@@ -4,6 +4,7 @@ from Tables import db, Day, Month
 from gen import month_names
 from utils import response
 from flask_cors import CORS
+from datetime import datetime
 
 # Initialize Flask and CORS
 app = Flask(__name__)
@@ -27,9 +28,6 @@ def gen_months():
         db.session.add(month)
         db.session.commit()
 
-
-# Routes
-@app.route("/next/days/", methods=["GET"])
 def gen_days():
 
     gen_months()
@@ -37,20 +35,51 @@ def gen_days():
 
     for month in months:
         for i in range(month.num_days):
-            day = Day(day=i+1, month_id=month.id, month_name=month.name, active=False)
+            day = Day(day=i+1, month_id=month.id, month_name=month.name, active=True)
             db.session.add(day)
             month.days.append(day)
             db.session.commit()
     
-    res = Day.query.all()
-    return response(res= {"days": [day.serialize_for_day() for day in res]}, success=True, code=200)
+    
+
+# Routes
+@app.route("/", methods=["GET"])
+def fill_database():
+    try:
+        gen_days()
+        return "Done"
+    except Exception as e:
+        return e
+        
+
+@app.route("/next/days/", methods=["GET"])
+def get_days():
+    days = Day.query.all()
+    today = datetime.day()
+    active_days = []
+
+    for day in days:
+        if day.number >= today:
+            day.active = False
+            db.session.commit()
+            active_days.append(day)
+
+    return response(res={"days": [day.serialize_for_day() for day in active_days]})
 
 
 @app.route("/next/months/", methods=["GET"])
 def get_months():
     months = Month.query.all()
-    
-    return response(res={"months": [month.serialize_for_month() for month in months]})
+    this_month = datetime.month()
+    active_months = []
+
+    for month in months:
+        if month.id >= this_month:
+            month.active = False
+            db.session.commit()
+            active_months.append(month)
+
+    return response(res={"months": [month.serialize_for_month() for month in active_months]})
 
 
 
