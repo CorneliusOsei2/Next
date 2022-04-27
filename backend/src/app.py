@@ -3,9 +3,11 @@ from flask import Flask
 from Tables import db, Day, Month
 from gen import month_names
 from utils import response
+from flask_cors import CORS
 
-# Initialize Flask
+# Initialize Flask and CORS
 app = Flask(__name__)
+CORS(app)
 
 # DB config
 db_filename = "next.db"
@@ -48,7 +50,7 @@ def gen_days():
 def get_months():
     months = Month.query.all()
     
-    return response(res={"months": {month.name: month.serialize_for_month() for month in months}})
+    return response(res={"months": [month.serialize_for_month() for month in months]})
 
 
 

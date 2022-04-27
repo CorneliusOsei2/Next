@@ -1,3 +1,4 @@
-next
+venv
 next.db
 __pycache__
+node_modules

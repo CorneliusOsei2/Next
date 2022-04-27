@@ -19,5 +19,3 @@ def month_names():
      "December": 31
     }
 
-
-month_names()

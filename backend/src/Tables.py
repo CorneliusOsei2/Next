@@ -39,6 +39,7 @@ class Month(db.Model):
     def serialize_for_month(self):
         return {
             "id": self.id,
+            "name": self.name,
             "active": self.active,
             "days": [day.serialize_for_month() for day in self.days]
         }
