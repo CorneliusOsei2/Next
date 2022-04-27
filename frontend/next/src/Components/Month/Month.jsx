@@ -1,5 +1,5 @@
 import { useState } from "react";
-
+import "./month.css"
 
 const Month = () => {
     const [months, setMonths] = useState([]);
@@ -20,15 +20,12 @@ const Month = () => {
         <div className="App">
           <header className="App-header">
             
-            <button onClick={genMonths}>Weeks</button>
+            <button onClick={genMonths}>Months Bar</button>
             
-              <div className='row'>
+              <div className='months-scroll'>
                 {months.map(mnth => {
                   return (
-                      
-                  <div className='card col-md-3' key={mnth.id}>
-                    <div className='card-title'> {mnth.name} </div>
-                  </div>
+                    <button className="month" key={mnth.id}> {mnth.name} </button>
                 )}
                 )}
             </div>

@@ -1,5 +1,4 @@
-import './App.css';
-import Month from './Components/Month';
+import Month from './Components/Month/Month';
 
 function App() {
   return (

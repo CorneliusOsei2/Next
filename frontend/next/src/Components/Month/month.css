@@ -1,0 +1,18 @@
+body{
+    background-color: black;
+}
+
+.months-scroll {
+    background-color: #333;
+    overflow: auto;
+    white-space: nowrap;
+  }
+  
+.months-scroll button {
+    display: inline-block;
+    text-align: center;
+    padding: 14px;
+    text-decoration: none;
+    width: 10%;
+}
+
