@@ -7,7 +7,7 @@ class Day(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     month_id = db.Column(db.Integer, db.ForeignKey("months.id"))
     month_name = db.Column(db.String, nullable=False)
-    day = db.Column(db.Integer, nullable=False)
+    number = db.Column(db.Integer, nullable=False)
     active = db.Column(db.Boolean, nullable=False)
     # timeslots = db.relationship("Timeslot", cascade="delete")
    
@@ -15,7 +15,7 @@ class Day(db.Model):
         return {
             "id": self.id,
             "month": self.month_name,
-            "day": self.day,
+            "number": self.number,
             "active": self.active,
              # "timeslots": [slot.serialize_for_day() for slot in self.timeslots]
         }
@@ -23,7 +23,7 @@ class Day(db.Model):
     def serialize_for_month(self):
 
         return {
-            "day": self.day,
+            "number": self.number,
             "active": self.active
         }
 

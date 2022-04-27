@@ -1,10 +1,11 @@
 
 from flask import Flask
+from sympy import true
 from Tables import db, Day, Month
 from gen import month_names
 from utils import response
 from flask_cors import CORS
-from datetime import datetime
+from datetime import date
 
 # Initialize Flask and CORS
 app = Flask(__name__)
@@ -24,7 +25,7 @@ def gen_months():
     months = month_names()
 
     for month_name, num_days in months.items():
-        month = Month(name=month_name, num_days = num_days, active=False)
+        month = Month(name=month_name, num_days = num_days, active= True)
         db.session.add(month)
         db.session.commit()
 
@@ -35,7 +36,7 @@ def gen_days():
 
     for month in months:
         for i in range(month.num_days):
-            day = Day(day=i+1, month_id=month.id, month_name=month.name, active=True)
+            day = Day(number=i+1, month_id=month.id, month_name=month.name, active=True)
             db.session.add(day)
             month.days.append(day)
             db.session.commit()
@@ -55,7 +56,7 @@ def fill_database():
 @app.route("/next/days/", methods=["GET"])
 def get_days():
     days = Day.query.all()
-    today = datetime.day()
+    today = date.today().day
     active_days = []
 
     for day in days:
@@ -70,7 +71,7 @@ def get_days():
 @app.route("/next/months/", methods=["GET"])
 def get_months():
     months = Month.query.all()
-    this_month = datetime.month()
+    this_month = date.today().month
     active_months = []
 
     for month in months:
