@@ -129,15 +129,25 @@ class Course(db.Model):
         self.code = kwargs.get("code", "")
         self.name = kwargs.get("name", "")
 
-    def serialize(self):
+    def serialize(self, include_users=False):
         """
         Serialize Course object
         """
-        return {
-            "id":self.id,
-            "code":self.code,
-            "name":self.name
-        }
+        if include_users:
+            return {
+                "id":self.id,
+                "code":self.code,
+                "name":self.name,
+                "instructors": [i.serialize() for i in self.instructors],
+                "students": [s.serialize() for s in self.students]
+            }
+        else:
+            return {
+                "id":self.id,
+                "code":self.code,
+                "name":self.name
+            }
+        
 
 class User(db.Model):
     __tablename__ = "users"
@@ -158,15 +168,43 @@ class User(db.Model):
         self.name = kwargs.get("name")
         self.netid = kwargs.get("netid")
     
-    def serialize(self):
+    def serialize(self, include_courses=False, include_timeslots=False):
         """
         Serialize User object
         """
-        return {
-            "id": self.id,
-            "name": self.name,
-            "netid": self.netid
-        }
+
+        if include_courses and include_timeslots:
+            return {
+                "id": self.id,
+                "name": self.name,
+                "netid": self.netid,
+                "courses_as_student": [c.serialize() for c in self.courses_as_student],
+                "courses_as_instructor": [c.serialize() for c in self.courses_as_instructor],
+                "timeslots_as_student": [t.serialize() for t in self.timeslots_as_student],
+                "timeslots_as_instructor": [t.serialize() for t in self.timeslots_as_instructor],
+            }
+        elif include_courses:
+            return {
+                "id": self.id,
+                "name": self.name,
+                "netid": self.netid,
+                "courses_as_student": [c.serialize() for c in self.courses_as_student],
+                "courses_as_instructor": [c.serialize() for c in self.courses_as_instructor]
+            }
+        elif include_timeslots:
+            return {
+                "id": self.id,
+                "name": self.name,
+                "netid": self.netid,
+                "timeslots_as_student": [t.serialize() for t in self.timeslots_as_student],
+                "timeslots_as_instructor": [t.serialize() for t in self.timeslots_as_instructor],
+            }
+        else:
+            return {
+                "id": self.id,
+                "name": self.name,
+                "netid": self.netid,
+            }
 
 
 
