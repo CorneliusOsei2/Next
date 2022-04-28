@@ -44,3 +44,33 @@ class Month(db.Model):
             "days": [day.serialize_for_month() for day in self.days]
         }
 
+class Timeslots(db.Model):
+    __tablename__ = "timeslots"
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    date = db.Column(db.String, nullable=False)
+    start_time = db.Column(db.Integer, nullable=False)
+    end_time = db.Column(db.Integer, nullable=False)
+
+    # Course for timeslot: One-to-many relationship
+    # course = db.relationship("Courses", cascade="delete")
+
+    def __init__(self, **kwargs):
+        """
+        Initialize Timeslot object
+        """
+        self.date = kwargs.get("date")
+        self.start_time = kwargs.get("start_time")
+        self.end_time = kwargs.get("end_time")
+
+    def serialize(self):
+        """
+        Serialize Timeslot object
+        """
+        return {
+            "id": self.id,
+            "date": self.date,
+            "start_time": self.start_time,
+            "end_time": self.end_time
+        }
+
+        
