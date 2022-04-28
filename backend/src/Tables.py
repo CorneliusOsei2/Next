@@ -74,4 +74,25 @@ class Timeslots(db.Model):
             "end_time": self.end_time
         }
 
+    
+class Course(db.Model):
+    __tablename__ = "courses"
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String, nullable=False)
+    code = db.Column(db.String, nullable=False)
+
+    def __init__(self, **kwargs):
+        self.code = kwargs.get("code", "")
+        self.name = kwargs.get("name", "")
+
+    def serialize(self):
+        """
+        Serialize Course object
+        """
+        
+        return {
+            "id":self.id,
+            "code":self.code,
+            "name":self.name
+        }
         
