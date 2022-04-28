@@ -1,9 +1,13 @@
+import queue
 from flask import Flask
+from requests import request
 from Tables import db, Day, Month, Timeslot, User, Course
+from backend.src.Tables import Queue
 from gen import month_names, gen_name, gen_netid, gen_course
 from utils import response, Debug
 from flask_cors import CORS
 from datetime import date
+import requests
 
 # Initialize Flask and CORS
 app = Flask(__name__)
@@ -63,7 +67,7 @@ def gen_courses():
         for user in users:
             if user.id == 1: course.instructors.append(user)
             else: course.students.append(user)
-            
+
             db.session.add(course)
             db.session.commit()
             
@@ -72,6 +76,9 @@ def gen_courses():
 # Routes
 @app.route("/", methods=["GET"])
 def fill_database():
+    '''
+    Generate data for our database
+    '''
     try:
         gen_days()
         gen_courses()
@@ -81,22 +88,11 @@ def fill_database():
         return e
 
 
-
-@app.route("/next/months/", methods=["GET"])
-def get_months():
-    months = Month.query.all()
-    this_month = date.today().month
-
-    for month in months:
-        if month.id < this_month:
-            month.active = False
-            db.session.commit()
-
-    return response(res={"months": [month.serialize() for month in months]})
-
-
 @app.route("/next/<int:month_id>/days/", methods=["GET"])
-def get_active_days(month_id):
+def get_days(month_id):
+    '''
+    Get days of a month
+    '''
     month = Month.query.filter_by(id=month_id).first()
     today = date.today()
 
@@ -108,15 +104,11 @@ def get_active_days(month_id):
     return response(res={"days": [day.serialize() for day in month.days]})
 
 
-
-@app.route("/next/<int:course_id>/<int:month_id>/<int:day_id>/timeslots", methods=["POST"])
-def get_timeslots(course_id, month_id, day_id):
-    date = str(month_id) + "-" + str(day_id)
-    timeslots = Timeslot.query.filter(Timeslot.date==date & Timeslot.course==course_id)
-
-
 @app.route("/next/users/", methods=["GET"])
 def get_users():
+    '''
+    Get all users: students and instructors
+    '''
     users = User.query.all()
 
     return response(res={"users": [user.serialize() for user in users]})
@@ -124,16 +116,46 @@ def get_users():
 
 @app.route("/next/courses/", methods=["GET"])
 def get_courses():
+    '''
+    Get all courses
+    '''
     courses = Course.query.all()
-
     return response(res={"courses": [course.serialize(include_users=True) for course in courses]})
 
 
-# @app.route("/next/<int:course_id>/users", methods=["GET"])
-# def get_courses():
-    
-#     return response(res={"courses": [course.serialize() for course in courses]})
 
+@app.route("/next/<int:course_id>/<int:month_id>/<int:day_id>/timeslots", methods=["GET", "POST"])
+def get_timeslots(course_id, month_id, day_id):
+    '''
+    Get timeslots for a particular course on a particular day
+    '''
+    date = str(month_id) + "-" + str(day_id)
+    
+    if requests.method == "GET":
+        timeslots = Timeslot.query.filter(Timeslot.date==date & Timeslot.course==course_id)
+        return response(res={"queue": queue}, success=True, code=200)
+    else:
+        pass
+
+
+@app.route("/next/<int:course_id>/<int:month_id>/<int:day_id>/<int:timeslot_id>/", methods=["GET", "POST"])
+def get_queue(course_id, month_id, day_id, timeslot_id):
+    date = str(month_id) + "-" + str(day_id)
+
+    if requests.method == "GET":
+        queue = Queue.query.filter(Queue.date==date & Queue.course_id==course_id & Queue.timeslot_id==timeslot_id)
+        return response(res={"queue": queue}, success=True, code=200)
+    else:
+        pass
+
+
+
+
+
+
+
+    
+        
 
 # Added for testing purposes. Drop all tables
 @app.route("/next/drop/", methods=["POST"])
