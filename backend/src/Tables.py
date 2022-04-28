@@ -1,7 +1,34 @@
 from flask_sqlalchemy import SQLAlchemy
 db = SQLAlchemy()
 
+# Association Tables
+instructor_course_association = db.Table(
+  "instructor_course_association",
+    db.Model.metadata,
+  db.Column("user_id", db.Integer, db.ForeignKey("users.id")),
+  db.Column("course_id", db.Integer, db.ForeignKey("courses.id"))
+)
 
+student_course_association = db.Table(
+  "student_course_association",
+  db.Model.metadata,
+  db.Column("user_id", db.Integer, db.ForeignKey("users.id")),
+  db.Column("course_id", db.Integer, db.ForeignKey("courses.id"))
+)
+
+student_timeslot_association = db.Table(
+  "student_timeslot_association",
+  db.Model.metadata,
+  db.Column("user_id", db.Integer, db.ForeignKey("users.id")),
+  db.Column("course_id", db.Integer, db.ForeignKey("timeslots.id"))
+)
+
+instructor_timeslot_association = db.Table(
+  "instructor_timeslot_association",
+  db.Model.metadata,
+  db.Column("user_id", db.Integer, db.ForeignKey("users.id")),
+  db.Column("course_id", db.Integer, db.ForeignKey("timeslots.id"))
+)
 
 class Month(db.Model):
     __tablename__ = "months"
@@ -60,6 +87,9 @@ class Timeslot(db.Model):
     course_id = db.Column(db.Integer, db.ForeignKey("courses.id"), nullable=False)
     course = db.relationship("Course", cascade="delete")
 
+    # Many-to-many relationship
+    students_in_timeslot = db.relationship("User", secondary=student_timeslot_association, back_populates="timeslots_as_student")
+    instructors_in_timeslot = db.relationship("User", secondary=instructor_timeslot_association, back_populates="timeslots_as_instructor")
 
     def __init__(self, **kwargs):
         """
@@ -88,6 +118,10 @@ class Course(db.Model):
     name = db.Column(db.String, nullable=False)
     code = db.Column(db.String, nullable=False)
 
+    # Many-to-many relationship
+    students = db.relationship("User", secondary=student_course_association, back_populates="courses_as_student")
+    instructors = db.relationship("User", secondary=instructor_course_association, back_populates="courses_as_instructor")
+
     def __init__(self, **kwargs):
         """
         Initialize Course object
@@ -110,6 +144,12 @@ class User(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     name = db.Column(db.String, nullable=False)
     netid = db.Column(db.String, nullable=False, unique=False)
+
+    # Many-to-many Relationships
+    courses_as_student = db.relationship("Course", secondary=student_course_association, back_populates="students")
+    courses_as_instructor = db.relationship("Course", secondary=instructor_course_association, back_populates="instructors")
+    timeslots_as_student = db.relationship("Timeslot", secondary=student_timeslot_association, back_populates="students_in_timeslot")
+    timeslots_as_instructor = db.relationship("Timeslot", secondary=instructor_timeslot_association, back_populates="instructors_in_timeslot")
 
     def __init__(self, **kwargs):
         """
