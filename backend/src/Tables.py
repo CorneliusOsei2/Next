@@ -1,6 +1,28 @@
 from flask_sqlalchemy import SQLAlchemy
 db = SQLAlchemy()
 
+class Course(db.Model):
+    __tablename__ = "courses"
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String, nullable=False)
+    code = db.Column(db.String, nullable=False)
+
+    def __init__(self, **kwargs):
+        """
+        Initialize Course object
+        """
+        self.code = kwargs.get("code", "")
+        self.name = kwargs.get("name", "")
+
+    def serialize(self):
+        """
+        Serialize Course object
+        """
+        return {
+            "id":self.id,
+            "code":self.code,
+            "name":self.name
+        }
 
 class User(db.Model):
     __tablename__ = "users"
