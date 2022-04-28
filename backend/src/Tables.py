@@ -24,9 +24,15 @@ class User(db.Model):
             "name": self.name,
             "netid": self.netid
         }
+<<<<<<< HEAD
 
 
 
+=======
+    
+    
+    
+>>>>>>> 59ca1305b17eda94ca20ec8afd9ce38a2fbd57ce
 class Day(db.Model):
     __tablename__ = "days"
     id = db.Column(db.Integer, primary_key=True)
