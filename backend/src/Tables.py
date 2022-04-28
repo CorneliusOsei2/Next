@@ -9,7 +9,6 @@ class Day(db.Model):
     month_name = db.Column(db.String, nullable=False)
     number = db.Column(db.Integer, nullable=False)
     active = db.Column(db.Boolean, nullable=False)
-    # timeslots = db.relationship("Timeslot", cascade="delete")
    
     def serialize_for_day(self):
         return {

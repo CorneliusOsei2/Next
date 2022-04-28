@@ -1,6 +1,4 @@
-
 from flask import Flask
-from sympy import true
 from Tables import db, Day, Month
 from gen import month_names
 from utils import response
@@ -53,6 +51,7 @@ def fill_database():
         return "Done"
     except Exception as e:
         return e
+
 
 
 @app.route("/next/<int:month_id>/days/", methods=["GET"])
