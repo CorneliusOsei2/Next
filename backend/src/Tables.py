@@ -2,6 +2,31 @@ from flask_sqlalchemy import SQLAlchemy
 db = SQLAlchemy()
 
 
+class User(db.Model):
+    __tablename__ = "users"
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    name = db.Column(db.String, nullable=False)
+    netid = db.Column(db.String, nullable=False, unique=False)
+
+    def __init__(self, **kwargs):
+        """
+        Initialize User object
+        """
+        self.name = kwargs.get("name")
+        self.netid = kwargs.get("netid")
+    
+    def serialize(self):
+        """
+        Serialize User object
+        """
+        return {
+            "id": self.id,
+            "name": self.name,
+            "netid": self.netid
+        }
+
+
+
 class Day(db.Model):
     __tablename__ = "days"
     id = db.Column(db.Integer, primary_key=True)
@@ -74,6 +99,7 @@ class Timeslots(db.Model):
             "end_time": self.end_time
         }
 
+<<<<<<< HEAD
     
 class Course(db.Model):
     __tablename__ = "courses"
@@ -96,3 +122,6 @@ class Course(db.Model):
             "name":self.name
         }
         
+=======
+
+>>>>>>> b07b21ed607c710c7d7bc664d9389d002eceee9f
