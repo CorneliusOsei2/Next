@@ -2,6 +2,31 @@ from flask_sqlalchemy import SQLAlchemy
 db = SQLAlchemy()
 
 
+
+
+class Month(db.Model):
+    __tablename__ = "months"
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    name = db.Column(db.String, nullable=False)
+    number = db.Column(db.Integer, nullable=False)
+    num_days = db.Column(db.Integer, nullable=False)
+    active = db.Column(db.Boolean, nullable=False)
+    days = db.relationship("Day", cascade="delete")
+
+    def __init__(self, **kwargs):
+        self.name = kwargs.get("name")
+        self.number = kwargs.get("number")
+        self.num_days = kwargs.get("num_days")
+        self.active = kwargs.get("active")
+
+    def serialize(self):
+        return {
+            "id": self.id,
+            "name": self.name,
+            "active": self.active,
+            "days": [day.serialize() for day in self.days]
+        }
+
 class Day(db.Model):
     __tablename__ = "days"
     id = db.Column(db.Integer, primary_key=True)
@@ -10,49 +35,32 @@ class Day(db.Model):
     number = db.Column(db.Integer, nullable=False)
     active = db.Column(db.Boolean, nullable=False)
    
-    def serialize_for_day(self):
+    def __init__(self, **kwargs):
+        self.month_id = kwargs.get("month_id")
+        self.month_name = kwargs.get("month_name")
+        self.number = kwargs.get("number")
+        self.active = kwargs.get("active")
+        
+
+    def serialize(self):
         return {
             "id": self.id,
             "month": self.month_name,
             "number": self.number,
             "active": self.active,
-             # "timeslots": [slot.serialize_for_day() for slot in self.timeslots]
-        }
-
-    def serialize_for_month(self):
-
-        return {
-            "number": self.number,
-            "active": self.active
         }
 
 
-class Month(db.Model):
-    __tablename__ = "months"
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String, nullable=False)
-    number = db.Column(db.Integer, nullable=False)
-    num_days = db.Column(db.Integer, nullable=False)
-    active = db.Column(db.Boolean, nullable=False)
-    days = db.relationship("Day", cascade="delete")
 
-    def serialize_for_month(self):
-        return {
-            "id": self.id,
-            "name": self.name,
-            "active": self.active,
-            "days": [day.serialize_for_month() for day in self.days]
-        }
-
-class Timeslots(db.Model):
+class Timeslot(db.Model):
     __tablename__ = "timeslots"
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     date = db.Column(db.String, nullable=False)
     start_time = db.Column(db.Integer, nullable=False)
     end_time = db.Column(db.Integer, nullable=False)
+    course_id = db.Column(db.Integer, db.ForeignKey("courses.id"), nullable=False)
+    course = db.relationship("Course", cascade="delete")
 
-    # Course for timeslot: One-to-many relationship
-    # course = db.relationship("Courses", cascade="delete")
 
     def __init__(self, **kwargs):
         """
@@ -61,6 +69,7 @@ class Timeslots(db.Model):
         self.date = kwargs.get("date")
         self.start_time = kwargs.get("start_time")
         self.end_time = kwargs.get("end_time")
+        self.course = kwargs.get("course")
 
     def serialize(self):
         """
@@ -73,4 +82,7 @@ class Timeslots(db.Model):
             "end_time": self.end_time
         }
 
-        
+
+class Course(db.Model):
+    __tablename__ = "courses" 
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)

@@ -1,7 +1,7 @@
 from flask import Flask
-from Tables import db, Day, Month
+from Tables import db, Day, Month, Timeslot
 from gen import month_names
-from utils import response
+from utils import response, Debug
 from flask_cors import CORS
 from datetime import date
 
@@ -24,13 +24,15 @@ def gen_months():
 
     i = 1
     for month_name, num_days in months.items():
+
         month = Month(name=month_name, number = i, num_days = num_days, active= True)
+        Debug.debug()
+
         db.session.add(month)
         db.session.commit()
         i += 1
 
 def gen_days():
-
     gen_months()
     months = Month.query.all()
 
@@ -41,13 +43,13 @@ def gen_days():
             month.days.append(day)
             db.session.commit()
     
-    
 
 # Routes
 @app.route("/", methods=["GET"])
 def fill_database():
     try:
         gen_days()
+        
         return "Done"
     except Exception as e:
         return e
@@ -64,7 +66,7 @@ def get_active_days(month_id):
             day.active = False
             db.session.commit()
         
-    return response(res={"days": [day.serialize_for_day() for day in month.days]})
+    return response(res={"days": [day.serialize() for day in month.days]})
 
 
 @app.route("/next/months/", methods=["GET"])
@@ -77,7 +79,14 @@ def get_months():
             month.active = False
             db.session.commit()
 
-    return response(res={"months": [month.serialize_for_month() for month in months]})
+    return response(res={"months": [month.serialize() for month in months]})
+
+
+@app.route("/next/<int:course_id>/<int:month_id>/<int:day_id>/timeslots", methods=["POST"])
+def get_timeslots(course_id, month_id, day_id):
+    date = str(month_id) + "-" + str(day_id)
+    timeslots = Timeslot.query.filter(Timeslot.date==date & Timeslot.course==course_id)
+
 
 
 
