@@ -24,10 +24,12 @@ with app.app_context():
 def gen_months():
     months = month_names()
 
+    i = 1
     for month_name, num_days in months.items():
-        month = Month(name=month_name, num_days = num_days, active= True)
+        month = Month(name=month_name, number = i, num_days = num_days, active= True)
         db.session.add(month)
         db.session.commit()
+        i += 1
 
 def gen_days():
 
@@ -51,21 +53,22 @@ def fill_database():
         return "Done"
     except Exception as e:
         return e
-        
 
-@app.route("/next/days/", methods=["GET"])
-def get_days():
-    days = Day.query.all()
-    today = date.today().day
+
+@app.route("/next/<int:month_id>/days/", methods=["GET"])
+def get_active_days(month_id):
+    month = Month.query.filter_by(id=month_id).first()
+    today = date.today()
     active_days = []
 
-    for day in days:
-        if day.number >= today:
+    for day in month.days:
+        if month.number < today.month or month.number <= today.month and day.number < today.day:
             day.active = False
             db.session.commit()
+        else:
             active_days.append(day)
 
-    return response(res={"days": [day.serialize_for_day() for day in active_days]})
+    return response(res={month.name: [day.serialize_for_day() for day in active_days]})
 
 
 @app.route("/next/months/", methods=["GET"])
@@ -75,9 +78,10 @@ def get_months():
     active_months = []
 
     for month in months:
-        if month.id >= this_month:
+        if month.id < this_month:
             month.active = False
             db.session.commit()
+        else:
             active_months.append(month)
 
     return response(res={"months": [month.serialize_for_month() for month in active_months]})

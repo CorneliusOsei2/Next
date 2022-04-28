@@ -1,11 +1,11 @@
-import Month from './Components/Month/Month';
 import Course from './Components/Course/Course';
+import MonthsPane from './Components/MonthsPane/MonthsPane';
 
 function App() {
   return (
     <div className="App">
     <Course></Course>
-    <Month></Month>
+    <MonthsPane></MonthsPane>
     </div>
   );
 }

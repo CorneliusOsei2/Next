@@ -32,6 +32,7 @@ class Month(db.Model):
     __tablename__ = "months"
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String, nullable=False)
+    number = db.Column(db.Integer, nullable=False)
     num_days = db.Column(db.Integer, nullable=False)
     active = db.Column(db.Boolean, nullable=False)
     days = db.relationship("Day", cascade="delete")
