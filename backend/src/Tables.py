@@ -2,6 +2,31 @@ from flask_sqlalchemy import SQLAlchemy
 db = SQLAlchemy()
 
 
+class User(db.Model):
+    __tablename__ = "users"
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    name = db.Column(db.String, nullable=False)
+    netid = db.Column(db.String, nullable=False, unique=False)
+
+    def __init__(self, **kwargs):
+        """
+        Initialize User object
+        """
+        self.name = kwargs.get("name")
+        self.netid = kwargs.get("netid")
+    
+    def serialize(self):
+        """
+        Serialize User object
+        """
+        return {
+            "id": self.id,
+            "name": self.name,
+            "netid": self.netid
+        }
+    
+    
+    
 class Day(db.Model):
     __tablename__ = "days"
     id = db.Column(db.Integer, primary_key=True)
