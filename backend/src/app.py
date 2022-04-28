@@ -59,32 +59,26 @@ def fill_database():
 def get_active_days(month_id):
     month = Month.query.filter_by(id=month_id).first()
     today = date.today()
-    active_days = []
 
     for day in month.days:
         if month.number < today.month or month.number <= today.month and day.number < today.day:
             day.active = False
             db.session.commit()
-        else:
-            active_days.append(day)
-
-    return response(res={month.name: [day.serialize_for_day() for day in active_days]})
+        
+    return response(res={"days": [day.serialize_for_day() for day in month.days]})
 
 
 @app.route("/next/months/", methods=["GET"])
 def get_months():
     months = Month.query.all()
     this_month = date.today().month
-    active_months = []
 
     for month in months:
         if month.id < this_month:
             month.active = False
             db.session.commit()
-        else:
-            active_months.append(month)
 
-    return response(res={"months": [month.serialize_for_month() for month in active_months]})
+    return response(res={"months": [month.serialize_for_month() for month in months]})
 
 
 

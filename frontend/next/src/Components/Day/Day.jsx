@@ -1,4 +1,3 @@
-import { useState } from "react";
 import "./day.css"
 
 const Day = ({id, number, active}) => {
@@ -6,12 +5,13 @@ const Day = ({id, number, active}) => {
   const day = {
     id, 
     number, 
-    active
+    active,
+    class: active === true ? "active" : "inactive"
   }
 
 
     return (
-      <button id={id} className="day">{day.number}</button>
+      <button id={id} className={ `day ${day.class}`}>{day.number}</button>
       );
 }
 
