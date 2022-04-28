@@ -1,6 +1,5 @@
 import { useState } from "react";
 import "./monthspane.css"
-import Month from "../Month/Month";
 import Day from "../Day/Day";
 import { useEffect } from "react";
 
@@ -33,9 +32,7 @@ const MonthsPane = () => {
       setMonth(month_id);
     }
 
-    
-   
-    
+  
     return (
         <div>
           <header>
