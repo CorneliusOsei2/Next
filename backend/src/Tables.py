@@ -126,8 +126,8 @@ class Course(db.Model):
         """
         Initialize Course object
         """
-        self.code = kwargs.get("code", "")
-        self.name = kwargs.get("name", "")
+        self.code = kwargs.get("code")
+        self.name = kwargs.get("name")
 
     def serialize(self, include_users=False):
         """

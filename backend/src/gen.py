@@ -1,6 +1,7 @@
 from Tables import Day, db
 from datetime import datetime
 from calendar import isleap
+from random import randint
 
 def month_names():
     
@@ -19,3 +20,20 @@ def month_names():
      "December": 31
     }
 
+
+def gen_name():
+    names = ["A", "B", "C", "D"]
+
+    return names[randint(0, 3)]
+
+
+def gen_netid():
+    netids = ["a3", "b5", "c9"]
+
+    return netids[randint(0, 2)]
+
+
+def gen_course():
+    courses = ["CS 1110", "CS 2110", "CS 3110"]
+
+    return courses[randint(0,2)]
