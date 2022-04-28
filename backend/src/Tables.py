@@ -1,4 +1,5 @@
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy import ForeignKey
 db = SQLAlchemy()
 
 # Association Tables
@@ -207,4 +208,23 @@ class User(db.Model):
             }
 
 
+class Queue(db.Model):
+    __tablename___ = "queues"
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    course_id = db.Column(db.Integer, db.ForeignKey("courses.id"), nullable=False)
+    date = db.Column(db.String)
+    joined_students = db.relationship("User")
+    completed_students = db.relationship("User")
 
+    def __init__(self, **kwargs) -> None:
+        self.course_id = kwargs.get("course_id")
+        self.day_id = kwargs.get("day_id")
+        self.month_id = kwargs.get("month_id")
+    
+    def serialize(self):
+        return {
+            "date": self.date,
+            "course_id": self.course_id,
+            "joined_students": self.joined_students,
+            "completed_students": self.completed_students
+        }
