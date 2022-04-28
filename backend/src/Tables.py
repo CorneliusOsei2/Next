@@ -3,7 +3,6 @@ db = SQLAlchemy()
 
 
 
-
 class Month(db.Model):
     __tablename__ = "months"
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
@@ -84,5 +83,50 @@ class Timeslot(db.Model):
 
 
 class Course(db.Model):
-    __tablename__ = "courses" 
+    __tablename__ = "courses"
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String, nullable=False)
+    code = db.Column(db.String, nullable=False)
+
+    def __init__(self, **kwargs):
+        """
+        Initialize Course object
+        """
+        self.code = kwargs.get("code", "")
+        self.name = kwargs.get("name", "")
+
+    def serialize(self):
+        """
+        Serialize Course object
+        """
+        return {
+            "id":self.id,
+            "code":self.code,
+            "name":self.name
+        }
+
+class User(db.Model):
+    __tablename__ = "users"
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    name = db.Column(db.String, nullable=False)
+    netid = db.Column(db.String, nullable=False, unique=False)
+
+    def __init__(self, **kwargs):
+        """
+        Initialize User object
+        """
+        self.name = kwargs.get("name")
+        self.netid = kwargs.get("netid")
+    
+    def serialize(self):
+        """
+        Serialize User object
+        """
+        return {
+            "id": self.id,
+            "name": self.name,
+            "netid": self.netid
+        }
+
+
+
