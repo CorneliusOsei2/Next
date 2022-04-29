@@ -1,39 +1,55 @@
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import ForeignKey
 db = SQLAlchemy()
+from sqlalchemy.dialects.postgresql import UUID
+import uuid
 
 # Association Tables
 instructor_course_association = db.Table(
   "instructor_course_association",
     db.Model.metadata,
-  db.Column("user_id", db.Integer, db.ForeignKey("users.id")),
-  db.Column("course_id", db.Integer, db.ForeignKey("courses.id"))
+  db.Column("user_id", db.String, db.ForeignKey("users.id")),
+  db.Column("course_id", db.String, db.ForeignKey("courses.id"))
 )
 
 student_course_association = db.Table(
   "student_course_association",
   db.Model.metadata,
-  db.Column("user_id", db.Integer, db.ForeignKey("users.id")),
-  db.Column("course_id", db.Integer, db.ForeignKey("courses.id"))
+  db.Column("user_id", db.String, db.ForeignKey("users.id")),
+  db.Column("course_id", db.String, db.ForeignKey("courses.id"))
 )
 
 student_timeslot_association = db.Table(
   "student_timeslot_association",
   db.Model.metadata,
-  db.Column("user_id", db.Integer, db.ForeignKey("users.id")),
-  db.Column("course_id", db.Integer, db.ForeignKey("timeslots.id"))
+  db.Column("user_id", db.String, db.ForeignKey("users.id")),
+  db.Column("course_id", db.String, db.ForeignKey("timeslots.id"))
 )
 
 instructor_timeslot_association = db.Table(
   "instructor_timeslot_association",
   db.Model.metadata,
-  db.Column("user_id", db.Integer, db.ForeignKey("users.id")),
-  db.Column("course_id", db.Integer, db.ForeignKey("timeslots.id"))
+  db.Column("user_id", db.String, db.ForeignKey("users.id")),
+  db.Column("course_id", db.String, db.ForeignKey("timeslots.id"))
+)
+
+student_joined_queue_association = db.Table(
+"student_joined_queue_association",
+  db.Model.metadata,
+  db.Column("user_id", db.String, db.ForeignKey("users.id")),
+  db.Column("queue_id", db.String, db.ForeignKey("queue.id"))
+)
+
+student_completed_queue_association = db.Table(
+"student_completed_queue_association",
+  db.Model.metadata,
+  db.Column("user_id", db.String, db.ForeignKey("users.id")),
+  db.Column("queue_id", db.String, db.ForeignKey("queue.id"))
 )
 
 class Month(db.Model):
     __tablename__ = "months"
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    id = db.Column('id', db.String, default=lambda: str(uuid.uuid4()), primary_key=True)
     name = db.Column(db.String, nullable=False)
     number = db.Column(db.Integer, nullable=False)
     num_days = db.Column(db.Integer, nullable=False)
@@ -56,7 +72,7 @@ class Month(db.Model):
 
 class Day(db.Model):
     __tablename__ = "days"
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column('id', db.String, default=lambda: str(uuid.uuid4()), primary_key=True)
     month_id = db.Column(db.Integer, db.ForeignKey("months.id"))
     month_name = db.Column(db.String, nullable=False)
     number = db.Column(db.Integer, nullable=False)
@@ -81,7 +97,7 @@ class Day(db.Model):
 
 class Timeslot(db.Model):
     __tablename__ = "timeslots"
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    id = db.Column('id', db.String, default=lambda: str(uuid.uuid4()), primary_key=True)
     date = db.Column(db.String, nullable=False)
     start_time = db.Column(db.Integer, nullable=False)
     end_time = db.Column(db.Integer, nullable=False)
@@ -113,9 +129,31 @@ class Timeslot(db.Model):
         }
 
 
+
+class Queue(db.Model):
+    __tablename___ = "queue"
+    id = db.Column('id', db.String, default=lambda: str(uuid.uuid4()), primary_key=True)
+    course_id = db.Column(db.Integer, db.ForeignKey("courses.id"), nullable=False)
+    date = db.Column(db.String)
+    students_joined = db.relationship("User", secondary=student_joined_queue_association, back_populates="queues_joined")
+    students_completed = db.relationship("User", secondary=student_completed_queue_association)
+
+    def __init__(self, **kwargs) -> None:
+        self.course_id = kwargs.get("course_id")
+        self.day_id = kwargs.get("day_id")
+        self.month_id = kwargs.get("month_id")
+    
+    def serialize(self):
+        return {
+            "date": self.date,
+            "course_id": self.course_id,
+            "joined_students": self.joined_students,
+            "completed_students": self.completed_students
+        }
+
 class Course(db.Model):
     __tablename__ = "courses"
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column('id', db.String, default=lambda: str(uuid.uuid4()), primary_key=True)
     name = db.Column(db.String, nullable=False)
     code = db.Column(db.String, nullable=False)
 
@@ -148,11 +186,11 @@ class Course(db.Model):
                 "code":self.code,
                 "name":self.name
             }
-        
+
 
 class User(db.Model):
     __tablename__ = "users"
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    id = db.Column('id', db.String, default=lambda: str(uuid.uuid4()), primary_key=True)
     name = db.Column(db.String, nullable=False)
     netid = db.Column(db.String, nullable=False, unique=False)
 
@@ -161,6 +199,7 @@ class User(db.Model):
     courses_as_instructor = db.relationship("Course", secondary=instructor_course_association, back_populates="instructors")
     timeslots_as_student = db.relationship("Timeslot", secondary=student_timeslot_association, back_populates="students_in_timeslot")
     timeslots_as_instructor = db.relationship("Timeslot", secondary=instructor_timeslot_association, back_populates="instructors_in_timeslot")
+    queues_joined = db.relationship("Queue", secondary=student_joined_queue_association, back_populates="students_joined")
 
     def __init__(self, **kwargs):
         """
@@ -206,25 +245,3 @@ class User(db.Model):
                 "name": self.name,
                 "netid": self.netid,
             }
-
-
-class Queue(db.Model):
-    __tablename___ = "queues"
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    course_id = db.Column(db.Integer, db.ForeignKey("courses.id"), nullable=False)
-    date = db.Column(db.String)
-    joined_students = db.relationship("User")
-    completed_students = db.relationship("User")
-
-    def __init__(self, **kwargs) -> None:
-        self.course_id = kwargs.get("course_id")
-        self.day_id = kwargs.get("day_id")
-        self.month_id = kwargs.get("month_id")
-    
-    def serialize(self):
-        return {
-            "date": self.date,
-            "course_id": self.course_id,
-            "joined_students": self.joined_students,
-            "completed_students": self.completed_students
-        }

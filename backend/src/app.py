@@ -79,6 +79,16 @@ def gen_courses():
             db.session.add(course)
             db.session.commit()
 
+def gen_timeslots():
+    pass
+
+
+
+
+
+
+
+
 # Routes
 @app.route("/", methods=["GET"])
 def fill_database():
@@ -93,13 +103,22 @@ def fill_database():
     except Exception as e:
         return e
 
-
-@app.route("/next/<int:month_id>/days/", methods=["GET"])
-def get_days(month_id):
+@app.route("/next/months/", methods=["GET"])
+def get_months():
     '''
     Get days of a month
     '''
-    month = Month.query.filter_by(id=month_id).first()
+    months = Month.query.all()
+    
+    return response(res={"months": [month.serialize() for month in months]})
+
+
+@app.route("/next/<string:month_number>/days/", methods=["GET"])
+def get_days(month_number):
+    '''
+    Get days of a month
+    '''
+    month = Month.query.filter_by(number=month_number).first()
     today = date.today()
 
     for day in month.days:
@@ -111,14 +130,26 @@ def get_days(month_id):
 
 
 @app.route("/next/users/", methods=["GET"])
-def get_users():
+def get_all_users():
     '''
     Get all users: students and instructors
     '''
     users = User.query.all()
-
     return response(res={"users": [user.serialize() for user in users]})
 
+@app.route("/next/<string:course_id>/users/", methods=["GET"])
+def get_course_users(course_id):
+    '''
+    Get all users: students and instructors
+    '''
+    # Artist.query.filter(Artist.albums.any(genre_id=genre.id)).all()
+    instructors = User.query.filter(User.courses_as_instructor.any(id=course_id)).all()
+    students = User.query.filter(User.courses_as_student.any(id=course_id)).all()
+    res = {
+        "instructors": [instructor.serialize() for instructor in instructors],
+        "students": [student.serialize() for student in students]
+    }
+    return response(res=res)
 
 @app.route("/next/courses/", methods=["GET"])
 def get_courses():
@@ -127,7 +158,6 @@ def get_courses():
     '''
     courses = Course.query.all()
     return response(res={"courses": [course.serialize(include_users=True) for course in courses]})
-
 
 
 @app.route("/next/<int:course_id>/<int:month_id>/<int:day_id>/timeslots", methods=["GET", "POST"])
@@ -144,17 +174,19 @@ def get_timeslots(course_id, month_id, day_id):
         pass
 
 
-@app.route("/next/<int:course_id>/<int:month_id>/<int:day_id>/<int:timeslot_id>/", methods=["GET", "POST"])
-def get_queue(course_id, month_id, day_id, timeslot_id):
+@app.route("/next/<int:user_id>/<int:course_id>/<int:month_id>/<int:day_id>/<int:timeslot_id>/", methods=["GET", "POST"])
+def get_queue(user_id, course_id, month_id, day_id, timeslot_id):
     '''
-    Get queue for particular course on a particular day
+    Get / Join queue for particular course on a particular day
     '''
     date = str(month_id) + "-" + str(day_id)
+    queue = Queue.query.filter(Queue.date==date & Queue.course_id==course_id & Queue.timeslot_id==timeslot_id)
+
     if requests.method == "GET":
-        queue = Queue.query.filter(Queue.date==date & Queue.course_id==course_id & Queue.timeslot_id==timeslot_id)
         return response(res={"queue": queue}, success=True, code=200)
     else:
-        pass
+        user = User.query_by(id=user_id)
+        queue.students_joined.append()
 
 
 
