@@ -1,0 +1,18 @@
+body{
+    background-color: gray;
+}
+
+.months-pane {
+    background-color: #333;
+    overflow: auto;
+    white-space: nowrap;
+  }
+  
+.months-pane button {
+    display: inline-block;
+    text-align: center;
+    padding: 14px;
+    width: 110px;
+    text-decoration: none;
+}
+

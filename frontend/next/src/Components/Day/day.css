@@ -1,0 +1,10 @@
+
+.day{
+    border-radius: 8px;
+    background-color: white;
+    border: 1px solid black
+}
+
+.inactive{
+    color: gray;
+}
