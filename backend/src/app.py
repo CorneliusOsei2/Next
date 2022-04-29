@@ -1,8 +1,7 @@
 import queue
 from flask import Flask
 from requests import request
-from Tables import db, Day, Month, Timeslot, User, Course
-from backend.src.Tables import Queue
+from Tables import db, Day, Month, Timeslot, User, Course, Queue
 from gen import month_names, gen_name, gen_netid, gen_course
 from utils import response, Debug
 from flask_cors import CORS
