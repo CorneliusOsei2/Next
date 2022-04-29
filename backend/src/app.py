@@ -133,7 +133,7 @@ def get_timeslots(course_id, month_id, day_id):
     
     if requests.method == "GET":
         timeslots = Timeslot.query.filter(Timeslot.date==date & Timeslot.course==course_id)
-        return response(res={"queue": queue}, success=True, code=200)
+        return response(res={"timeslot": [timeslot.serialize() for timeslot in timeslots]}, success=True, code=200)
     else:
         pass
 
@@ -154,8 +154,8 @@ def get_queue(course_id, month_id, day_id, timeslot_id):
 
 
 
-    
-        
+
+
 
 # Added for testing purposes. Drop all tables
 @app.route("/next/drop/", methods=["POST"])
