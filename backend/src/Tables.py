@@ -31,8 +31,15 @@ instructor_timeslot_association = db.Table(
   db.Column("course_id", db.Integer, db.ForeignKey("timeslots.id"))
 )
 
-student_queue_association = db.Table(
-"student_queue_association",
+student_joined_queue_association = db.Table(
+"student_joined_queue_association",
+  db.Model.metadata,
+  db.Column("user_id", db.Integer, db.ForeignKey("users.id")),
+  db.Column("queue_id", db.Integer, db.ForeignKey("queue.id"))
+)
+
+student_completed_queue_association = db.Table(
+"student_completed_queue_association",
   db.Model.metadata,
   db.Column("user_id", db.Integer, db.ForeignKey("users.id")),
   db.Column("queue_id", db.Integer, db.ForeignKey("queue.id"))
@@ -126,8 +133,9 @@ class Queue(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     course_id = db.Column(db.Integer, db.ForeignKey("courses.id"), nullable=False)
     date = db.Column(db.String)
-    students_joined = db.relationship("User", secondary="student_queue_association", back_populates="queues_joined")
-
+    students_joined = db.relationship("User", secondary=student_joined_queue_association, back_populates="queues_joined")
+    students_completed = db.relationship("User", secondary=student_completed_queue_association)
+    
     def __init__(self, **kwargs) -> None:
         self.course_id = kwargs.get("course_id")
         self.day_id = kwargs.get("day_id")
