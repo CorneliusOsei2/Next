@@ -24,6 +24,9 @@ with app.app_context():
 
 # Helpers
 def gen_months():
+    '''
+    Auto-generate months
+    '''
     months = month_names()
 
     i = 1
@@ -36,6 +39,9 @@ def gen_months():
         i += 1
 
 def gen_days():
+    '''
+    Autogenerate days for the months
+    '''
     gen_months()
     months = Month.query.all()
 
@@ -46,16 +52,19 @@ def gen_days():
             month.days.append(day)
             db.session.commit()
 
-
 def gen_users():
+    '''
+    Auto-generate users
+    '''
     for i in range(3):
         user = User(name=gen_name(), netid=gen_netid())
         db.session.add(user)
         db.session.commit()
 
-
 def gen_courses():
-
+    '''
+    Auto-generate users
+    '''
     gen_users()
     users = User.query.all()
 
@@ -70,8 +79,6 @@ def gen_courses():
 
             db.session.add(course)
             db.session.commit()
-            
-
 
 # Routes
 @app.route("/", methods=["GET"])
