@@ -5,28 +5,28 @@ from sqlalchemy.dialects.postgresql import UUID
 import uuid
 
 # Association Tables
-instructor_course_association = db.Table(
+InstructorCourse = db.Table(
   "instructor_course_association",
     db.Model.metadata,
   db.Column("user_id", db.String, db.ForeignKey("users.id")),
   db.Column("course_id", db.String, db.ForeignKey("courses.id"))
 )
 
-student_course_association = db.Table(
+StudentCourse = db.Table(
   "student_course_association",
   db.Model.metadata,
   db.Column("user_id", db.String, db.ForeignKey("users.id")),
   db.Column("course_id", db.String, db.ForeignKey("courses.id"))
 )
 
-student_timeslot_association = db.Table(
+StudentTimeslot = db.Table(
   "student_timeslot_association",
   db.Model.metadata,
   db.Column("user_id", db.String, db.ForeignKey("users.id")),
   db.Column("course_id", db.String, db.ForeignKey("timeslots.id"))
 )
 
-instructor_timeslot_association = db.Table(
+InstructorTimeslot = db.Table(
   "instructor_timeslot_association",
   db.Model.metadata,
   db.Column("user_id", db.String, db.ForeignKey("users.id")),
@@ -105,8 +105,8 @@ class Timeslot(db.Model):
     course = db.relationship("Course", cascade="delete")
 
     # Many-to-many relationship
-    students_in_timeslot = db.relationship("User", secondary=student_timeslot_association, back_populates="timeslots_as_student")
-    instructors_in_timeslot = db.relationship("User", secondary=instructor_timeslot_association, back_populates="timeslots_as_instructor")
+    students_in_timeslot = db.relationship("User", secondary=StudentTimeslot, back_populates="timeslots_as_student")
+    instructors_in_timeslot = db.relationship("User", secondary=InstructorTimeslot, back_populates="timeslots_as_instructor")
 
     def __init__(self, **kwargs):
         """
@@ -158,8 +158,8 @@ class Course(db.Model):
     code = db.Column(db.String, nullable=False)
 
     # Many-to-many relationship
-    students = db.relationship("User", secondary=student_course_association, back_populates="courses_as_student")
-    instructors = db.relationship("User", secondary=instructor_course_association, back_populates="courses_as_instructor")
+    students = db.relationship("User", secondary=StudentCourse, back_populates="courses_as_student")
+    instructors = db.relationship("User", secondary=InstructorCourse, back_populates="courses_as_instructor")
 
     def __init__(self, **kwargs):
         """
@@ -195,10 +195,10 @@ class User(db.Model):
     netid = db.Column(db.String, nullable=False, unique=False)
 
     # Many-to-many Relationships
-    courses_as_student = db.relationship("Course", secondary=student_course_association, back_populates="students")
-    courses_as_instructor = db.relationship("Course", secondary=instructor_course_association, back_populates="instructors")
-    timeslots_as_student = db.relationship("Timeslot", secondary=student_timeslot_association, back_populates="students_in_timeslot")
-    timeslots_as_instructor = db.relationship("Timeslot", secondary=instructor_timeslot_association, back_populates="instructors_in_timeslot")
+    courses_as_student = db.relationship("Course", secondary=StudentCourse, back_populates="students")
+    courses_as_instructor = db.relationship("Course", secondary=InstructorCourse, back_populates="instructors")
+    timeslots_as_student = db.relationship("Timeslot", secondary=StudentTimeslot, back_populates="students_in_timeslot")
+    timeslots_as_instructor = db.relationship("Timeslot", secondary=InstructorTimeslot, back_populates="instructors_in_timeslot")
     queues_joined = db.relationship("Queue", secondary=StudentJoinedQueue, back_populates="students_joined")
 
     def __init__(self, **kwargs):
