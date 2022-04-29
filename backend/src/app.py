@@ -103,13 +103,22 @@ def fill_database():
     except Exception as e:
         return e
 
-
-@app.route("/next/<int:month_id>/days/", methods=["GET"])
-def get_days(month_id):
+@app.route("/next/months/", methods=["GET"])
+def get_months():
     '''
     Get days of a month
     '''
-    month = Month.query.filter_by(id=month_id).first()
+    months = Month.query.all()
+    
+    return response(res={"months": [month.serialize() for month in months]})
+
+
+@app.route("/next/<string:month_number>/days/", methods=["GET"])
+def get_days(month_number):
+    '''
+    Get days of a month
+    '''
+    month = Month.query.filter_by(number=month_number).first()
     today = date.today()
 
     for day in month.days:
@@ -121,13 +130,26 @@ def get_days(month_id):
 
 
 @app.route("/next/users/", methods=["GET"])
-def get_users():
+def get_all_users():
     '''
     Get all users: students and instructors
     '''
     users = User.query.all()
     return response(res={"users": [user.serialize() for user in users]})
 
+@app.route("/next/<string:course_id>/users/", methods=["GET"])
+def get_course_users(course_id):
+    '''
+    Get all users: students and instructors
+    '''
+    # Artist.query.filter(Artist.albums.any(genre_id=genre.id)).all()
+    instructors = User.query.filter(User.courses_as_instructor.any(id=course_id)).all()
+    students = User.query.filter(User.courses_as_student.any(id=course_id)).all()
+    res = {
+        "instructors": [instructor.serialize() for instructor in instructors],
+        "students": [student.serialize() for student in students]
+    }
+    return response(res=res)
 
 @app.route("/next/courses/", methods=["GET"])
 def get_courses():
