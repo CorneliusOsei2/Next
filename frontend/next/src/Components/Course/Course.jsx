@@ -8,7 +8,7 @@ const Course = () => {
     return(
         
         <div>
-            <div className='months-scroll'>
+            <div className='courses-pane'>
                 {courses.map(mnth => {
                   return (
                     <button className="course"> {mnth} </button>

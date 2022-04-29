@@ -1,4 +1,9 @@
 
+.courses-pane{
+    margin: auto;
+    justify-content: center;
+}
+
 .course{
     font-size: 18px;
     border-radius: 8px;

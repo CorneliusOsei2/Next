@@ -1,0 +1,13 @@
+body{
+    display: flex;
+    background-color: gray;
+}
+
+
+.date-div{
+    flex-direction: row;
+    justify-content: center;
+    margin: auto;
+    align-items: center;
+
+}

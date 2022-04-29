@@ -1,9 +1,9 @@
 import { useState } from "react";
-import "./monthspane.css"
+import "./queuepage.css"
 import Day from "../Day/Day";
 import { useEffect } from "react";
 
-const MonthsPane = () => {
+const QueuePage = () => {
 
     const [days, setDays] = useState([])
     const [month, setMonth] = useState(4)
@@ -35,8 +35,10 @@ const MonthsPane = () => {
   
     return (
         <div>
-          <header>
-                        
+          <div>
+
+            <div className="date-div">
+               
               <select onChange={monthHandler} value={month} id="months-select">
                 <option value="1">January</option>
                 <option value="2">February</option>
@@ -51,21 +53,19 @@ const MonthsPane = () => {
               </select>
 
 
-              <div className='days-pane'>
                 {days.map(dy => {
                   return (
                     <Day key={dy.id} id={dy.id} number={dy.number} active={dy.active}></Day>
                   )}
                 )}
-              </div>
+          </div>
 
 
 
 
-
-          </header>
+          </div>
         </div>
       );
 }
 
-export default MonthsPane;
+export default QueuePage;
