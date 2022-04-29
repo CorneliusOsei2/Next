@@ -33,14 +33,14 @@ instructor_timeslot_association = db.Table(
   db.Column("course_id", db.String, db.ForeignKey("timeslots.id"))
 )
 
-student_joined_queue_association = db.Table(
+StudentJoinedQueue = db.Table(
 "student_joined_queue_association",
   db.Model.metadata,
   db.Column("user_id", db.String, db.ForeignKey("users.id")),
   db.Column("queue_id", db.String, db.ForeignKey("queue.id"))
 )
 
-student_completed_queue_association = db.Table(
+StudentCompletedQueue = db.Table(
 "student_completed_queue_association",
   db.Model.metadata,
   db.Column("user_id", db.String, db.ForeignKey("users.id")),
@@ -135,8 +135,8 @@ class Queue(db.Model):
     id = db.Column('id', db.String, default=lambda: str(uuid.uuid4()), primary_key=True)
     course_id = db.Column(db.Integer, db.ForeignKey("courses.id"), nullable=False)
     date = db.Column(db.String)
-    students_joined = db.relationship("User", secondary=student_joined_queue_association, back_populates="queues_joined")
-    students_completed = db.relationship("User", secondary=student_completed_queue_association)
+    students_joined = db.relationship("User", secondary=StudentJoinedQueue, back_populates="queues_joined")
+    students_completed = db.relationship("User", secondary=StudentCompletedQueue)
 
     def __init__(self, **kwargs) -> None:
         self.course_id = kwargs.get("course_id")
@@ -199,7 +199,7 @@ class User(db.Model):
     courses_as_instructor = db.relationship("Course", secondary=instructor_course_association, back_populates="instructors")
     timeslots_as_student = db.relationship("Timeslot", secondary=student_timeslot_association, back_populates="students_in_timeslot")
     timeslots_as_instructor = db.relationship("Timeslot", secondary=instructor_timeslot_association, back_populates="instructors_in_timeslot")
-    queues_joined = db.relationship("Queue", secondary=student_joined_queue_association, back_populates="students_joined")
+    queues_joined = db.relationship("Queue", secondary=StudentJoinedQueue, back_populates="students_joined")
 
     def __init__(self, **kwargs):
         """
