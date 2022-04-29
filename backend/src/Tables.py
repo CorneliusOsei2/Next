@@ -31,6 +31,13 @@ instructor_timeslot_association = db.Table(
   db.Column("course_id", db.Integer, db.ForeignKey("timeslots.id"))
 )
 
+student_queue_association = db.Table(
+"student_queue_association",
+  db.Model.metadata,
+  db.Column("user_id", db.Integer, db.ForeignKey("users.id")),
+  db.Column("course_id", db.Integer, db.ForeignKey("timeslots.id"))
+)
+
 class Month(db.Model):
     __tablename__ = "months"
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
@@ -161,6 +168,7 @@ class User(db.Model):
     courses_as_instructor = db.relationship("Course", secondary=instructor_course_association, back_populates="instructors")
     timeslots_as_student = db.relationship("Timeslot", secondary=student_timeslot_association, back_populates="students_in_timeslot")
     timeslots_as_instructor = db.relationship("Timeslot", secondary=instructor_timeslot_association, back_populates="instructors_in_timeslot")
+    queues_joined = db.relationship("Queue", secondary="student_queue_association", back_populates="students_joined")
 
     def __init__(self, **kwargs):
         """
@@ -213,7 +221,7 @@ class Queue(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     course_id = db.Column(db.Integer, db.ForeignKey("courses.id"), nullable=False)
     date = db.Column(db.String)
-    joined_students = db.relationship("User")
+    joined_students = db.relationship("User", secondary="student_queue_association", backpopulates="")
     completed_students = db.relationship("User")
 
     def __init__(self, **kwargs) -> None:

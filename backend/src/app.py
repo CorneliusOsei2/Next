@@ -116,7 +116,6 @@ def get_users():
     Get all users: students and instructors
     '''
     users = User.query.all()
-
     return response(res={"users": [user.serialize() for user in users]})
 
 
@@ -127,7 +126,6 @@ def get_courses():
     '''
     courses = Course.query.all()
     return response(res={"courses": [course.serialize(include_users=True) for course in courses]})
-
 
 
 @app.route("/next/<int:course_id>/<int:month_id>/<int:day_id>/timeslots", methods=["GET", "POST"])
