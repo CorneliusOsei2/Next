@@ -9,6 +9,10 @@ body{
     padding-top: 2%;
     padding-bottom: 2%;
 }
+.greet-name{
+    font-family: Georgia, 'Times New Roman', Times, serif;
+    font-size: 24px;
+}
 .date-div{
     height: 100vh;
     background-color: #fff;
@@ -19,12 +23,16 @@ body{
 
 }
 
+.courses-div{
+    justify-content: space-between;
+}
+
 .timeslots-div{
     padding: 2%;
 }
 
 .timeslot{
-    
+
 }
 
 .timeslot-btns{
