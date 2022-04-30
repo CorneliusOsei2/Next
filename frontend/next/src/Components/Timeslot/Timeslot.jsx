@@ -1,16 +1,29 @@
 
+import { useState } from "react"
+import "./timeslot.css"
+import TimeslotButton from "../TimeslotButton/TimeslotButton"
 
 const Timeslot = () => {
 
+    const [state, setState] = useState("join")
 
+    const handleJoinLeaveTimeslot = () => {
+        if (state === "join"){
+            // Render Queue Page
+           setState("leave")
+        } else {
+            // Exit Queue Page to Timeslot page
+            setState("join")
+        }
+    }
     return (
-        <div className="card">
+        <div className="card timeslot">
             <div className="card-title">8:00PM to 9:00PM</div>
             <hr />
             <div className="card-body">
                 Office hours
 
-                <div className="timeslot-btns"><div className="btn btn-primary">Join</div></div>
+                <TimeslotButton state={state} handleJoinLeaveTimeslot={handleJoinLeaveTimeslot}></TimeslotButton>
             </div>
 
         </div>
