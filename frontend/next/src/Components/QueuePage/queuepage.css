@@ -1,0 +1,38 @@
+body{
+    display: flex;
+    background-color: gray;
+}
+
+
+.greet-courses-div{
+    background-color: #fff;
+    padding-top: 2%;
+    padding-bottom: 2%;
+}
+.date-div{
+    height: 100vh;
+    background-color: #fff;
+    flex-direction: row;
+    justify-content: center;
+    margin: auto;
+    align-items: center;
+
+}
+
+.timeslots-div{
+    padding: 2%;
+}
+
+.timeslot{
+    
+}
+
+.timeslot-btns{
+    display: flex;
+    flex-direction: row;
+}
+
+.card-body{
+    display: flex;
+    flex-direction: column;
+}
