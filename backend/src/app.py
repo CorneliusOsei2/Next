@@ -189,8 +189,8 @@ def join_queue(user_id, queue_id):
     '''
     Get / Join queue for particular course on a particular day
     '''
-    user = User.query.filter_by(id=user_id)
-    queue = Queue.query.filter_by(id=queue_id)
+    user = User.query.filter_by(id=user_id).first()
+    queue = Queue.query.filter_by(id=queue_id).first()
     queue.students_joined.append(user)
     db.session.commit()
 
@@ -227,7 +227,7 @@ def add_timeslot(course_id):
     return response({"timeslot": time_slot.serialize()}, code=201)
 
 @app.route("/next/timeslots/<string:timeslot_id>/")
-def get_all_timeslots():
+def get_course_timeslots():
     timeslots = Timeslot.query.all()
 
     return response(res=[timeslot.serialize() for timeslot in timeslots])
