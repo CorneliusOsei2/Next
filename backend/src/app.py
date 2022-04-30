@@ -1,4 +1,5 @@
 import queue
+import json
 from flask import Flask
 from requests import request
 from Tables import db, Day, Month, Timeslot, User, Course, Queue
@@ -160,7 +161,7 @@ def get_courses():
     return response(res={"courses": [course.serialize(include_users=True) for course in courses]})
 
 
-@app.route("/next/<int:course_id>/<int:month_id>/<int:day_id>/timeslots", methods=["GET", "POST"])
+@app.route("/next/<int:course_id>/<int:month_id>/<int:day_id>/timeslots/", methods=["GET", "POST"])
 def get_timeslots(course_id, month_id, day_id):
     '''
     Get timeslots for a particular course on a particular day
@@ -189,6 +190,28 @@ def get_queue(user_id, course_id, month_id, day_id, timeslot_id):
         queue.students_joined.append()
 
 
+@app.route("/next/<int:course_id>/add/")
+def add_timeslot(course_id):
+    """
+    Add timeslot for course, given:
+    1) start_time (in epoch seconds)
+    2) end_time (in epoch seconds)
+    """
+    body = json.loads(request.data)
+    start_time = body.get("start_time")
+    end_time = body.get("end_time")
+
+    if start_time >= end_time:
+        return response({"error": "Invalid time range. "}, success=False, code=404)
+
+    course = Course.query.filter_by(id=course_id).first()
+    if course is None:
+        return response({"error": "course not found. "}, success=False, code=404)
+    
+    time_slot = Timeslot(start_time=start_time, end_time=end_time, course_id=course_id)
+    db.session.add(time_slot)
+    db.session.commit()
+    return response({"timeslot": time_slot.serialize()}, code=201)
 
 
 
