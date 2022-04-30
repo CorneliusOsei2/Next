@@ -12,15 +12,21 @@ const QueuePage = () => {
 
     const [days, setDays] = useState([])
     const [month, setMonth] = useState(4)
-    const [user, setUser] = useState("")
+    const [currDay, setCurrDay] = useState(30)
+    const [course, setCourse] = useState({})
+
+    /** TODO */
+    const [user, setUser] = useState({"name": "Cornelius"})
+
+    /** TODO */
+    const [showTimeslots, setShowTimeslots] = useState(true)
     
     useEffect(
-      () => getDays(month)
-    , [month])
+      () => getDays(month))
 
-    const getDays = (month_id) => {
+    const getDays = () => {
       
-      fetch(`http://0.0.0.0:4500/next/${month_id}/days/`, {
+      fetch(`http://0.0.0.0:4500/next/${month}/days/`, {
         "methods" : "GET",
         headers: {
             "Content-Type": "applications/json"
@@ -31,20 +37,34 @@ const QueuePage = () => {
         .catch(err => console.log(err))
     }
 
+    const getTimeslots = () =>{
+      fetch(`http://0.0.0.0:4500/next/${month}/days/`, {
+        "methods" : "GET",
+        headers: {
+            "Content-Type": "applications/json"
+        }
+        })
+        .then(res => res.json())
+        .then(res => setDays(res.days))
+        .catch(err => console.log(err))
+    } 
+
     const monthHandler = (e) => {
-      let month_id = e.target.value
-      console.log(month_id)
-      getDays(month_id)
-      setMonth(month_id);
+    setMonth(e.target.value);
     }
 
+    const dayHandler = (e) => {
+      let day_id = e.target.value
+      getTimeslots(day_id)
+      setCurrDay(day_id)
+    }
   
     return (
         <div>
 
           <div className="greet-courses-div">
               <div className="greet-div">
-                  Hi,  Cornelius
+                  Hi, <span className="greet-name">{user.name}</span>
               </div>
 
                 <div>
@@ -68,14 +88,18 @@ const QueuePage = () => {
                   <option value="8">August</option>
                   <option value="9">September</option>
                   <option value="10">October</option>
+                  <option value="11">November</option>
+                  <option value="12">December</option>
                 </select>
 
-
+                <select onChange={dayHandler} name="days-select" id="" value={currDay}>
                   {days.map(dy => {
                     return (
-                      <Day key={dy.id} id={dy.id} number={dy.number} active={dy.active}></Day>
+                      <option><Day key={dy.id} id={dy.id} number={dy.number} active={dy.active}></Day></option> 
                     )}
                   )}
+
+                </select>
             </div>
           </div>
           

@@ -1,9 +1,16 @@
 
 import "./course.css"
 
-const Course = () => {
+const Course = ({name, code}) => {
 
-    const courses = ["CS 110", "CS 2110"];
+    const btnClasses = ["btn-outline-primary", "btn-outline-secondary", "btn-outline-success"];
+
+    const course = {
+        name,
+        code,
+        class: name[name.indexOf(" ")]
+    }
+    const courses = ["CS 2800"]
 
     return(
         

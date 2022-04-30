@@ -6,7 +6,9 @@
 }
 
 .course{
+    background-color: white;
+    margin-left: 1%;
     font-size: 18px;
     border-radius: 8px;
-    border-color: blue;
+    border-color: rgb(32, 176, 208);
 }

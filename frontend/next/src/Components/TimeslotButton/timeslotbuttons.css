@@ -1,0 +1,8 @@
+.btn{
+    box-shadow: none;
+    border-radius: 9px;
+}
+
+.btn:hover{
+    opacity: 0.6;
+}
