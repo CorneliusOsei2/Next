@@ -1,5 +1,4 @@
 import queue
-import json
 from flask import Flask
 from requests import request
 from Tables import db, Day, Month, Timeslot, User, Course, Queue
@@ -8,6 +7,7 @@ from utils import response, Debug
 from flask_cors import CORS
 from datetime import date
 import requests
+import json
 
 # Initialize Flask and CORS
 app = Flask(__name__)
@@ -161,7 +161,7 @@ def get_courses():
     return response(res={"courses": [course.serialize(include_users=True) for course in courses]})
 
 
-@app.route("/next/<int:course_id>/<int:month_id>/<int:day_id>/timeslots/", methods=["GET", "POST"])
+@app.route("/next/<int:course_id>/<int:month_id>/<int:day_id>/timeslots", methods=["GET"])
 def get_timeslots(course_id, month_id, day_id):
     '''
     Get timeslots for a particular course on a particular day
@@ -171,8 +171,7 @@ def get_timeslots(course_id, month_id, day_id):
     if requests.method == "GET":
         timeslots = Timeslot.query.filter(Timeslot.date==date & Timeslot.course==course_id)
         return response(res={"queue": queue}, success=True, code=200)
-    else:
-        pass
+    
 
 
 @app.route("/next/<int:user_id>/<int:course_id>/<int:month_id>/<int:day_id>/<int:timeslot_id>/", methods=["GET", "POST"])
@@ -213,7 +212,14 @@ def add_timeslot(course_id):
     db.session.commit()
     return response({"timeslot": time_slot.serialize()}, code=201)
 
-   
+
+
+
+
+
+    
+        
+
 # Added for testing purposes. Drop all tables
 @app.route("/next/drop/", methods=["POST"])
 def drop_table():
