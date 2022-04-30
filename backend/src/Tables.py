@@ -1,5 +1,5 @@
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import ForeignKey
+from sqlalchemy import ForeignKey, null
 db = SQLAlchemy()
 from sqlalchemy.dialects.postgresql import UUID
 import uuid
@@ -102,6 +102,7 @@ class Timeslot(db.Model):
     end_time = db.Column(db.Integer, nullable=False)
     course_id = db.Column(db.Integer, db.ForeignKey("courses.id"), nullable=False)
     course = db.relationship("Course", cascade="delete")
+    queue_id = db.Column("Queue", db.ForeignKey("queue.id"), nullable=False)
 
     # Many-to-many relationship
     students_in_timeslot = db.relationship("User", secondary=StudentTimeslot, back_populates="timeslots_as_student")
@@ -123,7 +124,8 @@ class Timeslot(db.Model):
             "id": self.id,
             "course_id": self.course_id,
             "start_time": self.start_time,
-            "end_time": self.end_time
+            "end_time": self.end_time,
+            "queue_id": self.queue_id
         }
 
 
@@ -132,9 +134,9 @@ class Queue(db.Model):
     __tablename___ = "queue"
     id = db.Column('id', db.String, default=lambda: str(uuid.uuid4()), primary_key=True)
     course_id = db.Column(db.Integer, db.ForeignKey("courses.id"), nullable=False)
-    date = db.Column(db.String)
     students_joined = db.relationship("User", secondary=StudentJoinedQueue, back_populates="queues_joined")
     students_completed = db.relationship("User", secondary=StudentCompletedQueue)
+    timeslot_id = db.Column(db.String, db.ForeignKey("timeslots.id"), nullable=False)
 
     def __init__(self, **kwargs) -> None:
         self.course_id = kwargs.get("course_id")

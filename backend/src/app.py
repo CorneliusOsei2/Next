@@ -175,7 +175,7 @@ def get_timeslots(course_id, month_id, day_id):
     
 
 
-@app.route("/next/<int:user_id>/<int:course_id>/<int:month_id>/<int:day_id>/<int:timeslot_id>/", methods=["GET", "POST"])
+@app.route("/next/<int:user_id>/<int:course_id>/<int:month_id>/<int:day_id>/<int:timeslot_id>/", methods=["GET"])
 def get_queue(user_id, course_id, month_id, day_id, timeslot_id):
     '''
     Get / Join queue for particular course on a particular day
@@ -183,12 +183,18 @@ def get_queue(user_id, course_id, month_id, day_id, timeslot_id):
     date = str(month_id) + "-" + str(day_id)
     queue = Queue.query.filter(Queue.date==date & Queue.course_id==course_id & Queue.timeslot_id==timeslot_id)
 
-    if requests.method == "GET":
-        return response(res={"queue": queue}, success=True, code=200)
-    else:
-        user = User.query_by(id=user_id)
-        queue.students_joined.append()
-
+    return response(res={"queue": queue}, success=True, code=200)
+   
+@app.route("/next/<int:user_id>/<int:course_id>/<int:timeslot_id>/", methods=["POST"])
+def join_queue(user_id, course_id, month_id, day_id, timeslot_id):
+    '''
+    Get / Join queue for particular course on a particular day
+    '''
+    user = User.query.filter_by(id=user_id)
+    date = str(month_id) + "-" + str(day_id)
+    queue = Queue.query.filter(Queue.date==date & Queue.course_id==course_id & Queue.timeslot_id==timeslot_id)
+    queue.students_joined.append(user)
+    db.session.commit()
 
 @app.route("/next/<string:course_id>/add/", methods=["POST"])
 def add_timeslot(course_id):
@@ -205,10 +211,17 @@ def add_timeslot(course_id):
         return response({"error": "Invalid time range. "}, success=False, code=404)
 
     course = Course.query.filter_by(id=course_id).first()
+    queue = Queue(course_id=course.id)
+    db.session.add(queue)
+    db.session.commit()
+
     if course is None:
         return response({"error": "course not found. "}, success=False, code=404)
     
-    time_slot = Timeslot(start_time=start_time, end_time=end_time, course_id=course_id)
+    time_slot = Timeslot(start_time=start_time, end_time=end_time, course_id=course_id, queue_id=queue.id)
+    db.session.add(time_slot)
+    db.session.commit()
+    queue.timeslot_id = time_slot.id
     db.session.add(time_slot)
     db.session.commit()
     return response({"timeslot": time_slot.serialize()}, code=201)
