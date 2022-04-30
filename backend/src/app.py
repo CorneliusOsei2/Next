@@ -189,7 +189,7 @@ def get_queue(user_id, course_id, month_id, day_id, timeslot_id):
         queue.students_joined.append()
 
 
-@app.route("/next/<int:course_id>/add/")
+@app.route("/next/<string:course_id>/add/")
 def add_timeslot(course_id):
     """
     Add timeslot for course, given:
@@ -212,6 +212,11 @@ def add_timeslot(course_id):
     db.session.commit()
     return response({"timeslot": time_slot.serialize()}, code=201)
 
+@app.route("/next/timeslots/<string:timeslot_id>/")
+def get_all_timeslots():
+    timeslots = Timeslot.query.all()
+
+    return response(res=[timeslot.serialize() for timeslot in timeslots])
 
 
 
