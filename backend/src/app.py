@@ -8,6 +8,7 @@ from utils import response, Debug
 from flask_cors import CORS
 from datetime import date
 import requests
+import json
 
 # Initialize Flask and CORS
 app = Flask(__name__)
@@ -171,8 +172,7 @@ def get_timeslots(course_id, month_id, day_id):
     if requests.method == "GET":
         timeslots = Timeslot.query.filter(Timeslot.date==date & Timeslot.course==course_id)
         return response(res={"queue": queue}, success=True, code=200)
-    else:
-        pass
+    
 
 
 @app.route("/next/<int:user_id>/<int:course_id>/<int:month_id>/<int:day_id>/<int:timeslot_id>/", methods=["GET", "POST"])
@@ -213,7 +213,19 @@ def add_timeslot(course_id):
     db.session.commit()
     return response({"timeslot": time_slot.serialize()}, code=201)
 
-   
+@app.route("/next/timeslots/<string:timeslot_id>/")
+def get_all_timeslots():
+    timeslots = Timeslot.query.all()
+
+    return response(res=[timeslot.serialize() for timeslot in timeslots])
+
+
+
+
+
+    
+        
+
 # Added for testing purposes. Drop all tables
 @app.route("/next/drop/", methods=["POST"])
 def drop_table():
