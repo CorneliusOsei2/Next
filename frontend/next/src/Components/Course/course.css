@@ -1,5 +1,6 @@
 
 .courses-pane{
+    width: 100vw;
     margin: auto;
     justify-content: center;
 }
