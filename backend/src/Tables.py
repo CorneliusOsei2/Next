@@ -143,10 +143,9 @@ class Queue(db.Model):
     
     def serialize(self):
         return {
-            "date": self.date,
             "course_id": self.course_id,
-            "joined_students": self.joined_students,
-            "completed_students": self.completed_students
+            "joined_students": [s.serialize() for s in self.students_joined],
+            "completed_students": [s.serialize() for s in self.students_completed]
         }
 
 class Course(db.Model):

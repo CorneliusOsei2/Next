@@ -191,8 +191,8 @@ def join_queue(user_id, queue_id):
     '''
     Get / Join queue for particular course on a particular day
     '''
-    user = User.query.filter_by(id=user_id)
-    queue = Queue.query.filter_by(id=queue_id)
+    user = User.query.filter_by(id=user_id).first()
+    queue = Queue.query.filter_by(id=queue_id).first()
     queue.students_joined.append(user)
     db.session.commit()
 
