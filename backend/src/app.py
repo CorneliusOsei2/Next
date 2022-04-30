@@ -1,6 +1,7 @@
 from crypt import methods
 import queue
 import json
+from time import time
 from flask import Flask, request
 from Tables import db, Day, Month, Timeslot, User, Course, Queue
 from gen import month_names, gen_name, gen_netid, gen_course
@@ -212,19 +213,19 @@ def add_timeslot(course_id):
         return response({"error": "Invalid time range. "}, success=False, code=404)
 
     course = Course.query.filter_by(id=course_id).first()
-    queue = Queue(course_id=course.id)
-    db.session.add(queue)
-    db.session.commit()
 
     if course is None:
         return response({"error": "course not found. "}, success=False, code=404)
+
+    queue = Queue(course_id=course.id)
+    db.session.add(queue)
+    db.session.commit()
     
     time_slot = Timeslot(start_time=start_time, end_time=end_time, course_id=course_id, queue_id=queue.id)
     db.session.add(time_slot)
     db.session.commit()
-    queue.timeslot_id = time_slot.id
-    db.session.add(time_slot)
-    db.session.commit()
+
+    
     return response({"timeslot": time_slot.serialize()}, code=201)
 
 @app.route("/next/timeslots/<string:timeslot_id>/")
