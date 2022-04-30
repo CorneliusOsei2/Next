@@ -213,13 +213,7 @@ def add_timeslot(course_id):
     db.session.commit()
     return response({"timeslot": time_slot.serialize()}, code=201)
 
-
-
-
-
-    
-        
-
+   
 # Added for testing purposes. Drop all tables
 @app.route("/next/drop/", methods=["POST"])
 def drop_table():
