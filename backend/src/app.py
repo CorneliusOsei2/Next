@@ -175,17 +175,15 @@ def get_timeslots(course_id, month_id, day_id):
     
 
 
-@app.route("/next/<int:user_id>/<int:course_id>/<int:month_id>/<int:day_id>/<int:timeslot_id>/", methods=["GET"])
-def get_queue(user_id, course_id, month_id, day_id, timeslot_id):
+@app.route("/next/queues/<string:queue_id>/", methods=["GET"])
+def get_queue(course_id, month_id, day_id, timeslot_id):
     '''
     Get / Join queue for particular course on a particular day
     '''
-    date = str(month_id) + "-" + str(day_id)
     queue = Queue.query.filter(Queue.date==date & Queue.course_id==course_id & Queue.timeslot_id==timeslot_id)
-
     return response(res={"queue": queue}, success=True, code=200)
    
-@app.route("/next/<string:user_id>/<string:queue_id>/", methods=["POST"])
+@app.route("/next/<string:user_id>/queues/<string:queue_id>/", methods=["POST"])
 def join_queue(user_id, queue_id):
     '''
     Get / Join queue for particular course on a particular day
