@@ -100,9 +100,9 @@ class Timeslot(db.Model):
     id = db.Column('id', db.String, default=lambda: str(uuid.uuid4()), primary_key=True)
     start_time = db.Column(db.Integer, nullable=False)
     end_time = db.Column(db.Integer, nullable=False)
-    course_id = db.Column(db.Integer, db.ForeignKey("courses.id"), nullable=False)
+    course_id = db.Column(db.String, db.ForeignKey("courses.id"), nullable=False)
     course = db.relationship("Course", cascade="delete")
-    queue_id = db.Column("Queue", db.ForeignKey("queue.id"), nullable=False)
+    queue_id = db.Column(db.String, db.ForeignKey("queue.id"), nullable=False)
 
     # Many-to-many relationship
     students_in_timeslot = db.relationship("User", secondary=StudentTimeslot, back_populates="timeslots_as_student")
@@ -115,6 +115,7 @@ class Timeslot(db.Model):
         self.start_time = kwargs.get("start_time")
         self.end_time = kwargs.get("end_time")
         self.course_id = kwargs.get("course_id")
+        self.queue_id = kwargs.get("queue_id")
 
     def serialize(self):
         """
@@ -136,12 +137,9 @@ class Queue(db.Model):
     course_id = db.Column(db.Integer, db.ForeignKey("courses.id"), nullable=False)
     students_joined = db.relationship("User", secondary=StudentJoinedQueue, back_populates="queues_joined")
     students_completed = db.relationship("User", secondary=StudentCompletedQueue)
-    timeslot_id = db.Column(db.String, db.ForeignKey("timeslots.id"), nullable=False)
 
     def __init__(self, **kwargs) -> None:
         self.course_id = kwargs.get("course_id")
-        self.day_id = kwargs.get("day_id")
-        self.month_id = kwargs.get("month_id")
     
     def serialize(self):
         return {
