@@ -1,6 +1,7 @@
+from crypt import methods
 import queue
-from flask import Flask
-from requests import request
+import json
+from flask import Flask, request
 from Tables import db, Day, Month, Timeslot, User, Course, Queue
 from gen import month_names, gen_name, gen_netid, gen_course
 from utils import response, Debug
@@ -161,7 +162,7 @@ def get_courses():
     return response(res={"courses": [course.serialize(include_users=True) for course in courses]})
 
 
-@app.route("/next/<int:course_id>/<int:month_id>/<int:day_id>/timeslots", methods=["GET"])
+@app.route("/next/<string:course_id>/<int:month_id>/<int:day_id>/timeslots/", methods=["GET", "POST"])
 def get_timeslots(course_id, month_id, day_id):
     '''
     Get timeslots for a particular course on a particular day
@@ -195,9 +196,7 @@ def join_queue(user_id, course_id, month_id, day_id, timeslot_id):
     queue.students_joined.append(user)
     db.session.commit()
 
-    return response(res={"queue": queue}, success=True, code=200)
-  
-@app.route("/next/<string:course_id>/add/")
+@app.route("/next/<string:course_id>/add/", methods=["POST"])
 def add_timeslot(course_id):
     """
     Add timeslot for course, given:
