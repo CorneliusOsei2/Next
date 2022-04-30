@@ -121,6 +121,7 @@ class Timeslot(db.Model):
         """
         return {
             "id": self.id,
+            "course_id": self.course_id,
             "start_time": self.start_time,
             "end_time": self.end_time
         }
