@@ -1,3 +1,4 @@
+
 const AddTimeslot = ({course_id}) => {
 
     const addSlot = (e) => {
