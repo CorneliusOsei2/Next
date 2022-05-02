@@ -1,7 +1,6 @@
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import ForeignKey, null
-import uuid
 import bcrypt
+import uuid
 import hashlib
 import os
 import datetime
@@ -36,20 +35,6 @@ InstructorTimeslot = db.Table(
   db.Model.metadata,
   db.Column("user_id", db.String, db.ForeignKey("users.id")),
   db.Column("course_id", db.String, db.ForeignKey("timeslots.id"))
-)
-
-StudentJoinedQueue = db.Table(
-"student_joined_queue_association",
-  db.Model.metadata,
-  db.Column("user_id", db.String, db.ForeignKey("users.id")),
-  db.Column("queue_id", db.String, db.ForeignKey("queue.id"))
-)
-
-StudentCompletedQueue = db.Table(
-"student_completed_queue_association",
-  db.Model.metadata,
-  db.Column("user_id", db.String, db.ForeignKey("users.id")),
-  db.Column("queue_id", db.String, db.ForeignKey("queue.id"))
 )
 
 class Month(db.Model):
@@ -107,9 +92,9 @@ class Timeslot(db.Model):
     end_time = db.Column(db.Integer, nullable=False)
     course_id = db.Column(db.String, db.ForeignKey("courses.id"), nullable=False)
     course = db.relationship("Course", cascade="delete")
-    queue_id = db.Column(db.String, db.ForeignKey("queue.id"), nullable=False)
-    students_joined = db.relationship("User", secondary=StudentJoinedQueue, back_populates="queues_joined")
-    students_completed = db.relationship("User", secondary=StudentCompletedQueue)
+    timestamp_id = db.Column(db.String, db.ForeignKey("timestamp.id"), nullable=False)
+    students_joined = db.relationship("User",  db.ForeignKey("users.id"), cascade="delete")
+    students_completed = db.relationship("User",  db.ForeignKey("users.id"), cascade="delete")
 
 
     # Many-to-many relationship
@@ -123,7 +108,7 @@ class Timeslot(db.Model):
         self.start_time = kwargs.get("start_time")
         self.end_time = kwargs.get("end_time")
         self.course_id = kwargs.get("course_id")
-        self.queue_id = kwargs.get("queue_id")
+        self.timestamp_id = kwargs.get("timestamp_id")
 
     def serialize(self):
         """
@@ -134,7 +119,7 @@ class Timeslot(db.Model):
             "course_id": self.course_id,
             "start_time": self.start_time,
             "end_time": self.end_time,
-            "queue_id": self.queue_id
+            "timestamp_id": self.timestamp_id
         }
 
 
@@ -145,12 +130,9 @@ class Timestamp(db.Model):
     user_id = db.Column(db.String, db.ForeignKey("users.id"))
     timeslot_id = db.Column(db.String, nullable=False)
    
-    def __init__(self, **kwargs) -> None:
-        self.course_id = kwargs.get("course_id")
-    
+   
     def serialize(self):
         return {
-            "course_id": self.course_id,
             "joined_students": [s.serialize() for s in self.students_joined],
             "completed_students": [s.serialize() for s in self.students_completed]
         }
@@ -211,7 +193,6 @@ class User(db.Model):
     courses_as_instructor = db.relationship("Course", secondary=InstructorCourse, back_populates="instructors")
     timeslots_as_student = db.relationship("Timeslot", secondary=StudentTimeslot, back_populates="students_in_timeslot")
     timeslots_as_instructor = db.relationship("Timeslot", secondary=InstructorTimeslot, back_populates="instructors_in_timeslot")
-    queues_joined = db.relationship("Queue", secondary=StudentJoinedQueue, back_populates="students_joined")
 
     def __init__(self, **kwargs):
         """

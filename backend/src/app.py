@@ -1,4 +1,3 @@
-import queue
 import json
 from time import time
 from flask import Flask, request
@@ -32,9 +31,7 @@ def gen_months():
 
     i = 1
     for month_name, num_days in months.items():
-
         month = Month(name=month_name, number = i, num_days = num_days, active= True)
-
         db.session.add(month)
         db.session.commit()
         i += 1
@@ -85,12 +82,6 @@ def gen_timeslots():
     pass
 
 
-
-
-
-
-
-
 # Routes
 @app.route("/", methods=["GET"])
 def fill_database():
@@ -111,7 +102,6 @@ def get_months():
     Get days of a month
     '''
     months = Month.query.all()
-    
     return response(res={"months": [month.serialize() for month in months]})
 
 
@@ -144,7 +134,6 @@ def get_course_users(course_id):
     '''
     Get all users: students and instructors
     '''
-    # Artist.query.filter(Artist.albums.any(genre_id=genre.id)).all()
     instructors = User.query.filter(User.courses_as_instructor.any(id=course_id)).all()
     students = User.query.filter(User.courses_as_student.any(id=course_id)).all()
     res = {
@@ -192,7 +181,7 @@ def get_queue(timeslot_id):
     '''
     Get / Join queue for particular course on a particular day
     '''
-    timeslot = Timeslot.query.filter_by(id==timeslot_id)
+    timeslot = Timeslot.query.filter_by(id=timeslot_id)
 
     return response(res={"queue": [student.serialize() for student in timeslot.students_joined]}, success=True, code=200)
    
@@ -228,9 +217,12 @@ def add_timeslot(course_id):
     if course is None:
         return response({"error": "course not found. "}, success=False, code=404)
 
-    
-    time_slot = Timeslot(start_time=start_time, end_time=end_time, course_id=course_id, queue_id=queue.id)
-    db.session.add(time_slot)
+    timestamp = Timestamp()
+    db.session.add(timestamp)
+
+    db.session.commit()
+    timeslot = Timeslot(start_time=start_time, end_time=end_time, course_id=course_id, timestamp_id = timestamp.id)
+    db.session.add(timeslot)
     db.session.commit()
 
     

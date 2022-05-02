@@ -9,7 +9,6 @@ const Day = ({id, number, active}) => {
     class: active === true ? "active" : "inactive"
   }
 
-
     return (
       <button id={id} className={ `day ${day.class}`}>{day.number}</button>
       );

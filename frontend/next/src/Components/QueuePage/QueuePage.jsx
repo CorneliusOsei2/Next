@@ -25,9 +25,9 @@ const QueuePage = () => {
     useEffect(
       () => getDays(month))
     
-      useEffect(
-        () => getCourses()
-      )
+    useEffect(
+      () => getCourses()
+    )
 
     const getDays = () => {
       
@@ -87,7 +87,7 @@ const QueuePage = () => {
                 <div>
                   {courses.map(course => {
                     return (
-                      <Course name={course.name} code={course.code}></Course>
+                      <Course name={course.name} code={course}></Course>
                   )}
                   )}
                   
