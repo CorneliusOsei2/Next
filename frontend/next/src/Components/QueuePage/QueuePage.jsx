@@ -25,9 +25,9 @@ const QueuePage = () => {
     useEffect(
       () => getDays(month))
     
-    useEffect(
-      () => getCourses()
-    )
+    // useEffect(
+    //   () => getCourses()
+    // )
 
     const getDays = () => {
       
