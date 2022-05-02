@@ -1,8 +1,9 @@
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import ForeignKey, null
-db = SQLAlchemy()
-from sqlalchemy.dialects.postgresql import UUID
 import uuid
+
+
+db = SQLAlchemy()
 
 # Association Tables
 InstructorCourse = db.Table(
@@ -103,6 +104,9 @@ class Timeslot(db.Model):
     course_id = db.Column(db.String, db.ForeignKey("courses.id"), nullable=False)
     course = db.relationship("Course", cascade="delete")
     queue_id = db.Column(db.String, db.ForeignKey("queue.id"), nullable=False)
+    students_joined = db.relationship("User", secondary=StudentJoinedQueue, back_populates="queues_joined")
+    students_completed = db.relationship("User", secondary=StudentCompletedQueue)
+
 
     # Many-to-many relationship
     students_in_timeslot = db.relationship("User", secondary=StudentTimeslot, back_populates="timeslots_as_student")
@@ -131,13 +135,12 @@ class Timeslot(db.Model):
 
 
 
-class Queue(db.Model):
-    __tablename___ = "queue"
+class Timestamp(db.Model):
+    __tablename___ = "timestamps"
     id = db.Column('id', db.String, default=lambda: str(uuid.uuid4()), primary_key=True)
-    course_id = db.Column(db.Integer, db.ForeignKey("courses.id"), nullable=False)
-    students_joined = db.relationship("User", secondary=StudentJoinedQueue, back_populates="queues_joined")
-    students_completed = db.relationship("User", secondary=StudentCompletedQueue)
-
+    user_id = db.Column(db.String, db.ForeignKey("users.id"))
+    timeslot_id = db.Column(db.String, nullable=False)
+   
     def __init__(self, **kwargs) -> None:
         self.course_id = kwargs.get("course_id")
     
@@ -190,7 +193,7 @@ class User(db.Model):
     id = db.Column('id', db.String, default=lambda: str(uuid.uuid4()), primary_key=True)
     name = db.Column(db.String, nullable=False)
     netid = db.Column(db.String, nullable=False, unique=False)
-
+    
     # Many-to-many Relationships
     courses_as_student = db.relationship("Course", secondary=StudentCourse, back_populates="students")
     courses_as_instructor = db.relationship("Course", secondary=InstructorCourse, back_populates="instructors")

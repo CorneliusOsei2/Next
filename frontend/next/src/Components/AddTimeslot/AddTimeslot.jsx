@@ -1,3 +1,4 @@
+import "./addtimeslot.css"
 
 const AddTimeslot = ({course_id}) => {
 
@@ -12,7 +13,7 @@ const AddTimeslot = ({course_id}) => {
             headers : {
             'Content-Type':'application/json'
             },
-            body:JSON.stringify(body)
+            body:JSON.stringify(slot)
             })
         .then(response => response.json())
         .catch(error => console.log(error))
@@ -31,3 +32,5 @@ const AddTimeslot = ({course_id}) => {
         </div>
     )
 }
+
+export default AddTimeslot
