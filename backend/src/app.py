@@ -184,7 +184,7 @@ def get_timeslots(course_id, month_id, day_id):
     
     if requests.method == "GET":
         timeslots = Timeslot.query.filter(Timeslot.date==date & Timeslot.course==course_id)
-        return response(res={"queue": queue}, success=True, code=200)
+        return response(res={"timeslots": [timeslot.serialize() for timeslot in timeslots]}, success=True, code=200)
     
 
 @app.route("/next/queues/<string:timeslot_id>/", methods=["GET"])
@@ -202,7 +202,7 @@ def join_queue(user_id, timeslot_id):
     Get / Join queue for particular course on a particular day
     '''
     user = User.query.filter_by(id=user_id).first()
-    timeslot = Timeslot.query.filter_by(id==timeslot_id)
+    timeslot = Timeslot.query.filter_by(id=timeslot_id)
     timeslot.students_joined.append(user)
     db.session.commit()
     
@@ -228,9 +228,6 @@ def add_timeslot(course_id):
     if course is None:
         return response({"error": "course not found. "}, success=False, code=404)
 
-    queue = Queue(course_id=course.id)
-    db.session.add(queue)
-    db.session.commit()
     
     time_slot = Timeslot(start_time=start_time, end_time=end_time, course_id=course_id, queue_id=queue.id)
     db.session.add(time_slot)
