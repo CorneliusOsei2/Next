@@ -1,4 +1,3 @@
-from crypt import methods
 import queue
 import json
 from time import time
@@ -226,7 +225,7 @@ def add_timeslot(course_id):
     
     return response({"timeslot": time_slot.serialize()}, code=201)
 
-@app.route("/next/timeslots/<string:timeslot_id>/")
+@app.route("/next/<int:month_id>/<day_id:day_id>/timeslots/<string:timeslot_id>/")
 def get_course_timeslots():
     timeslots = Timeslot.query.all()
 
