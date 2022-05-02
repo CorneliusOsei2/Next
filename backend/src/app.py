@@ -162,17 +162,19 @@ def get_courses():
     return response(res={"courses": [course.serialize(include_users=True) for course in courses]})
 
 
-@app.route("/next/<string:course_id>/<int:month_id>/<int:day_id>/timeslots/", methods=["GET", "POST"])
+@app.route("/next/<string:course_id>/<int:month_id>/<int:day_id>/timeslots/", methods=["GET"])
 def get_timeslots(course_id, month_id, day_id):
-    '''
+    """
     Get timeslots for a particular course on a particular day
-    '''
+    """
     date = str(month_id) + "-" + str(day_id)
     
-    if requests.method == "GET":
-        timeslots = Timeslot.query.filter(Timeslot.date==date & Timeslot.course==course_id)
-        return response(res={"queue": queue}, success=True, code=200)
-    
+    timeslots = Timeslot.query.filter(Timeslot.date==date & Timeslot.course==course_id)
+    return response(res={"timeslots": timeslots}, success=True, code=200)
+
+
+# TODO: add separate route  
+# @app.route("/next/<string:course_id>/<int:month_id>/<int:day_id>/timeslots/", methods=["GET", "POST"])
 
 
 # @app.route("/next/queues/<string:queue_id>/", methods=["GET"])
@@ -214,11 +216,11 @@ def add_timeslot(course_id):
     if course is None:
         return response({"error": "course not found. "}, success=False, code=404)
 
-    queue = Queue(course_id=course.id)
-    db.session.add(queue)
+    timestamp = Timestamp(course_id=course.id)
+    db.session.add(timestamp)
     db.session.commit()
     
-    time_slot = Timeslot(start_time=start_time, end_time=end_time, course_id=course_id, queue_id=queue.id)
+    time_slot = Timeslot(start_time=start_time, end_time=end_time, course_id=course_id, timeslot_id=time_slot.id)
     db.session.add(time_slot)
     db.session.commit()
 

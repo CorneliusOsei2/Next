@@ -103,14 +103,14 @@ class Day(db.Model):
 class Timeslot(db.Model):
     __tablename__ = "timeslots"
     id = db.Column('id', db.String, default=lambda: str(uuid.uuid4()), primary_key=True)
-    start_time = db.Column(db.Integer, nullable=False)
-    end_time = db.Column(db.Integer, nullable=False)
+    date = db.Column(db.String, nullable=False)
+    start_time = db.Column(db.DateTime, nullable=False)
+    end_time = db.Column(db.DateTime, nullable=False)
     course_id = db.Column(db.String, db.ForeignKey("courses.id"), nullable=False)
     course = db.relationship("Course", cascade="delete")
-    queue_id = db.Column(db.String, db.ForeignKey("queue.id"), nullable=False)
+    # queue_id = db.Column(db.String, db.ForeignKey("queue.id"), nullable=False)
     students_joined = db.relationship("User", secondary=StudentJoinedQueue, back_populates="queues_joined")
     students_completed = db.relationship("User", secondary=StudentCompletedQueue)
-
 
     # Many-to-many relationship
     students_in_timeslot = db.relationship("User", secondary=StudentTimeslot, back_populates="timeslots_as_student")
@@ -123,7 +123,7 @@ class Timeslot(db.Model):
         self.start_time = kwargs.get("start_time")
         self.end_time = kwargs.get("end_time")
         self.course_id = kwargs.get("course_id")
-        self.queue_id = kwargs.get("queue_id")
+        # self.queue_id = kwargs.get("queue_id")
 
     def serialize(self):
         """
@@ -134,7 +134,9 @@ class Timeslot(db.Model):
             "course_id": self.course_id,
             "start_time": self.start_time,
             "end_time": self.end_time,
-            "queue_id": self.queue_id
+            # "queue_id": self.queue_id,
+            "students_joined": [s.serialize() for s in self.students_joined],
+            "students_completed": [s.serialize() for s in self.students_completed]
         }
 
 
@@ -144,15 +146,20 @@ class Timestamp(db.Model):
     id = db.Column('id', db.String, default=lambda: str(uuid.uuid4()), primary_key=True)
     user_id = db.Column(db.String, db.ForeignKey("users.id"))
     timeslot_id = db.Column(db.String, nullable=False)
+    joined_at = db.Colum(db.DateTime, nullable=False)
    
     def __init__(self, **kwargs) -> None:
-        self.course_id = kwargs.get("course_id")
+        self.user_id = kwargs.get("user_id")
+        self.timeslot_id = kwargs.get("timeslot_id")
+        self.joined_at = datetime.datetime.now()
     
     def serialize(self):
         return {
-            "course_id": self.course_id,
-            "joined_students": [s.serialize() for s in self.students_joined],
-            "completed_students": [s.serialize() for s in self.students_completed]
+            "user_id": self.timeslot_id,
+            "timeslot_id": self.timeslot_id,
+            "joined_at": self.joined_at
+            # "joined_students": [s.serialize() for s in self.students_joined],
+            # "completed_students": [s.serialize() for s in self.students_completed]
         }
 
 class Course(db.Model):
