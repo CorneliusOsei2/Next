@@ -161,6 +161,19 @@ def get_courses():
     courses = Course.query.all()
     return response(res={"courses": [course.serialize(include_users=True) for course in courses]})
 
+@app.route("/next/<string:user_id>/courses/", methods=["GET"])
+def get_user_courses(user_id):
+    '''
+    Get all courses
+    '''
+    user = User.query.filter_by(id=user_id)
+    courses = {
+        "courses_as_instructor": [course.serialize() for course in user.courses_as_instructor],
+        "courses_as_student":  [course.serialize() for course in user.courses_as_student]
+    }
+    return response(res={courses})
+
+
 
 @app.route("/next/<string:course_id>/<int:month_id>/<int:day_id>/timeslots/", methods=["GET", "POST"])
 def get_timeslots(course_id, month_id, day_id):
@@ -174,26 +187,27 @@ def get_timeslots(course_id, month_id, day_id):
         return response(res={"queue": queue}, success=True, code=200)
     
 
+@app.route("/next/queues/<string:timeslot_id>/", methods=["GET"])
+def get_queue(timeslot_id):
+    '''
+    Get / Join queue for particular course on a particular day
+    '''
+    timeslot = Timeslot.query.filter_by(id==timeslot_id)
 
-# @app.route("/next/queues/<string:queue_id>/", methods=["GET"])
-# def get_queue(course_id, timeslot_id):
-#     '''
-#     Get / Join queue for particular course on a particular day
-#     '''
-#     queue = Queue.query.filter(Queue.date==date & Queue.course_id==course_id & Queue.timeslot_id==timeslot_id)
-#     return response(res={"queue": queue}, success=True, code=200)
+    return response(res={"queue": [student.serialize() for student in timeslot.students_joined]}, success=True, code=200)
    
-# @app.route("/next/<string:user_id>/queues/<string:queue_id>/", methods=["POST"])
-# def join_queue(user_id, queue_id):
-#     '''
-#     Get / Join queue for particular course on a particular day
-#     '''
-#     user = User.query.filter_by(id=user_id).first()
-#     queue = Queue.query.filter_by(id=queue_id).first()
-#     queue.students_joined.append(user)
-#     db.session.commit()
-
-#     return response(res=queue.serialize())
+@app.route("/next/<string:user_id>/<string:timeslot_id>/", methods=["POST"])
+def join_queue(user_id, timeslot_id):
+    '''
+    Get / Join queue for particular course on a particular day
+    '''
+    user = User.query.filter_by(id=user_id).first()
+    timeslot = Timeslot.query.filter_by(id==timeslot_id)
+    timeslot.students_joined.append(user)
+    db.session.commit()
+    
+    # Joined Queue response to be adjusted
+    return "Joined Queue"
 
 @app.route("/next/<string:course_id>/add/", methods=["POST"])
 def add_timeslot(course_id):
