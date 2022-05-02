@@ -8,7 +8,7 @@ const Course = ({name, code}) => {
     const course = {
         name,
         code,
-        class: name[name.indexOf(" ")]
+        class: name.slice(name.indexOf(" "))
     }
     const courses = ["CS 2800"]
 
@@ -16,11 +16,7 @@ const Course = ({name, code}) => {
         
         <div>
             <div className='courses-pane'>
-                {courses.map(mnth => {
-                  return (
-                    <button className="course"> {mnth} </button>
-                )}
-                )}
+                
             </div>
         </div>
        

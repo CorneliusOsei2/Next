@@ -1,4 +1,4 @@
-import queue
+import enum
 import json
 from time import time
 from flask import Flask, request
@@ -32,9 +32,7 @@ def gen_months():
 
     i = 1
     for month_name, num_days in months.items():
-
         month = Month(name=month_name, number = i, num_days = num_days, active= True)
-
         db.session.add(month)
         db.session.commit()
         i += 1
@@ -58,7 +56,7 @@ def gen_users():
     Auto-generate users
     '''
     for i in range(3):
-        user = User(name=gen_name(), username=gen_netid())
+        user = User(name=gen_name(), username=gen_netid(i), password="123")
         db.session.add(user)
         db.session.commit()
 
@@ -74,8 +72,8 @@ def gen_courses():
         db.session.add(course)
         db.session.commit()
 
-        for user in users:
-            if user.id == 1: course.instructors.append(user)
+        for j, user in enumerate(users):
+            if j == 1: course.instructors.append(user)
             else: course.students.append(user)
 
             db.session.add(course)
@@ -83,12 +81,6 @@ def gen_courses():
 
 def gen_timeslots():
     pass
-
-
-
-
-
-
 
 
 # Routes
@@ -111,7 +103,6 @@ def get_months():
     Get days of a month
     '''
     months = Month.query.all()
-    
     return response(res={"months": [month.serialize() for month in months]})
 
 
@@ -133,18 +124,17 @@ def get_days(month_number):
 
 @app.route("/next/users/", methods=["GET"])
 def get_all_users():
-    '''
-    Get all users: students and instructors
-    '''
+    """
+    (DEV ONLY) Endpoint to get all users.
+    """
     users = User.query.all()
     return response(res={"users": [user.serialize() for user in users]})
 
 @app.route("/next/<string:course_id>/users/", methods=["GET"])
 def get_course_users(course_id):
-    '''
-    Get all users: students and instructors
-    '''
-    # Artist.query.filter(Artist.albums.any(genre_id=genre.id)).all()
+    """
+    Endpoint for gettting all users (students and instructors) for a course id.
+    """
     instructors = User.query.filter(User.courses_as_instructor.any(id=course_id)).all()
     students = User.query.filter(User.courses_as_student.any(id=course_id)).all()
     res = {
@@ -155,50 +145,71 @@ def get_course_users(course_id):
 
 @app.route("/next/courses/", methods=["GET"])
 def get_courses():
-    '''
-    Get all courses
-    '''
+    """
+    (DEV ONLY) Endpoint to get all courses.
+    """
     courses = Course.query.all()
     return response(res={"courses": [course.serialize(include_users=True) for course in courses]})
 
+@app.route("/next/<string:user_id>/courses/", methods=["GET"])
+def get_courses_for_user(user_id):
+    """
+    Endpoint for getting all courses (as instructor and student) for a user.
+    """
+    # TODO: Need to add user authentication, should not be able to access if given only user_id
+    user = User.query.filter_by(id=user_id)
+    courses = {
+        "courses_as_instructor": [course.serialize() for course in user.courses_as_instructor],
+        "courses_as_student":  [course.serialize() for course in user.courses_as_student]
+    }
+    return response(res={courses})
+
 
 @app.route("/next/<string:course_id>/<int:month_id>/<int:day_id>/timeslots/", methods=["GET"])
-def get_timeslots(course_id, month_id, day_id):
+def get_timeslots_for_course_on_date(course_id, month_id, day_id):
+    # TESTED
     """
     Get timeslots for a particular course on a particular day
     """
     date = str(month_id) + "-" + str(day_id)
     
-    timeslots = Timeslot.query.filter(Timeslot.date==date & Timeslot.course==course_id)
-    return response(res={"timeslots": timeslots}, success=True, code=200)
+    timeslots = Timeslot.query.filter(Timeslot.date==date and Timeslot.course==course_id)
+    return response(res={"timeslots": [t.serialize() for t in timeslots]}, success=True, code=200)
 
 
-# TODO: add separate route  
-# @app.route("/next/<string:course_id>/<int:month_id>/<int:day_id>/timeslots/", methods=["GET", "POST"])
+@app.route("/next/queues/<string:timeslot_id>/", methods=["GET"])
+def get_queue(timeslot_id):
+    '''
+    Get / Join queue for particular course on a particular day
+    '''
+    timeslot = Timeslot.query.filter_by(id=timeslot_id)
 
-
-# @app.route("/next/queues/<string:queue_id>/", methods=["GET"])
-# def get_queue(course_id, timeslot_id):
-#     '''
-#     Get / Join queue for particular course on a particular day
-#     '''
-#     queue = Queue.query.filter(Queue.date==date & Queue.course_id==course_id & Queue.timeslot_id==timeslot_id)
-#     return response(res={"queue": queue}, success=True, code=200)
+    return response(res={"queue": [student.serialize() for student in timeslot.students_joined]}, success=True, code=200)
    
-# @app.route("/next/<string:user_id>/queues/<string:queue_id>/", methods=["POST"])
-# def join_queue(user_id, queue_id):
-#     '''
-#     Get / Join queue for particular course on a particular day
-#     '''
-#     user = User.query.filter_by(id=user_id).first()
-#     queue = Queue.query.filter_by(id=queue_id).first()
-#     queue.students_joined.append(user)
-#     db.session.commit()
+@app.route("/next/<string:user_id>/<string:timeslot_id>/", methods=["POST"])
+def join_queue(user_id, timeslot_id):
+    # TESTED
+    """
+    Endpoint for adding user to queue for timeslot id.
+    """
+    # TODO: needs user authentication
+    user = User.query.filter_by(id=user_id).first()
+    if user is None:
+        return response("user not found", success=False, code=400)
+    timeslot = Timeslot.query.filter_by(id=timeslot_id).first()
+    if timeslot is None:
+        return response("timeslot not found", success=False, code=400)
 
-#     return response(res=queue.serialize())
+    # Creating instance in queue
+    timestamp = Timestamp(user_id=user.id, timeslot_id=timeslot.id)
+    db.session.add(timestamp)
+    db.session.commit()
+
+    return response({"timestamp": timestamp.serialize()}, code=201)
 
 @app.route("/next/<string:course_id>/add/", methods=["POST"])
 def add_timeslot(course_id):
+    # TESTED
     """
     Add timeslot for course, given:
     1) start_time (in epoch seconds)
@@ -215,20 +226,16 @@ def add_timeslot(course_id):
 
     if course is None:
         return response({"error": "course not found. "}, success=False, code=404)
-
-    timestamp = Timestamp(course_id=course.id)
-    db.session.add(timestamp)
-    db.session.commit()
     
-    time_slot = Timeslot(start_time=start_time, end_time=end_time, course_id=course_id, timeslot_id=time_slot.id)
+    time_slot = Timeslot(start_time=start_time, end_time=end_time, course_id=course_id)
     db.session.add(time_slot)
     db.session.commit()
-
     
     return response({"timeslot": time_slot.serialize()}, code=201)
 
 @app.route("/next/timeslots/<string:timeslot_id>/", methods=["DELETE"])
 def delete_timeslot(timeslot_id):
+    # Tested
     timeslot = Timeslot.query.filter_by(id=timeslot_id).first()
     if timeslot is None:
         return response("timeslot not found", success=False, code=404)

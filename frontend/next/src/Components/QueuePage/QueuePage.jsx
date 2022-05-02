@@ -13,7 +13,8 @@ const QueuePage = () => {
     const [days, setDays] = useState([])
     const [month, setMonth] = useState(4)
     const [currDay, setCurrDay] = useState(30)
-    const [course, setCourse] = useState({})
+    const [courses, setCourses] = useState([])
+    const [currCourse, setCurrCourse] = useState({})
 
     /** TODO */
     const [user, setUser] = useState({"name": "Cornelius"})
@@ -23,6 +24,10 @@ const QueuePage = () => {
     
     useEffect(
       () => getDays(month))
+    
+    useEffect(
+      () => getCourses()
+    )
 
     const getDays = () => {
       
@@ -49,6 +54,18 @@ const QueuePage = () => {
         .catch(err => console.log(err))
     } 
 
+    const getCourses = () => {
+      fetch(`http://0.0.0.0:4500/next/${user.id}/courses/`, {
+        "methods" : "GET",
+        headers: {
+            "Content-Type": "applications/json"
+        }
+        })
+        .then(res => res.json())
+        .then(res => setCourses(res.days))
+        .catch(err => console.log(err))
+    }
+
     const monthHandler = (e) => {
     setMonth(e.target.value);
     }
@@ -68,7 +85,12 @@ const QueuePage = () => {
               </div>
 
                 <div>
-                  <Course></Course>
+                  {courses.map(course => {
+                    return (
+                      <Course name={course.name} code={course}></Course>
+                  )}
+                  )}
+                  
                 </div>
           </div>
              
