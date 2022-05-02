@@ -196,6 +196,17 @@ def join_queue(user_id, queue_id):
 
     return response(res=queue.serialize())
 
+@app.route("/next/<string:user_id>/queues/<string:queue_id>/", methods=["DELETE"])
+def leave_queue(user_id, queue_id):
+    """
+    Leave a queue you're currently in
+    """
+    user = User.query.filter_by(id=user_id).first()
+    queue = Queue.query.filter_by(id=queue_id).first()
+    queue.students_joined.remove(user)
+    db.session.commit()
+
+
 @app.route("/next/<string:course_id>/add/", methods=["POST"])
 def add_timeslot(course_id):
     """
