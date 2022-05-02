@@ -225,18 +225,24 @@ def add_timeslot(course_id):
     
     return response({"timeslot": time_slot.serialize()}, code=201)
 
-@app.route("/next/<int:month_id>/<day_id:day_id>/timeslots/<string:timeslot_id>/")
-def get_course_timeslots():
+@app.route("/next/timeslots/<string:timeslot_id>/", methods=["DELETE"])
+def delete_timeslot(timeslot_id):
+    timeslot = Timeslot.query.filter_by(id=timeslot_id).first()
+    if timeslot is None:
+        return response("timeslot not found", success=False, code=404)
+    
+    db.session.delete(timeslot)
+    db.session.commit()
+    return response({"timeslot": timeslot.serialize()})
+
+
+@app.route("/next/timeslots/<string:timeslot_id>/")
+def get_course_timeslots(timeslot_id):
+    # TODO: update to get course for timeslot_id
     timeslots = Timeslot.query.all()
 
     return response(res=[timeslot.serialize() for timeslot in timeslots])
-
-
-
-
-
     
-        
 
 # Added for testing purposes. Drop all tables
 @app.route("/next/drop/", methods=["POST"])

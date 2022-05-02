@@ -147,8 +147,8 @@ class Timestamp(db.Model):
     def serialize(self):
         return {
             "course_id": self.course_id,
-            "joined_students": [student.serialize() for student in self.joined_students],
-            "completed_students": [student.serialize() for student in self.completed_students]
+            "joined_students": [s.serialize() for s in self.students_joined],
+            "completed_students": [s.serialize() for s in self.students_completed]
         }
 
 class Course(db.Model):

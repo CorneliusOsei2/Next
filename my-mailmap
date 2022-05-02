@@ -1,4 +1,0 @@
-CorneliusOsei2 <oseiowusuboatengcornelius6@gmail.com> Cornelius Boateng <cob32@cornell.edu>
-
-
-git rebase -i 607450a -x "git commit --amend --reset-author -CHEAD"
