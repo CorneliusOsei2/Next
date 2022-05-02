@@ -27,10 +27,10 @@ def gen_name():
     return names[randint(0, 3)]
 
 
-def gen_netid():
+def gen_netid(i):
     netids = ["a3", "b5", "c9"]
 
-    return netids[randint(0, 2)]
+    return netids[i]
 
 
 def gen_course():
