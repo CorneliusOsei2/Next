@@ -2,7 +2,7 @@ import queue
 import json
 from time import time
 from flask import Flask, request
-from Tables import db, Day, Month, Timeslot, User, Course, Queue
+from Tables import db, Day, Month, Timeslot, User, Course, Timestamp
 from gen import month_names, gen_name, gen_netid, gen_course
 from utils import response, Debug
 from flask_cors import CORS
@@ -58,7 +58,7 @@ def gen_users():
     Auto-generate users
     '''
     for i in range(3):
-        user = User(name=gen_name(), netid=gen_netid())
+        user = User(name=gen_name(), username=gen_netid())
         db.session.add(user)
         db.session.commit()
 

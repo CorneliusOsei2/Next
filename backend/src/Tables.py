@@ -1,6 +1,10 @@
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import ForeignKey, null
 import uuid
+import bcrypt
+import hashlib
+import os
+import datetime
 
 
 db = SQLAlchemy()
@@ -192,7 +196,15 @@ class User(db.Model):
     __tablename__ = "users"
     id = db.Column('id', db.String, default=lambda: str(uuid.uuid4()), primary_key=True)
     name = db.Column(db.String, nullable=False)
-    netid = db.Column(db.String, nullable=False, unique=False)
+
+    # User Information
+    username = db.Column(db.String, nullable=False, unique=True)
+    password_digest = db.Column(db.String, nullable=False)
+
+    # Session Information
+    session_token = db.Column(db.String, nullable=False, unique=True)
+    session_expiration = db.Column(db.DateTime, nullable=False)
+    update_token = db.Column(db.String, nullable=False, unique=True)
     
     # Many-to-many Relationships
     courses_as_student = db.relationship("Course", secondary=StudentCourse, back_populates="students")
@@ -206,7 +218,45 @@ class User(db.Model):
         Initialize User object
         """
         self.name = kwargs.get("name")
-        self.netid = kwargs.get("netid")
+        self.username = kwargs.get("username")
+        # Storing pasword
+        self.password_digest = bcrypt.hashpw(kwargs.get("password").encode("utf8"), bcrypt.gensalt(rounds=13))
+
+    def _urlsafe_base_64(self):
+        """
+        Randomly generates hashed tokens (for session/update tokens)
+        """
+        return hashlib.sha1(os.urandom(64)).hexdigest()
+
+    def renew_session(self):
+        """
+        Renews sessions:
+        1) creates new session token 
+        2) sets expiration time of new session to a day from now
+        3) creates a new update token
+        """
+        self.session_token = self._urlsafe_base_64()
+        self.session_expiration = datetime.datetime.now() + datetime.timedelta(days=1)
+        self.update_token = self._urlsafe_base_64()
+
+    def verify_password(self, password):
+        """
+        Verifies password for a user.
+        """
+        return bcrypt.checkpw(password.encode("utf8"), self.password_digest)
+
+    def verify_session_token(self, session_token):
+        """
+        Verifies session token of a user.
+        """
+        return session_token == self.session_token and datetime.datetime.now() < self.session_expiration
+
+    def verify_update_token(self, update_token):
+        """
+        Verifies update token of a user.
+        """
+        return update_token == self.update_token
+
     
     def serialize(self, include_courses=False, include_timeslots=False):
         """
@@ -217,7 +267,7 @@ class User(db.Model):
             return {
                 "id": self.id,
                 "name": self.name,
-                "netid": self.netid,
+                "username": self.username,
                 "courses_as_student": [c.serialize() for c in self.courses_as_student],
                 "courses_as_instructor": [c.serialize() for c in self.courses_as_instructor],
                 "timeslots_as_student": [t.serialize() for t in self.timeslots_as_student],
@@ -227,7 +277,7 @@ class User(db.Model):
             return {
                 "id": self.id,
                 "name": self.name,
-                "netid": self.netid,
+                "username": self.username,
                 "courses_as_student": [c.serialize() for c in self.courses_as_student],
                 "courses_as_instructor": [c.serialize() for c in self.courses_as_instructor]
             }
@@ -235,7 +285,7 @@ class User(db.Model):
             return {
                 "id": self.id,
                 "name": self.name,
-                "netid": self.netid,
+                "username": self.username,
                 "timeslots_as_student": [t.serialize() for t in self.timeslots_as_student],
                 "timeslots_as_instructor": [t.serialize() for t in self.timeslots_as_instructor],
             }
@@ -243,5 +293,5 @@ class User(db.Model):
             return {
                 "id": self.id,
                 "name": self.name,
-                "netid": self.netid,
+                "username": self.username,
             }
