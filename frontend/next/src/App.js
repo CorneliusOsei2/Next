@@ -1,12 +1,14 @@
-import QueuePage from './Components/QueuePage/QueuePage';
+
+import MainPage from "./Components/MainPage/MainPage.jsx"
 
 import "./App.css"
 
 function App() {
   return (
     <div className="App">
-   
-    <QueuePage></QueuePage>
+     
+
+      <MainPage></MainPage>
     </div>
   );
 }

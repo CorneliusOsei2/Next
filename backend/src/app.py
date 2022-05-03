@@ -244,7 +244,6 @@ def get_courses_for_user():
     if not was_successful:
         return session_token
     
-    # user = User.query.filter_by(id=user_id).first()
     user = users_dao.get_user_by_session_token(session_token)
     if user is None or not user.verify_session_token(session_token):
         return response("Invalid session token.", success=False, code=404)
@@ -255,7 +254,6 @@ def get_courses_for_user():
         "courses_as_student":  [course.serialize() for course in user.courses_as_student]
     }
     return response(user_info)
-
 
 @app.route("/next/<string:course_id>/<int:month_id>/<int:day_id>/timeslots/", methods=["GET"])
 def get_timeslots_for_course_on_date(course_id, month_id, day_id):
@@ -296,7 +294,7 @@ def join_queue(user_id, timeslot_id):
         return response("user not found", success=False, code=400)
     timeslot = Timeslot.query.filter_by(id=timeslot_id).first()
     if timeslot is None:
-        return response("timeslot not found", success=False, code=400)
+        return response({"Error": "Timeslot not found"}, success=False, code=400)
 
     # Creating instance in queue
     timestamp = Timestamp(user_id=user.id, timeslot_id=timeslot.id)
