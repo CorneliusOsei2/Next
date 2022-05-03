@@ -38,9 +38,15 @@ const MainPage = () => {
         .catch(err => console.log(err))
     } 
 
-    const addSlot = (slot) => {
-        
-        fetch(`localhost:4500/${currCourse}/add/`,
+    const addSlot = (time) => {
+        let slot = {
+            "start_time": time.start_time,
+            "end_time": time.end_time,
+            "day": currDay,
+            "month": currMonth
+        }
+
+        fetch(`http://0.0.0.0:4500/next/${currCourse}/add/`,
             {'method':'POST',
             headers : {
             'Content-Type':'application/json'
