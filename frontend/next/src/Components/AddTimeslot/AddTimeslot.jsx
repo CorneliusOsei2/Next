@@ -10,17 +10,17 @@ const AddTimeslot = ({addSlot, timeslot}) => {
     const handleTimeSubmit = (e) => {
         setShowSlot(true)
 
-        setStart( e.target.from.value)
+        setStart(e.target.from.value)
         setEnd(e.target.to.value)
 
-        const [start_hrs, start_mins] = e.target.from.value.split(':');
-        const [end_hrs, end_mins] = e.target.to.value.split(':');
-        const startSeconds = (start_hrs) * 60 * 60 + (start_mins) * 60;
-        const endSeconds = (end_hrs) * 60 * 60 + (end_mins) * 60;
+        // const [start_hrs, start_mins] = e.target.from.value.split(':');
+        // const [end_hrs, end_mins] = e.target.to.value.split(':');
+        // const startSeconds = (start_hrs) * 60 * 60 + (start_mins) * 60;
+        // const endSeconds = (end_hrs) * 60 * 60 + (end_mins) * 60;
 
         const slot = {
-            "start_time": startSeconds,
-            "end_time": endSeconds
+            "start_time": e.target.from.value,
+            "end_time": e.target.to.value
         }
 
         console.log(slot)

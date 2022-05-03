@@ -103,8 +103,10 @@ class Timeslot(db.Model):
     __tablename__ = "timeslots"
     id = db.Column('id', db.String, default=lambda: str(uuid.uuid4()), primary_key=True)
     date = db.Column(db.String, nullable=False)
-    start_time = db.Column(db.DateTime, nullable=False)
-    end_time = db.Column(db.DateTime, nullable=False)
+    start_time = db.Column(db.String, nullable=False)
+    start_secs = db.Column(db.Integer, nullable=False)
+    end_time = db.Column(db.String, nullable=False)
+    end_secs = db.Column(db.Integer, nullable=False)
     course_id = db.Column(db.String, db.ForeignKey("courses.id"), nullable=False)
     course = db.relationship("Course", cascade="delete")
 
@@ -116,13 +118,10 @@ class Timeslot(db.Model):
         """
         Initialize Timeslot object
         """
-        start_time_epoch = kwargs.get("start_time")
-        end_time_epoch = kwargs.get("end_time")
-        self.start_time = datetime.datetime.fromtimestamp(start_time_epoch)
-        self.end_time = datetime.datetime.fromtimestamp(end_time_epoch)
+        self.start_time = kwargs.get("start_time")
+        self.end_time = kwargs.get("end_time")
         self.course_id = kwargs.get("course_id")
-
-        self.date = str(self.start_time.month) + "-" + str(self.start_time.day)
+        self.date = kwargs.get("date")
 
     def serialize(self):
         """
