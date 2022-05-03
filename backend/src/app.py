@@ -285,8 +285,38 @@ def get_timeslots_for_course_on_date(course_id, month_id, day_id):
     date = str(month_id) + "-" + str(day_id)
     
     # Get timeslots by ascending order
-    timeslots = Timeslot.query.filter(Timeslot.date==date and Timeslot.course==course_id).order_by(Timeslot.start_time.asc())
+    # timeslots = Timeslot.query.filter(Timeslot.date==date and Timeslot.course==course_id).order_by(Timeslot.start_time.asc())
+
+    timeslots = Timeslot.query.filter_by(course_id=course_id)
     return response(res={"timeslots": [t.serialize() for t in timeslots]}, success=True, code=200)
+
+
+@app.route("/next/<string:course_id>/add/", methods=["POST"])
+def add_timeslot(course_id):
+    # TESTED
+    """
+    Add timeslot for course, given:
+    1) start_time (in epoch seconds)
+    2) end_time (in epoch seconds)
+    """
+    body = json.loads(request.data)
+    start_time = body.get("start_time")
+    end_time = body.get("end_time")
+    date = str(body.get("month")) + "-" + str(body.get("month"))
+
+    if start_time >= end_time:
+        return response({"error": "Invalid time range. "}, success=False, code=404)
+
+    course = Course.query.filter_by(id=course_id).first()
+
+    if course is None:
+        return response({"error": "course not found. "}, success=False, code=404)
+    
+    time_slot = Timeslot(start_time=start_time, end_time=end_time, course_id=course_id, date=date)
+    db.session.add(time_slot)
+    db.session.commit()
+    
+    return response({"timeslot": time_slot.serialize()}, code=201)
 
 
 @app.route("/next/queues/<string:timeslot_id>/", methods=["GET"])
@@ -343,46 +373,46 @@ def join_queue(course_id, timeslot_id):
 
     return response({"timestamp": timestamp.serialize()}, code=201)
 
-@app.route("/next/courses/<string:course_id>/timeslots/add/", methods=["POST"])
-def add_timeslot(course_id):
-    # TESTED
-    """
-    Add timeslot for course, given:
-    1) start_time (in epoch seconds)
-    2) end_time (in epoch seconds)
-    """
-    # Get user from session
-    was_successful, session_token = extract_token(request)
-    if not was_successful:
-        return session_token
-    user = users_dao.get_user_by_session_token(session_token)
-    if user is None or not user.verify_session_token(session_token):
-        return response("Invalid session token.", success=False, code=401)
+# @app.route("/next/courses/<string:course_id>/timeslots/add/", methods=["POST"])
+# def add_timeslot(course_id):
+#     # TESTED
+#     """
+#     Add timeslot for course, given:
+#     1) start_time (in epoch seconds)
+#     2) end_time (in epoch seconds)
+#     """
+#     # Get user from session
+#     was_successful, session_token = extract_token(request)
+#     if not was_successful:
+#         return session_token
+#     user = users_dao.get_user_by_session_token(session_token)
+#     if user is None or not user.verify_session_token(session_token):
+#         return response("Invalid session token.", success=False, code=401)
 
-    body = json.loads(request.data)
-    start_time = body.get("start_time")
-    end_time = body.get("end_time")
+#     body = json.loads(request.data)
+#     start_time = body.get("start_time")
+#     end_time = body.get("end_time")
 
-    if start_time is None or end_time is None:
-        return response("Must provide both [start_time] and [end_time]. ", success=False, code=404) 
+#     if start_time is None or end_time is None:
+#         return response("Must provide both [start_time] and [end_time]. ", success=False, code=404) 
 
-    if start_time >= end_time:
-        return response("Invalid time range. ", success=False, code=404)
+#     if start_time >= end_time:
+#         return response("Invalid time range. ", success=False, code=404)
 
-    course = Course.query.filter_by(id=course_id).first()
+#     course = Course.query.filter_by(id=course_id).first()
 
-    if course is None:
-        return response("course not found. ", success=False, code=404)
+#     if course is None:
+#         return response("course not found. ", success=False, code=404)
 
-    # Check if user is an instructor for the course
-    if user not in course.instructors:
-        return response("user is not authorized to add a timeslot ", success=False, code=401)
+#     # Check if user is an instructor for the course
+#     if user not in course.instructors:
+#         return response("user is not authorized to add a timeslot ", success=False, code=401)
     
-    time_slot = Timeslot(start_time=start_time, end_time=end_time, course_id=course_id)
-    db.session.add(time_slot)
-    db.session.commit()
+#     time_slot = Timeslot(start_time=start_time, end_time=end_time, course_id=course_id)
+#     db.session.add(time_slot)
+#     db.session.commit()
     
-    return response({"timeslot": time_slot.serialize()}, code=201)
+#     return response({"timeslot": time_slot.serialize()}, code=201)
 
 @app.route("/next/timeslots/<string:timeslot_id>/", methods=["DELETE"])
 def delete_timeslot(timeslot_id):
@@ -396,12 +426,12 @@ def delete_timeslot(timeslot_id):
     return response({"timeslot": timeslot.serialize()})
 
 
-@app.route("/next/timeslots/<string:timeslot_id>/")
-def get_course_timeslots(timeslot_id):
-    # TODO: update to get course for timeslot_id
-    timeslots = Timeslot.query.all()
+# @app.route("/next/<course_id>/<int:day_id>/<int:month_id>/timeslots//")
+# def get_course_timeslots(timeslot_id):
+#     # TODO: update to get course for timeslot_id
+#     timeslots = Timeslot.query.all()
 
-    return response(res=[timeslot.serialize() for timeslot in timeslots])
+#     return response(res=[timeslot.serialize() for timeslot in timeslots])
     
 
 # Added for testing purposes. Drop all tables

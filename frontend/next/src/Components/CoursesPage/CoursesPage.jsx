@@ -1,7 +1,7 @@
 import { useState } from "react"
 import "./coursespage.css"
 
-const CoursesPage = ({showTimeslotsPage, user_id}) => {
+const CoursesPage = ({getTimeslots, user_id}) => {
 
     const [courses, setCourses] = useState([])
     
@@ -23,7 +23,7 @@ const CoursesPage = ({showTimeslotsPage, user_id}) => {
       }
     
     const handleCourseClick = (e) => {
-        showTimeslotsPage(e.target.id)
+        getTimeslots(e.target.id)
     }
 
     return(

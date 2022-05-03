@@ -16,7 +16,7 @@ const MainPage = () => {
 
     const [showCoursesPage, setShowCoursesPage] = useState(true)
     const [showTimeslotsPage, setShowTimeslotsPage] = useState(false)
-    const [showAddTimeslot, setShowAddTimeslot] = useState(false)
+    const [showAddTimeslot, setShowAddTimeslot] = useState(true)
     
 
     const handleShowTimesotsPage = (course_id) => {
@@ -26,21 +26,40 @@ const MainPage = () => {
         setShowTimeslotsPage(!showTimeslotsPage)
     }
 
+
+    const handleDate = (day, month) => {
+        setCurrDay(day);
+        setCurrMonth(month);
+        getTimeslots(currCourse)
+    }
+
     const getTimeslots = (course_id) => {
-      fetch(`http://0.0.0.0:4500/next/${course_id}/${currMonth}/${currDay}/timeslots/`, {
-        "methods" : "GET",
-        headers: {
-            "Content-Type": "applications/json"
-        }
-        })
-        .then(res => res.json())
-        .then(res => setTimeslots(res.timeslots))
-        .catch(err => console.log(err))
+        
+        setShowCoursesPage(false);
+        setShowTimeslotsPage(true);
+        setShowAddTimeslot(false);
+        
+        fetch(`http://0.0.0.0:4500/next/${course_id}/${currMonth}/${currDay}/timeslots/`, {
+            "methods" : "GET",
+            headers: {
+                "Content-Type": "applications/json"
+            }
+            })
+            .then(res => res.json())
+            .then(res => setTimeslots(res.timeslots))
+            .catch(err => console.log(err))
     } 
 
-    const addSlot = (slot) => {
-        
-        fetch(`localhost:4500/${currCourse}/add/`,
+    const addSlot = (time) => {
+        let slot = {
+            "start_time": time.start_time,
+            "end_time": time.end_time,
+            "day": currDay,
+            "month": currMonth
+        }
+
+        console.log(slot)
+        fetch(`http://0.0.0.0:4500/next/${currCourse}/add/`,
             {'method':'POST',
             headers : {
             'Content-Type':'application/json'
@@ -53,16 +72,10 @@ const MainPage = () => {
     }
     
 
-    const handleDate = (day, month) => {
-        setCurrDay(day);
-        setCurrMonth(month);
-        getTimeslots(currCourse)
-    }
-
     return(
         <div>
 
-             {showCoursesPage && <CoursesPage user_id={user.id} showTimeslotsPage={handleShowTimesotsPage}></CoursesPage>}
+             {showCoursesPage && <CoursesPage user_id={user.id} getTimeslots={getTimeslots}></CoursesPage>}
              {showTimeslotsPage && <TimeslotsPage timeslots={timeslots} handleDate={handleDate}></TimeslotsPage>}
              {showAddTimeslot &&  <AddTimeslot addSlot={addSlot} slot={slot}></AddTimeslot>}
             
