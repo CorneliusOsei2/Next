@@ -155,7 +155,7 @@ def get_course_users(course_id):
 @app.route("/next/months/", methods=["GET"])
 def get_months():
     """
-    Endpoint to months.
+    Endpoint to get months.
     """
     months = Month.query.all()
     return response(res={"months": [month.serialize() for month in months]})
