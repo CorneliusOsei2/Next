@@ -181,8 +181,25 @@ def login():
 
 @app.route("/next/session/", methods=["POST"])
 def update_session():
-    # TODO
-    pass
+    """
+    Endpoint for updating a user's session.
+    """
+    was_successful, update_token = extract_token(request)
+    if not was_successful:
+        return update_token
+    
+    try: 
+        user = users_dao.renew_session(update_token)
+    except Exception as e:
+        return response(f"Invalid update token: {str(e)}")
+    
+    return response(
+        {
+            "session_token": user.session_token,
+            "session_expiration": str(user.session_expiration),
+            "update_token": user.update_token
+        }, code=201
+    )
 
 
 @app.route("/next/logout/", methods=["POST"])
