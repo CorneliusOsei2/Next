@@ -37,7 +37,7 @@ const CoursesPage = ({showTimeslotsPage, user_id}) => {
                         Hi, <span className="greet-name">Cornelius</span>
                     </div>
 
-                    <div className="row">
+                    <div className="row container">
 
                         {courses.map(course => {
                         return (

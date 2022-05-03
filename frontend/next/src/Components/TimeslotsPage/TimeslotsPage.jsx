@@ -4,22 +4,22 @@ import { useEffect } from "react";
 
 // Components
 import Timeslot from "../Timeslot/Timeslot"
+import TimeslotButtons from "../TimeslotButton/TimeslotButton";
 
+/**
+ * 
+ * event.timeStamp
+ */
 
-const TimeslotsPage = ({handleDate}) => {
+const TimeslotsPage = ({timeslots, handleDate}) => {
 
     const [days, setDays] = useState([])
     const [month, setMonth] = useState(4)
     const [day, setDay] = useState(30)
     const [courses, setCourses] = useState([])
    
-
-
-    /** TODO */
-    const [showTimeslots, setShowTimeslots] = useState(true)
     
-    useEffect(
-      () => getDays(month))
+    useEffect(() => getDays(month))
     
    
     const getDays = () => {
@@ -95,10 +95,19 @@ const TimeslotsPage = ({handleDate}) => {
             </div>
           </div>
           
-          <div className="col-md-9 timeslots-div">
+          <div className="col-md-9 timeslots-div row">
               
               <div className="col-md-3 timeslot">
-                <Timeslot></Timeslot>
+              {timeslots.map(slot => {
+                    return (
+                      <div className="slot">
+                          <div className="slot-top">{slot.start} - {slot.end}</div>
+                          <div className="slot-mid">{slot.total}</div>
+                          <div className="slot-bottom"><TimeslotButtons></TimeslotButtons></div>
+                      </div> 
+                    )}
+              )}
+
               </div>
               
              

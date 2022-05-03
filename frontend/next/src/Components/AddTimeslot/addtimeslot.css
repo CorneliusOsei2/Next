@@ -9,3 +9,9 @@ input,
 label {
     margin: .4rem 0;
 }
+
+.time{
+    width: 150px;
+    margin: auto;
+    margin-top: 2%;
+}
