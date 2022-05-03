@@ -48,4 +48,5 @@ def renew_session(update_token):
   user.renew_session()
   db.session.commit()
 
+  return user
   
