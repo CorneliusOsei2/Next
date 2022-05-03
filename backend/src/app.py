@@ -23,6 +23,23 @@ db.init_app(app)
 with app.app_context():
     db.create_all()
 
+# ########
+# HELPERS 
+# ########
+
+def extract_token(request):
+    """
+    Helper to extract token from header of request.
+    """
+    auth_header = request.headers.get("Authorization")
+
+    if auth_header is None:
+        return False, response({"Missing Authorization header"}, success=False, code=400)
+    
+    bearer_token = auth_header.replace("Bearer", "").strip()
+    return True, bearer_token
+
+
 # ##############################
 # HELPERS FOR INTITIALIZATION
 # ##############################
@@ -85,6 +102,10 @@ def gen_timeslots():
     pass
 
 
+# ##########
+# DEV ONLY 
+# ##########
+
 @app.route("/", methods=["GET"])
 def fill_database():
     """
@@ -97,10 +118,6 @@ def fill_database():
         return "Done"
     except Exception as e:
         return e
-
-# ##########
-# DEV ONLY 
-# ##########
 
 @app.route("/next/users/", methods=["GET"])
 def get_all_users():
