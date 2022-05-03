@@ -23,11 +23,30 @@ db.init_app(app)
 with app.app_context():
     db.create_all()
 
-# Helpers
+# ########
+# HELPERS 
+# ########
+
+def extract_token(request):
+    """
+    Helper to extract token from header of request.
+    """
+    auth_header = request.headers.get("Authorization")
+
+    if auth_header is None:
+        return False, response({"Missing Authorization header"}, success=False, code=400)
+    
+    bearer_token = auth_header.replace("Bearer", "").strip()
+    return True, bearer_token
+
+
+# ##############################
+# HELPERS FOR INTITIALIZATION
+# ##############################
 def gen_months():
-    '''
-    Auto-generate months
-    '''
+    """
+    Helper for auto-generateing months.
+    """
     months = month_names()
 
     i = 1
@@ -38,9 +57,9 @@ def gen_months():
         i += 1
 
 def gen_days():
-    '''
-    Autogenerate days for the months
-    '''
+    """
+    Helper for autogenerating days for the months.
+    """
     gen_months()
     months = Month.query.all()
 
@@ -52,18 +71,18 @@ def gen_days():
             db.session.commit()
 
 def gen_users():
-    '''
-    Auto-generate users
-    '''
+    """
+    Helper for auto-generating users.
+    """
     for i in range(3):
         user = User(name=gen_name(), username=gen_netid(i), password="123")
         db.session.add(user)
         db.session.commit()
 
 def gen_courses():
-    '''
-    Auto-generate users
-    '''
+    """
+    Helper for auto-generating users.
+    """
     gen_users()
     users = User.query.all()
 
@@ -83,12 +102,15 @@ def gen_timeslots():
     pass
 
 
-# Routes
+# ##########
+# DEV ONLY 
+# ##########
+
 @app.route("/", methods=["GET"])
 def fill_database():
-    '''
-    Generate data for our database
-    '''
+    """
+    Endpoint for generating data for database.
+    """
     try:
         gen_days()
         gen_courses()
@@ -96,31 +118,6 @@ def fill_database():
         return "Done"
     except Exception as e:
         return e
-
-@app.route("/next/months/", methods=["GET"])
-def get_months():
-    '''
-    Get days of a month
-    '''
-    months = Month.query.all()
-    return response(res={"months": [month.serialize() for month in months]})
-
-
-@app.route("/next/<string:month_number>/days/", methods=["GET"])
-def get_days(month_number):
-    '''
-    Get days of a month
-    '''
-    month = Month.query.filter_by(number=month_number).first()
-    today = date.today()
-
-    for day in month.days:
-        if month.number < today.month or month.number <= today.month and day.number < today.day:
-            day.active = False
-            db.session.commit()
-        
-    return response(res={"days": [day.serialize() for day in month.days]})
-
 
 @app.route("/next/users/", methods=["GET"])
 def get_all_users():
@@ -130,6 +127,16 @@ def get_all_users():
     users = User.query.all()
     return response(res={"users": [user.serialize() for user in users]})
 
+<<<<<<< HEAD
+=======
+@app.route("/next/courses/", methods=["GET"])
+def get_courses():
+    """
+    (DEV ONLY) Endpoint to get all courses.
+    """
+    courses = Course.query.all()
+    return response(res={"courses": [course.serialize(include_users=True) for course in courses]})
+>>>>>>> 4eb435e1b04ea9f8481cb2058efce33674b57983
 
 @app.route("/next/<string:course_id>/users/", methods=["GET"])
 def get_course_users(course_id):
@@ -144,27 +151,58 @@ def get_course_users(course_id):
     }
     return response(res=res)
 
+<<<<<<< HEAD
 
 @app.route("/next/courses/", methods=["GET"])
 def get_courses():
+=======
+# ##########
+# Public Routes 
+# ##########
+
+@app.route("/next/months/", methods=["GET"])
+def get_months():
+>>>>>>> 4eb435e1b04ea9f8481cb2058efce33674b57983
     """
-    (DEV ONLY) Endpoint to get all courses.
+    Endpoint to get months.
     """
-    courses = Course.query.all()
-    return response(res={"courses": [course.serialize(include_users=True) for course in courses]})
+    months = Month.query.all()
+    return response(res={"months": [month.serialize() for month in months]})
+
+
+@app.route("/next/<string:month_number>/days/", methods=["GET"])
+def get_days(month_number):
+    """
+    Endpoint to get days of a month.
+    """
+    month = Month.query.filter_by(number=month_number).first()
+    today = date.today()
+
+    for day in month.days:
+        if month.number < today.month or month.number <= today.month and day.number < today.day:
+            day.active = False
+            db.session.commit()
+        
+    return response(res={"days": [day.serialize() for day in month.days]})
 
 @app.route("/next/<string:user_id>/courses/", methods=["GET"])
 def get_courses_for_user(user_id):
+    # Tested
     """
     Endpoint for getting all courses (as instructor and student) for a user.
     """
     # TODO: Need to add user authentication, should not be able to access if given only user_id
-    user = User.query.filter_by(id=user_id)
-    courses = {
+    user = User.query.filter_by(id=user_id).first()
+    user_info = {
+        "user_id": user_id,
         "courses_as_instructor": [course.serialize() for course in user.courses_as_instructor],
         "courses_as_student":  [course.serialize() for course in user.courses_as_student]
     }
+<<<<<<< HEAD
     return response(res={"courses": courses})
+=======
+    return response(user_info)
+>>>>>>> 4eb435e1b04ea9f8481cb2058efce33674b57983
 
 
 @app.route("/next/<string:course_id>/<int:month_id>/<int:day_id>/timeslots/", methods=["GET"])
@@ -270,8 +308,6 @@ def drop_table():
     db.drop_all(bind=None)
 
     return response(res=[], success=True, code=201)
-
-
 
 
 if __name__ == '__main__':
