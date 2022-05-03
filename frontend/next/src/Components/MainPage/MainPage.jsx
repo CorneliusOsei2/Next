@@ -34,15 +34,20 @@ const MainPage = () => {
     }
 
     const getTimeslots = (course_id) => {
-      fetch(`http://0.0.0.0:4500/next/${course_id}/${currMonth}/${currDay}/timeslots/`, {
-        "methods" : "GET",
-        headers: {
-            "Content-Type": "applications/json"
-        }
-        })
-        .then(res => res.json())
-        .then(res => setTimeslots(res.timeslots))
-        .catch(err => console.log(err))
+        
+        setShowCoursesPage(false);
+        setShowTimeslotsPage(true);
+        setShowAddTimeslot(false);
+        
+        fetch(`http://0.0.0.0:4500/next/${course_id}/${currMonth}/${currDay}/timeslots/`, {
+            "methods" : "GET",
+            headers: {
+                "Content-Type": "applications/json"
+            }
+            })
+            .then(res => res.json())
+            .then(res => setTimeslots(res.timeslots))
+            .catch(err => console.log(err))
     } 
 
     const addSlot = (time) => {
@@ -70,7 +75,7 @@ const MainPage = () => {
     return(
         <div>
 
-             {showCoursesPage && <CoursesPage user_id={user.id} showTimeslotsPage={handleShowTimesotsPage}></CoursesPage>}
+             {showCoursesPage && <CoursesPage user_id={user.id} getTimeslots={getTimeslots}></CoursesPage>}
              {showTimeslotsPage && <TimeslotsPage timeslots={timeslots} handleDate={handleDate}></TimeslotsPage>}
              {showAddTimeslot &&  <AddTimeslot addSlot={addSlot} slot={slot}></AddTimeslot>}
             
