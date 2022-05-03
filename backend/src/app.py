@@ -248,6 +248,7 @@ def add_timeslot(course_id):
     body = json.loads(request.data)
     start_time = body.get("start_time")
     end_time = body.get("end_time")
+    date = body.get("month") + "-" + body.get("month")
 
     if start_time >= end_time:
         return response({"error": "Invalid time range. "}, success=False, code=404)
@@ -257,7 +258,7 @@ def add_timeslot(course_id):
     if course is None:
         return response({"error": "course not found. "}, success=False, code=404)
     
-    time_slot = Timeslot(start_time=start_time, end_time=end_time, course_id=course_id)
+    time_slot = Timeslot(start_time=start_time, end_time=end_time, course_id=course_id, date=date)
     db.session.add(time_slot)
     db.session.commit()
     
