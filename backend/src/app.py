@@ -26,10 +26,10 @@ db.init_app(app)
 with app.app_context():
     db.create_all()
 
-# ########
-# HELPERS 
-# ########
 
+
+
+############################################# HELPERS  ##############################################################
 def extract_token(request):
     """
     Helper to extract token from header of request.
@@ -43,9 +43,8 @@ def extract_token(request):
     return True, bearer_token
 
 
-# ##############################
-# HELPERS FOR INTITIALIZATION
-# ##############################
+
+############################################# HELPERS FOR INTITIALIZATION #############################################
 def gen_months():
     """
     Helper for auto-generateing months.
@@ -105,10 +104,8 @@ def gen_timeslots():
     pass
 
 
-# ##########
-# DEV ONLY 
-# ##########
 
+############################################# DEV ONLY ########################################################
 @app.route("/", methods=["GET"])
 def fill_database():
     """
@@ -151,9 +148,8 @@ def get_course_users(course_id):
     }
     return response(res=res)
 
-# ##########
-# Public Routes 
-# ##########
+
+############################################# PUBLIC ROUTES ##############################################
 
 @app.route("/next/login/", methods=["POST"])
 def login():
