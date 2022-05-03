@@ -1,3 +1,4 @@
+from crypt import methods
 import enum
 import json
 from time import time
@@ -10,6 +11,7 @@ from datetime import date
 import requests
 import json
 import users_dao
+from datetime import datetime
 
 # Initialize Flask and CORS
 app = Flask(__name__)
@@ -173,11 +175,39 @@ def login():
     
     return response(
         {
+            "user_id": user.id,
             "session_token": user.session_token,
             "session_expiration": str(user.session_expiration),
             "update_token": user.update_token
 
         }, code=201)
+
+
+@app.route("/next/session/", methods=["POST"])
+def update_session():
+    # TODO
+    pass
+
+
+@app.route("/next/logout/", methods=["POST"])
+def logout():
+    # TESTED
+    """
+    Endpoint to log out a user.
+    """
+    was_successful, session_token = extract_token(request)
+    if not was_successful:
+        return session_token
+    
+    user = users_dao.get_user_by_session_token(session_token)
+    if not user or not user.verify_session_token(session_token):
+        return response("Invalid session token", success=False, code=404)
+    
+    user.session_expiration = datetime.now()
+    db.session.commit()
+
+    return response({"response": "Successfully logged out"}, code=201)
+
 
 @app.route("/next/months/", methods=["GET"])
 def get_months():
