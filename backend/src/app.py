@@ -92,7 +92,6 @@ def fill_database():
     try:
         gen_days()
         gen_courses()
-        gen_users()
         
         return "Done"
     except Exception as e:
