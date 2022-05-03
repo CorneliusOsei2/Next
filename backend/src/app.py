@@ -92,6 +92,7 @@ def fill_database():
     try:
         gen_days()
         gen_courses()
+        gen_users()
         
         return "Done"
     except Exception as e:
@@ -130,6 +131,7 @@ def get_all_users():
     users = User.query.all()
     return response(res={"users": [user.serialize() for user in users]})
 
+
 @app.route("/next/<string:course_id>/users/", methods=["GET"])
 def get_course_users(course_id):
     """
@@ -142,6 +144,7 @@ def get_course_users(course_id):
         "students": [student.serialize() for student in students]
     }
     return response(res=res)
+
 
 @app.route("/next/courses/", methods=["GET"])
 def get_courses():
@@ -162,7 +165,7 @@ def get_courses_for_user(user_id):
         "courses_as_instructor": [course.serialize() for course in user.courses_as_instructor],
         "courses_as_student":  [course.serialize() for course in user.courses_as_student]
     }
-    return response(res={courses})
+    return response(res={"courses": courses})
 
 
 @app.route("/next/<string:course_id>/<int:month_id>/<int:day_id>/timeslots/", methods=["GET"])
@@ -180,10 +183,9 @@ def get_timeslots_for_course_on_date(course_id, month_id, day_id):
 @app.route("/next/queues/<string:timeslot_id>/", methods=["GET"])
 def get_queue(timeslot_id):
     '''
-    Get / Join queue for particular course on a particular day
+    Get queue for particular course on a particular day
     '''
     timeslot = Timeslot.query.filter_by(id=timeslot_id)
-
     return response(res={"queue": [student.serialize() for student in timeslot.students_joined]}, success=True, code=200)
    
 @app.route("/next/<string:user_id>/<string:timeslot_id>/", methods=["POST"])
@@ -198,7 +200,7 @@ def join_queue(user_id, timeslot_id):
         return response("user not found", success=False, code=400)
     timeslot = Timeslot.query.filter_by(id=timeslot_id).first()
     if timeslot is None:
-        return response("timeslot not found", success=False, code=400)
+        return response({"Error": "Timeslot not found"}, success=False, code=400)
 
     # Creating instance in queue
     timestamp = Timestamp(user_id=user.id, timeslot_id=timeslot.id)

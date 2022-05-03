@@ -3,7 +3,6 @@ import "./queuepage.css"
 import { useEffect } from "react";
 
 // Components
-import Day from "../Day/Day";
 import Course from "../Course/Course"
 import Timeslot from "../Timeslot/Timeslot"
 
@@ -14,10 +13,8 @@ const QueuePage = () => {
     const [month, setMonth] = useState(4)
     const [currDay, setCurrDay] = useState(30)
     const [courses, setCourses] = useState([])
-    const [currCourse, setCurrCourse] = useState({})
+   
 
-    /** TODO */
-    const [user, setUser] = useState({"name": "Cornelius"})
 
     /** TODO */
     const [showTimeslots, setShowTimeslots] = useState(true)
@@ -54,18 +51,7 @@ const QueuePage = () => {
         .catch(err => console.log(err))
     } 
 
-    const getCourses = () => {
-      fetch(`http://0.0.0.0:4500/next/${user.id}/courses/`, {
-        "methods" : "GET",
-        headers: {
-            "Content-Type": "applications/json"
-        }
-        })
-        .then(res => res.json())
-        .then(res => setCourses(res.days))
-        .catch(err => console.log(err))
-    }
-
+   
     const monthHandler = (e) => {
     setMonth(e.target.value);
     }
@@ -81,7 +67,7 @@ const QueuePage = () => {
 
           <div className="greet-courses-div">
               <div className="greet-div">
-                  Hi, <span className="greet-name">{user.name}</span>
+                  {/* Hi, <span className="greet-name">{user.name}</span> */}
               </div>
 
                 <div>
@@ -117,7 +103,7 @@ const QueuePage = () => {
                 <select onChange={dayHandler} name="days-select" id="" value={currDay}>
                   {days.map(dy => {
                     return (
-                      <option><Day key={dy.id} id={dy.id} number={dy.number} active={dy.active}></Day></option> 
+                      <option key={dy.id} value={dy.number}>{dy.number}</option> 
                     )}
                   )}
 

@@ -268,40 +268,40 @@ class User(db.Model):
         return update_token == self.update_token
 
     
-#     def serialize(self, include_courses=False, include_timeslots=False):
-#         """
-#         Serialize User object
-#         """
+    def serialize(self, include_courses=False, include_timeslots=False):
+        """
+        Serialize User object
+        """
 
-#         if include_courses and include_timeslots:
-#             return {
-#                 "id": self.id,
-#                 "name": self.name,
-#                 "username": self.username,
-#                 "courses_as_student": [c.serialize() for c in self.courses_as_student],
-#                 "courses_as_instructor": [c.serialize() for c in self.courses_as_instructor],
-#                 "timeslots_as_student": [t.serialize() for t in self.timeslots_as_student],
-#                 "timeslots_as_instructor": [t.serialize() for t in self.timeslots_as_instructor],
-#             }
-#         elif include_courses:
-#             return {
-#                 "id": self.id,
-#                 "name": self.name,
-#                 "username": self.username,
-#                 "courses_as_student": [c.serialize() for c in self.courses_as_student],
-#                 "courses_as_instructor": [c.serialize() for c in self.courses_as_instructor]
-#             }
-#         elif include_timeslots:
-#             return {
-#                 "id": self.id,
-#                 "name": self.name,
-#                 "username": self.username,
-#                 "timeslots_as_student": [t.serialize() for t in self.timeslots_as_student],
-#                 "timeslots_as_instructor": [t.serialize() for t in self.timeslots_as_instructor],
-#             }
-#         else:
-#             return {
-#                 "id": self.id,
-#                 "name": self.name,
-#                 "username": self.username,
-#             }
+        if include_courses and include_timeslots:
+            return {
+                "id": self.id,
+                "name": self.name,
+                "username": self.username,
+                "courses_as_student": [c.serialize() for c in self.courses_as_student],
+                "courses_as_instructor": [c.serialize() for c in self.courses_as_instructor],
+                "timeslots_as_student": [t.serialize() for t in self.timeslots_as_student],
+                "timeslots_as_instructor": [t.serialize() for t in self.timeslots_as_instructor],
+            }
+        elif include_courses:
+            return {
+                "id": self.id,
+                "name": self.name,
+                "username": self.username,
+                "courses_as_student": [c.serialize() for c in self.courses_as_student],
+                "courses_as_instructor": [c.serialize() for c in self.courses_as_instructor]
+            }
+        # elif include_timeslots:
+        #     return {
+        #         "id": self.id,
+        #         "name": self.name,
+        #         "username": self.username,
+        #         "timeslots_as_student": [t.serialize() for t in self.timeslots_as_student],
+        #         "timeslots_as_instructor": [t.serialize() for t in self.timeslots_as_instructor],
+        #     }
+        # else:
+        #     return {
+        #         "id": self.id,
+        #         "name": self.name,
+        #         "username": self.username,
+        #     }
