@@ -16,7 +16,7 @@ const MainPage = () => {
 
     const [showCoursesPage, setShowCoursesPage] = useState(true)
     const [showTimeslotsPage, setShowTimeslotsPage] = useState(false)
-    const [showAddTimeslot, setShowAddTimeslot] = useState(false)
+    const [showAddTimeslot, setShowAddTimeslot] = useState(true)
     
 
     const handleShowTimesotsPage = (course_id) => {
