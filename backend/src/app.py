@@ -285,7 +285,7 @@ def get_timeslots_for_course_on_date(course_id, month_id, day_id):
     date = str(month_id) + "-" + str(day_id)
     
     # Get timeslots by ascending order
-    timeslots = Timeslot.query.filter(Timeslot.date==date and Timeslot.course==course_id).order_by(Timeslot.start_time.asc())
+    timeslots = Timeslot.query.filter(Timeslot.date==date and Timeslot.course==course_id).order_by(Timeslot.start_time_epoch.asc())
     return response(res={"timeslots": [t.serialize() for t in timeslots]}, success=True, code=200)
 
 

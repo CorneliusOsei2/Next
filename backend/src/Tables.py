@@ -103,8 +103,10 @@ class Timeslot(db.Model):
     __tablename__ = "timeslots"
     id = db.Column('id', db.String, default=lambda: str(uuid.uuid4()), primary_key=True)
     date = db.Column(db.String, nullable=False)
-    start_time = db.Column(db.DateTime, nullable=False)
-    end_time = db.Column(db.DateTime, nullable=False)
+    start_time = db.Column(db.String, nullable=False)
+    end_time = db.Column(db.String, nullable=False)
+    start_time_epoch = db.Column(db.Integer, nullable=False)
+    end_time_epoch = db.Column(db.Integer, nullable=False)
     course_id = db.Column(db.String, db.ForeignKey("courses.id"), nullable=False)
     course = db.relationship("Course", cascade="delete")
 
@@ -116,13 +118,25 @@ class Timeslot(db.Model):
         """
         Initialize Timeslot object
         """
+        # Parameters
         start_time_epoch = kwargs.get("start_time")
         end_time_epoch = kwargs.get("end_time")
-        self.start_time = datetime.datetime.fromtimestamp(start_time_epoch)
-        self.end_time = datetime.datetime.fromtimestamp(end_time_epoch)
-        self.course_id = kwargs.get("course_id")
 
-        self.date = str(self.start_time.month) + "-" + str(self.start_time.day)
+        # Getting datetime values
+        dt_start_time = datetime.datetime.fromtimestamp(start_time_epoch)
+        start_time_str = f"{dt_start_time.hour}:{dt_start_time.minute}"
+        dt_start_time_hm = datetime.datetime.strptime(start_time_str, "%H:%M")
+
+        dt_end_time = datetime.datetime.fromtimestamp(end_time_epoch)
+        end_time_str = f"{dt_end_time.hour}:{dt_end_time.minute}"
+        dt_end_time_hm = datetime.datetime.strptime(end_time_str, "%H:%M")
+
+        self.start_time_epoch = start_time_epoch
+        self.end_time_epoch = end_time_epoch
+        self.start_time = dt_start_time_hm.strftime("%I:%M %p")
+        self.end_time = dt_end_time_hm.strftime("%I:%M %p")
+        self.course_id = kwargs.get("course_id")
+        self.date = f"{dt_start_time.month}-{dt_start_time.day}"
 
     def serialize(self):
         """
@@ -131,8 +145,9 @@ class Timeslot(db.Model):
         return {
             "id": self.id,
             "course_id": self.course_id,
-            "start_time": str(self.start_time),
-            "end_time": str(self.end_time),
+            "date": self.date,
+            "start_time": self.start_time,
+            "end_time": self.end_time,
             "total_joined": len(self.students_in_timeslot)
         }
 
