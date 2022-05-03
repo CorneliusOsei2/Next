@@ -153,16 +153,18 @@ def get_courses():
 
 @app.route("/next/<string:user_id>/courses/", methods=["GET"])
 def get_courses_for_user(user_id):
+    # Tested
     """
     Endpoint for getting all courses (as instructor and student) for a user.
     """
     # TODO: Need to add user authentication, should not be able to access if given only user_id
-    user = User.query.filter_by(id=user_id)
-    courses = {
+    user = User.query.filter_by(id=user_id).first()
+    user_info = {
+        "user_id": user_id,
         "courses_as_instructor": [course.serialize() for course in user.courses_as_instructor],
         "courses_as_student":  [course.serialize() for course in user.courses_as_student]
     }
-    return response(res={courses})
+    return response(user_info)
 
 
 @app.route("/next/<string:course_id>/<int:month_id>/<int:day_id>/timeslots/", methods=["GET"])
