@@ -107,9 +107,6 @@ class Timeslot(db.Model):
     end_time = db.Column(db.DateTime, nullable=False)
     course_id = db.Column(db.String, db.ForeignKey("courses.id"), nullable=False)
     course = db.relationship("Course", cascade="delete")
-    
-    # students_joined = db.relationship("User", secondary=StudentJoinedTimeslot, back_populates="queues_joined")
-    # students_completed = db.relationship("User", secondary=StudentCompletedTimeslot)
 
     # Many-to-many relationship
     students_in_timeslot = db.relationship("User", secondary=StudentTimeslot, back_populates="timeslots_as_student")
@@ -136,8 +133,6 @@ class Timeslot(db.Model):
             "course_id": self.course_id,
             "start_time": str(self.start_time),
             "end_time": str(self.end_time)
-            # "students_joined": [s.serialize() for s in self.students_joined],
-            # "students_completed": [s.serialize() for s in self.students_completed]
         }
 
 
