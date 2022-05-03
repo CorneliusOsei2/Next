@@ -11,19 +11,19 @@ def get_user_by_username(username):
   """
   Returns a User object from the DB given a username
   """
-  return User.query.filter_by(User.username == username).first()
+  return User.query.filter(User.username == username).first()
 
 def get_user_by_session_token(session_token):
   """
   Returns a User object from the DB given a session token.
   """
-  return User.query.filter_by(User.session_token == session_token).first()
+  return User.query.filter(User.session_token == session_token).first()
 
 def get_user_by_update_token(update_token):
   """
   Returns a User object from the DB given an update token.
   """
-  return User.query.filter_by(User.update_token == update_token).first()
+  return User.query.filter(User.update_token == update_token).first()
 
 def verify_credentials(username, password):
   """
