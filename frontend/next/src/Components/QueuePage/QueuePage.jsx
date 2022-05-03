@@ -25,10 +25,7 @@ const QueuePage = () => {
     useEffect(
       () => getDays(month))
     
-    useEffect(
-      () => getCourses()
-    )
-
+   
     const getDays = () => {
       
       fetch(`http://0.0.0.0:4500/next/${month}/days/`, {
@@ -55,7 +52,7 @@ const QueuePage = () => {
     } 
 
     const getCourses = () => {
-      fetch(`http://0.0.0.0:4500/next/${user.id}/courses/`, {
+      fetch(`http://0.0.0.0:4500/next/2fe14b93-d7ef-4f6e-afb2-8bba7656f08d/courses/`, {
         "methods" : "GET",
         headers: {
             "Content-Type": "applications/json"
