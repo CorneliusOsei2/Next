@@ -3,6 +3,10 @@ import "./timeslotspage.css"
 import { useEffect } from "react";
 
 // Components
+<<<<<<< HEAD:frontend/next/src/Components/QueuePage/QueuePage.jsx
+import Course from "../Course/Course"
+=======
+>>>>>>> 4eb435e1b04ea9f8481cb2058efce33674b57983:frontend/next/src/Components/TimeslotsPage/TimeslotsPage.jsx
 import Timeslot from "../Timeslot/Timeslot"
 
 
@@ -12,10 +16,8 @@ const TimeslotsPage = ({handleDate}) => {
     const [month, setMonth] = useState(4)
     const [day, setDay] = useState(30)
     const [courses, setCourses] = useState([])
-    const [currCourse, setCurrCourse] = useState({})
+   
 
-    /** TODO */
-    const [user, setUser] = useState({"name": "Cornelius"})
 
     /** TODO */
     const [showTimeslots, setShowTimeslots] = useState(true)
@@ -23,7 +25,14 @@ const TimeslotsPage = ({handleDate}) => {
     useEffect(
       () => getDays(month))
     
+<<<<<<< HEAD:frontend/next/src/Components/QueuePage/QueuePage.jsx
+    // useEffect(
+    //   () => getCourses()
+    // )
+
+=======
    
+>>>>>>> 4eb435e1b04ea9f8481cb2058efce33674b57983:frontend/next/src/Components/TimeslotsPage/TimeslotsPage.jsx
     const getDays = () => {
       
       fetch(`http://0.0.0.0:4500/next/${month}/days/`, {
@@ -38,7 +47,11 @@ const TimeslotsPage = ({handleDate}) => {
     }
 
 
+<<<<<<< HEAD:frontend/next/src/Components/QueuePage/QueuePage.jsx
+   
+=======
 
+>>>>>>> 4eb435e1b04ea9f8481cb2058efce33674b57983:frontend/next/src/Components/TimeslotsPage/TimeslotsPage.jsx
     const monthHandler = (e) => {
       setMonth(e.target.value);
       handleDate(day, month);
@@ -54,7 +67,7 @@ const TimeslotsPage = ({handleDate}) => {
 
           <div className="greet-courses-div">
               <div className="greet-div">
-                  Hi, <span className="greet-name">{user.name}</span>
+                  {/* Hi, <span className="greet-name">{user.name}</span> */}
               </div>
 
                 <div>
@@ -90,7 +103,11 @@ const TimeslotsPage = ({handleDate}) => {
                 <select onChange={dayHandler} name="days-select" id="" value={day}>
                   {days.map(dy => {
                     return (
+<<<<<<< HEAD:frontend/next/src/Components/QueuePage/QueuePage.jsx
+                      <option key={dy.id} value={dy.number}>{dy.number}</option> 
+=======
                       <option key={dy.id} value={dy.number} is_active={dy.active.toString()}>{dy.number}</option> 
+>>>>>>> 4eb435e1b04ea9f8481cb2058efce33674b57983:frontend/next/src/Components/TimeslotsPage/TimeslotsPage.jsx
                     )}
                   )}
 

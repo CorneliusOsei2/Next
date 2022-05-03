@@ -127,6 +127,8 @@ def get_all_users():
     users = User.query.all()
     return response(res={"users": [user.serialize() for user in users]})
 
+<<<<<<< HEAD
+=======
 @app.route("/next/courses/", methods=["GET"])
 def get_courses():
     """
@@ -134,6 +136,7 @@ def get_courses():
     """
     courses = Course.query.all()
     return response(res={"courses": [course.serialize(include_users=True) for course in courses]})
+>>>>>>> 4eb435e1b04ea9f8481cb2058efce33674b57983
 
 @app.route("/next/<string:course_id>/users/", methods=["GET"])
 def get_course_users(course_id):
@@ -148,12 +151,18 @@ def get_course_users(course_id):
     }
     return response(res=res)
 
+<<<<<<< HEAD
+
+@app.route("/next/courses/", methods=["GET"])
+def get_courses():
+=======
 # ##########
 # Public Routes 
 # ##########
 
 @app.route("/next/months/", methods=["GET"])
 def get_months():
+>>>>>>> 4eb435e1b04ea9f8481cb2058efce33674b57983
     """
     Endpoint to get months.
     """
@@ -189,7 +198,11 @@ def get_courses_for_user(user_id):
         "courses_as_instructor": [course.serialize() for course in user.courses_as_instructor],
         "courses_as_student":  [course.serialize() for course in user.courses_as_student]
     }
+<<<<<<< HEAD
+    return response(res={"courses": courses})
+=======
     return response(user_info)
+>>>>>>> 4eb435e1b04ea9f8481cb2058efce33674b57983
 
 
 @app.route("/next/<string:course_id>/<int:month_id>/<int:day_id>/timeslots/", methods=["GET"])
@@ -231,7 +244,7 @@ def join_queue(user_id, timeslot_id):
         return response("user not found", success=False, code=400)
     timeslot = Timeslot.query.filter_by(id=timeslot_id).first()
     if timeslot is None:
-        return response("timeslot not found", success=False, code=400)
+        return response({"Error": "Timeslot not found"}, success=False, code=400)
 
     # Creating instance in queue
     timestamp = Timestamp(user_id=user.id, timeslot_id=timeslot.id)
