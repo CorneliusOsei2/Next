@@ -175,17 +175,24 @@ def get_timeslots_for_course_on_date(course_id, month_id, day_id):
     """
     date = str(month_id) + "-" + str(day_id)
     
-    timeslots = Timeslot.query.filter(Timeslot.date==date and Timeslot.course==course_id)
+    # Get timeslots by ascending order
+    timeslots = Timeslot.query.filter(Timeslot.date==date and Timeslot.course==course_id).order_by(Timeslot.start_time.asc())
     return response(res={"timeslots": [t.serialize() for t in timeslots]}, success=True, code=200)
 
 
 @app.route("/next/queues/<string:timeslot_id>/", methods=["GET"])
 def get_queue(timeslot_id):
-    '''
-    Get queue for particular course on a particular day
-    '''
-    timeslot = Timeslot.query.filter_by(id=timeslot_id)
-    return response(res={"queue": [student.serialize() for student in timeslot.students_joined]}, success=True, code=200)
+    # Tested
+    """
+    Get queue for timeslot given its id.
+    """
+    timeslot = Timeslot.query.filter_by(id=timeslot_id).first()
+    if timeslot is None:
+        return response("timeslot not found", success=False, code=400)
+    
+    # Retrieve timestamps in ascending time order
+    timestamps = Timestamp.query.filter_by(timeslot_id=timeslot_id).order_by(Timestamp.joined_at.asc())
+    return response(res={"queue": [t.serialize() for t in timestamps]}, success=True, code=200)
    
 @app.route("/next/<string:user_id>/<string:timeslot_id>/", methods=["POST"])
 def join_queue(user_id, timeslot_id):
