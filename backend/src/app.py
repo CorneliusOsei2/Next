@@ -77,7 +77,7 @@ def gen_users():
     Helper for auto-generating users.
     """
     for i in range(3):
-        user = User(name=gen_name(), username=gen_netid(i), password="123")
+        user = User(name=gen_name(i), username=gen_netid(i), password="123")
         db.session.add(user)
         db.session.commit()
 
@@ -89,7 +89,7 @@ def gen_courses():
     users = User.query.all()
 
     for i in range(3):
-        course = Course(code=gen_course(), name="Programming")
+        course = Course(code=gen_course(i), name="Programming")
         db.session.add(course)
         db.session.commit()
 
@@ -102,7 +102,6 @@ def gen_courses():
 
 def gen_timeslots():
     pass
-
 
 
 ############################################# DEV ONLY ########################################################
@@ -134,6 +133,14 @@ def get_courses():
     """
     courses = Course.query.all()
     return response(res={"courses": [course.serialize(include_users=True) for course in courses]})
+
+@app.route("/dev/next/timeslots/", methods=["GET"])
+def get_all_timeslots():
+    """
+    (DEV ONLY) Endpoint to get all timeslots.
+    """
+    timeslots = Timeslot.query.all()
+    return response(res={"timeslots": [timeslot.serialize() for timeslot in timeslots]})
 
 @app.route("/next/<string:course_id>/users/", methods=["GET"])
 def get_course_users(course_id):
@@ -181,6 +188,7 @@ def login():
 
 @app.route("/next/session/", methods=["POST"])
 def update_session():
+    # TESTED
     """
     Endpoint for updating a user's session.
     """
@@ -295,19 +303,38 @@ def get_queue(timeslot_id):
     timestamps = Timestamp.query.filter_by(timeslot_id=timeslot_id).order_by(Timestamp.joined_at.asc())
     return response(res={"queue": [t.serialize() for t in timestamps]}, success=True, code=200)
    
-@app.route("/next/<string:user_id>/<string:timeslot_id>/", methods=["POST"])
-def join_queue(user_id, timeslot_id):
+@app.route("/next/courses/<string:course_id>/timeslots/<string:timeslot_id>/", methods=["POST"])
+def join_queue(course_id, timeslot_id):
     # TESTED
     """
     Endpoint for adding user to queue for timeslot id.
     """
-    # TODO: needs user authentication
-    user = User.query.filter_by(id=user_id).first()
-    if user is None:
-        return response("user not found", success=False, code=400)
+    # Get user from session
+    was_successful, session_token = extract_token(request)
+    if not was_successful:
+        return session_token
+    user = users_dao.get_user_by_session_token(session_token)
+    if user is None or not user.verify_session_token(session_token):
+        return response("Invalid session token.", success=False, code=401)
+
+    # Get parameters from request body
+    course = Course.query.filter_by(id=course_id).first()
+    if course is None:
+        return response("course not found", success=False, code=404)
+
     timeslot = Timeslot.query.filter_by(id=timeslot_id).first()
     if timeslot is None:
-        return response({"Error": "Timeslot not found"}, success=False, code=400)
+        return response("timeslot not found", success=False, code=404)
+    
+    # Check if user is in course
+    if user not in course.students:
+        return response("not a student for this course", success=False, code=401)
+    
+    # Check if user is not already in queue
+    optional_timestamp = Timestamp.query.filter(Timestamp.user_id==user.id).first()
+    if optional_timestamp is not None:
+        if optional_timestamp.status != "":
+            return response("already in queue", success=False, code=400)
 
     # Creating instance in queue
     timestamp = Timestamp(user_id=user.id, timeslot_id=timeslot.id)
@@ -316,7 +343,7 @@ def join_queue(user_id, timeslot_id):
 
     return response({"timestamp": timestamp.serialize()}, code=201)
 
-@app.route("/next/<string:course_id>/add/", methods=["POST"])
+@app.route("/next/courses/<string:course_id>/timeslots/add/", methods=["POST"])
 def add_timeslot(course_id):
     # TESTED
     """
@@ -324,6 +351,14 @@ def add_timeslot(course_id):
     1) start_time (in epoch seconds)
     2) end_time (in epoch seconds)
     """
+    # Get user from session
+    was_successful, session_token = extract_token(request)
+    if not was_successful:
+        return session_token
+    user = users_dao.get_user_by_session_token(session_token)
+    if user is None or not user.verify_session_token(session_token):
+        return response("Invalid session token.", success=False, code=401)
+
     body = json.loads(request.data)
     start_time = body.get("start_time")
     end_time = body.get("end_time")
@@ -338,6 +373,10 @@ def add_timeslot(course_id):
 
     if course is None:
         return response("course not found. ", success=False, code=404)
+
+    # Check if user is an instructor for the course
+    if user not in course.instructors:
+        return response("user is not authorized to add a timeslot ", success=False, code=401)
     
     time_slot = Timeslot(start_time=start_time, end_time=end_time, course_id=course_id)
     db.session.add(time_slot)
