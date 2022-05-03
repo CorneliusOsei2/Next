@@ -288,7 +288,6 @@ def get_timeslots_for_course_on_date(course_id, month_id, day_id):
     timeslots = Timeslot.query.filter(Timeslot.date==date and Timeslot.course==course_id).order_by(Timeslot.start_time_epoch.asc())
     return response(res={"timeslots": [t.serialize() for t in timeslots]}, success=True, code=200)
 
-
 @app.route("/next/queues/<string:timeslot_id>/", methods=["GET"])
 def get_queue(timeslot_id):
     # Tested
@@ -396,12 +395,12 @@ def delete_timeslot(timeslot_id):
     return response({"timeslot": timeslot.serialize()})
 
 
-@app.route("/next/timeslots/<string:timeslot_id>/")
-def get_course_timeslots(timeslot_id):
-    # TODO: update to get course for timeslot_id
-    timeslots = Timeslot.query.all()
+# @app.route("/next/<course_id>/<int:day_id>/<int:month_id>/timeslots//")
+# def get_course_timeslots(timeslot_id):
+#     # TODO: update to get course for timeslot_id
+#     timeslots = Timeslot.query.all()
 
-    return response(res=[timeslot.serialize() for timeslot in timeslots])
+#     return response(res=[timeslot.serialize() for timeslot in timeslots])
     
 
 # Added for testing purposes. Drop all tables

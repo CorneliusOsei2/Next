@@ -101,8 +101,8 @@ const TimeslotsPage = ({timeslots, handleDate}) => {
               {timeslots.map(slot => {
                     return (
                       <div className="slot">
-                          <div className="slot-top">{slot.start} - {slot.end}</div>
-                          <div className="slot-mid">{slot.total}</div>
+                          <div className="slot-top">{slot.start_time} - {slot.end_time}</div>
+                          <div className="slot-mid">{slot.total_joined}</div>
                           <div className="slot-bottom"><TimeslotButtons></TimeslotButtons></div>
                       </div> 
                     )}
