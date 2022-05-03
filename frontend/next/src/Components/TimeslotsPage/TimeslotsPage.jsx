@@ -1,18 +1,16 @@
 import { useState } from "react";
-import "./queuepage.css"
+import "./timeslotspage.css"
 import { useEffect } from "react";
 
 // Components
-import Day from "../Day/Day";
-import Course from "../Course/Course"
 import Timeslot from "../Timeslot/Timeslot"
 
 
-const QueuePage = () => {
+const TimeslotsPage = ({handleDate}) => {
 
     const [days, setDays] = useState([])
     const [month, setMonth] = useState(4)
-    const [currDay, setCurrDay] = useState(30)
+    const [day, setDay] = useState(30)
     const [courses, setCourses] = useState([])
     const [currCourse, setCurrCourse] = useState({})
 
@@ -39,38 +37,16 @@ const QueuePage = () => {
         .catch(err => console.log(err))
     }
 
-    const getTimeslots = () =>{
-      fetch(`http://0.0.0.0:4500/next/${month}/days/`, {
-        "methods" : "GET",
-        headers: {
-            "Content-Type": "applications/json"
-        }
-        })
-        .then(res => res.json())
-        .then(res => setDays(res.days))
-        .catch(err => console.log(err))
-    } 
 
-    const getCourses = () => {
-      fetch(`http://0.0.0.0:4500/next/2fe14b93-d7ef-4f6e-afb2-8bba7656f08d/courses/`, {
-        "methods" : "GET",
-        headers: {
-            "Content-Type": "applications/json"
-        }
-        })
-        .then(res => res.json())
-        .then(res => setCourses(res.days))
-        .catch(err => console.log(err))
-    }
 
     const monthHandler = (e) => {
-    setMonth(e.target.value);
+      setMonth(e.target.value);
+      handleDate(day, month);
     }
 
     const dayHandler = (e) => {
-      let day_id = e.target.value
-      getTimeslots(day_id)
-      setCurrDay(day_id)
+      setDay(e.target.value)
+      handleDate(day, month)
     }
   
     return (
@@ -84,7 +60,7 @@ const QueuePage = () => {
                 <div>
                   {courses.map(course => {
                     return (
-                      <Course name={course.name} code={course}></Course>
+                      <div name={course.name} code={course}>tada</div>
                   )}
                   )}
                   
@@ -111,10 +87,10 @@ const QueuePage = () => {
                   <option value="12">December</option>
                 </select>
 
-                <select onChange={dayHandler} name="days-select" id="" value={currDay}>
+                <select onChange={dayHandler} name="days-select" id="" value={day}>
                   {days.map(dy => {
                     return (
-                      <option><Day key={dy.id} id={dy.id} number={dy.number} active={dy.active}></Day></option> 
+                      <option key={dy.id} value={dy.number} is_active={dy.active.toString()}>{dy.number}</option> 
                     )}
                   )}
 
@@ -141,4 +117,4 @@ const QueuePage = () => {
       );
 }
 
-export default QueuePage;
+export default TimeslotsPage;
