@@ -132,7 +132,8 @@ class Timeslot(db.Model):
             "id": self.id,
             "course_id": self.course_id,
             "start_time": str(self.start_time),
-            "end_time": str(self.end_time)
+            "end_time": str(self.end_time),
+            "total_joined": len(self.students_in_timeslot)
         }
 
 

@@ -1,34 +1,42 @@
 import "./addtimeslot.css"
+import { useState } from "react"
 
-const AddTimeslot = ({course_id}) => {
+const AddTimeslot = ({addSlot, timeslot}) => {
+    const [showSlot, setShowSlot] = useState(false)
+    const [start, setStart] = useState()
 
-    const addSlot = (e) => {
+    const handleTimeSubmit = (e) => {
+        setShowSlot(!showSlot)
+        setStart( e.target.from.value)
+
+        const [start_hrs, start_mins, start_secs] = start.split(':');
+        const [end_hrs, end_mins, end_secs] = start.split(':');
+        const startSeconds = (+start_hrs) * 60 * 60 + (+start_mins) * 60 + (+start_secs);
+        const endSeconds = (+end_hrs) * 60 * 60 + (+end_mins) * 60 + (+end_secs);
+
         const slot = {
-            "start_time": e.target.start,
-            "end_time": e.target.end
+            "start_time": startSeconds,
+            "end_time": endSeconds
         }
-
-        fetch(`localhost:4500/{course_id}/add/`,
-            {'method':'POST',
-            headers : {
-            'Content-Type':'application/json'
-            },
-            body:JSON.stringify(slot)
-            })
-        .then(response => response.json())
-        .catch(error => console.log(error))
+        addSlot(slot);
+        e.preventDefault();
     }
-    
 
+  
     return (
         <div>
 
-            <form className="timeslot-form" onSubmit={addSlot}>
-                <input className="form-control" type="time" id="from" name="start" min="09:00" max="18:00" required></input>
-                <input className="form-control" type="time" id="to" name="end" min="09:00" max="18:00" required></input>
+            <form id="timeslot-form" onSubmit={handleTimeSubmit}>
+                <input className="form-control time" type="time" id="from" name="start" required></input>
+                <input className="form-control time" type="time" id="to" name="end" required></input>
 
-                <button>Add</button>
+                <button type="submit">Add</button>
             </form>
+
+            {showSlot && <div className="timeslot-view">
+                <p>Tada</p>
+            </div>}
+
         </div>
     )
 }

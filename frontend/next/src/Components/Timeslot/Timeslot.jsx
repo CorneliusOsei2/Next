@@ -3,7 +3,7 @@ import { useState } from "react"
 import "./timeslot.css"
 import TimeslotButton from "../TimeslotButton/TimeslotButton"
 
-const Timeslot = () => {
+const Timeslot = ({id, start, end}) => {
 
     const [state, setState] = useState("join")
 
