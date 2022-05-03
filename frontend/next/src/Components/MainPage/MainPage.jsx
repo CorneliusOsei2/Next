@@ -26,6 +26,13 @@ const MainPage = () => {
         setShowTimeslotsPage(!showTimeslotsPage)
     }
 
+
+    const handleDate = (day, month) => {
+        setCurrDay(day);
+        setCurrMonth(month);
+        getTimeslots(currCourse)
+    }
+
     const getTimeslots = (course_id) => {
       fetch(`http://0.0.0.0:4500/next/${course_id}/${currMonth}/${currDay}/timeslots/`, {
         "methods" : "GET",
@@ -46,6 +53,7 @@ const MainPage = () => {
             "month": currMonth
         }
 
+        console.log(slot)
         fetch(`http://0.0.0.0:4500/next/${currCourse}/add/`,
             {'method':'POST',
             headers : {
@@ -58,12 +66,6 @@ const MainPage = () => {
         .catch(error => console.log(error))
     }
     
-
-    const handleDate = (day, month) => {
-        setCurrDay(day);
-        setCurrMonth(month);
-        getTimeslots(currCourse)
-    }
 
     return(
         <div>
