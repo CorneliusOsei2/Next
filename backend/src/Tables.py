@@ -272,7 +272,6 @@ class User(db.Model):
         """
         Serialize User object
         """
-
         if include_courses and include_timeslots:
             return {
                 "id": self.id,
