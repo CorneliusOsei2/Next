@@ -155,15 +155,17 @@ class LoginController: UIViewController {
         let _ = loginButton
         view.backgroundColor = .white
         setGradientBackground()
+        setupConstraints()
     }
     
     func setupConstraints() {
-        
+        // add contraints
     }
     
     @objc func loginAction() {
-        let home = HomeController()
-        self.navigationController?.pushViewController(home, animated: true)
+        print("login")
+        UIApplication.shared.windows.first?.rootViewController = CustomTabBarViewController()
+        UIApplication.shared.windows.first?.makeKeyAndVisible()
     }
     
 }
