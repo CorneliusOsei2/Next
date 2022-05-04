@@ -7,7 +7,7 @@ import AddTimeslot from '../AddTimeslot/AddTimeslot';
 
 const MainPage = () => {
 
-    const [user, setUser] = useState({"id": "e2016d04-3812-4476-b796-fae436fd414d"})
+    const [user, setUser] = useState({"id": "426513b5-47be-4266-80c4-f2e495138689"})
     const [currMonth, setCurrMonth] = useState(4)
     const [currDay, setCurrDay] = useState(30)
     const [currCourse, setCurrCourse] = useState("1ecef47c-1632-4d78-a282-7652163f6baa")
@@ -38,7 +38,7 @@ const MainPage = () => {
         setShowCoursesPage(false);
         setShowTimeslotsPage(true);
         setShowAddTimeslot(false);
-        
+
         fetch(`http://0.0.0.0:4500/next/${course_id}/${currMonth}/${currDay}/timeslots/`, {
             "methods" : "GET",
             headers: {
