@@ -276,8 +276,9 @@ def get_courses_for_user():
     }
     return response(user_info)
 
-@app.route("/next/<string:course_id>/<int:month_id>/<int:day_id>/timeslots/", methods=["GET"])
+@app.route("/next/courses/<string:course_id>/<int:month_id>/<int:day_id>/timeslots/", methods=["GET"])
 def get_timeslots_for_course_on_date(course_id, month_id, day_id):
+    # TODO: add authorization; reformat date in url maybe?
     # TESTED
     """
     Get timeslots for a particular course on a particular day
@@ -290,6 +291,7 @@ def get_timeslots_for_course_on_date(course_id, month_id, day_id):
 
 @app.route("/next/queues/<string:timeslot_id>/", methods=["GET"])
 def get_queue(timeslot_id):
+    # TODO: add authorization; add course_id to url to verify if user is able to get queue
     # Tested
     """
     Get queue for timeslot given its id.
@@ -383,9 +385,29 @@ def add_timeslot(course_id):
     
     return response({"timeslot": time_slot.serialize()}, code=201)
 
-@app.route("/next/timeslots/<string:timeslot_id>/", methods=["DELETE"])
-def delete_timeslot(timeslot_id):
+@app.route("/next/courses/<string:course_id>/timeslots/<string:timeslot_id>/", methods=["DELETE"])
+def delete_timeslot(course_id, timeslot_id):
     # Tested
+    """
+    Endpoint for instructor to delete a timeslot for a course.
+    """
+    # Get user from session
+    was_successful, session_token = extract_token(request)
+    if not was_successful:
+        return session_token
+    user = users_dao.get_user_by_session_token(session_token)
+    if user is None or not user.verify_session_token(session_token):
+        return response("Invalid session token.", success=False, code=401) 
+
+    course = Course.query.filter_by(id=course_id).first()
+
+    if course is None:
+        return response("course not found. ", success=False, code=404)
+
+    # Check if user is an instructor for the course
+    if user not in course.instructors:
+        return response("user is not authorized to delete a timeslot ", success=False, code=401)
+
     timeslot = Timeslot.query.filter_by(id=timeslot_id).first()
     if timeslot is None:
         return response("timeslot not found", success=False, code=404)
@@ -394,21 +416,12 @@ def delete_timeslot(timeslot_id):
     db.session.commit()
     return response({"timeslot": timeslot.serialize()})
 
-
-# @app.route("/next/<course_id>/<int:day_id>/<int:month_id>/timeslots//")
-# def get_course_timeslots(timeslot_id):
-#     # TODO: update to get course for timeslot_id
-#     timeslots = Timeslot.query.all()
-
-#     return response(res=[timeslot.serialize() for timeslot in timeslots])
-    
-
 # Added for testing purposes. Drop all tables
 @app.route("/next/drop/", methods=["POST"])
 def drop_table():
-    '''
+    """
     Drop tables
-    '''
+    """
     db.drop_all(bind=None)
 
     return response(res=[], success=True, code=201)
