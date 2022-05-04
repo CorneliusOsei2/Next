@@ -5,10 +5,11 @@ import hashlib
 import os
 import datetime
 
-
+# Initialization
 db = SQLAlchemy()
 
-# Association Tables
+############################################# ASSOCIATION TABLES  ##############################################################
+
 InstructorCourse = db.Table(
   "instructor_course_association",
     db.Model.metadata,
@@ -51,6 +52,8 @@ StudentCompletedTimeslot = db.Table(
   db.Column("timeslot_id", db.String, db.ForeignKey("timeslots.id"))
 )
 
+############################################# MODEL TABLES  ##############################################################
+
 class Month(db.Model):
     __tablename__ = "months"
     id = db.Column('id', db.String, default=lambda: str(uuid.uuid4()), primary_key=True)
@@ -74,6 +77,7 @@ class Month(db.Model):
             "days": [day.serialize() for day in self.days]
         }
 
+
 class Day(db.Model):
     __tablename__ = "days"
     id = db.Column('id', db.String, default=lambda: str(uuid.uuid4()), primary_key=True)
@@ -88,7 +92,6 @@ class Day(db.Model):
         self.number = kwargs.get("number")
         self.active = kwargs.get("active")
         
-
     def serialize(self):
         return {
             "id": self.id,
@@ -96,7 +99,6 @@ class Day(db.Model):
             "number": self.number,
             "active": self.active,
         }
-
 
 
 class Timeslot(db.Model):
@@ -150,7 +152,6 @@ class Timeslot(db.Model):
             "end_time": self.end_time,
             "total_joined": len(self.students_in_timeslot)
         }
-
 
 
 class Timestamp(db.Model):
