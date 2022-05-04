@@ -176,6 +176,7 @@ def login():
     if not was_successful:
         return response("Incorrect username or password", success=False, code=401)
     
+    user = users_dao.renew_session(user.update_token)
     return response(
         {
             "user_id": user.id,
