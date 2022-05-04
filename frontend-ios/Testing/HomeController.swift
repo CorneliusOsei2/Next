@@ -19,15 +19,22 @@ class HomeController: UIViewController {
         
         
         // This spawns in the UIObjects that are to be displayed on the home page.
-        let _ = sprite
+        let _ = icon
         let _ = greeting
+        
+        
+        var stroke = UIView()
+        stroke.bounds = view.bounds.insetBy(dx: -0.5, dy: -0.5)
+        stroke.center = view.center
+        view.addSubview(stroke)
+        
         
         //
         // Code below generates the list of courses based on networking data. courseNames is dummy data.
         //
         
         // Default course color scheme. Can change if you want to.
-        let colorScheme: [CGColor] = [#colorLiteral(red: 0.5568627715, green: 0.3529411852, blue: 0.9686274529, alpha: 1), #colorLiteral(red: 0.8078431487, green: 0.02745098062, blue: 0.3333333433, alpha: 1), #colorLiteral(red: 0.9254902005, green: 0.2352941185, blue: 0.1019607857, alpha: 1), #colorLiteral(red: 0.2588235438, green: 0.7568627596, blue: 0.9686274529, alpha: 1), #colorLiteral(red: 0.721568644, green: 0.8862745166, blue: 0.5921568871, alpha: 1), #colorLiteral(red: 0.1019607857, green: 0.2784313858, blue: 0.400000006, alpha: 1)]
+        let colorScheme: [CGColor] = [#colorLiteral(red: 0.8722902536, green: 0.6250724792, blue: 0.9576098323, alpha: 1), #colorLiteral(red: 0.9619587064, green: 0.6241410375, blue: 0.6233865023, alpha: 1), #colorLiteral(red: 0.9254902005, green: 0.2352941185, blue: 0.1019607857, alpha: 1), #colorLiteral(red: 0.2588235438, green: 0.7568627596, blue: 0.9686274529, alpha: 1), #colorLiteral(red: 0.721568644, green: 0.8862745166, blue: 0.5921568871, alpha: 1), #colorLiteral(red: 0.1019607857, green: 0.2784313858, blue: 0.400000006, alpha: 1)]
         
         var courses:[UIButton] = []
         let courseNames: [String] = ["CS1110", "CS2110", "CS3110", "CS2800", "CS3410"] // [NETWORKING], fill in with course names.
@@ -44,37 +51,7 @@ class HomeController: UIViewController {
             }
         }
         
-        // Everything below here is crap
-        var view = UILabel()
-        view.frame = CGRect(x: 100, y: 100, width: 118.59, height: 120.41)
-        view.backgroundColor = .white
-
-
-        var parent = self.view!
-        parent.addSubview(view)
-        view.translatesAutoresizingMaskIntoConstraints = false
-        view.widthAnchor.constraint(equalToConstant: 118.59).isActive = true
-        view.heightAnchor.constraint(equalToConstant: 120.41).isActive = true
-        view.leadingAnchor.constraint(equalTo: parent.leadingAnchor, constant: 256.41).isActive = true
-        view.topAnchor.constraint(equalTo: parent.topAnchor, constant: 0).isActive = true
-
-
-
-        // Vector 18
-
-        view = UILabel()
-        view.frame = CGRect(x: 0, y: 0, width: 156.51, height: 178.14)
-        view.backgroundColor = .white
-
-
-        parent = self.view!
-        parent.addSubview(view)
-        view.translatesAutoresizingMaskIntoConstraints = false
-        view.widthAnchor.constraint(equalToConstant: 156.51).isActive = true
-        view.heightAnchor.constraint(equalToConstant: 178.14).isActive = true
-        view.leadingAnchor.constraint(equalTo: parent.leadingAnchor, constant: 216.99).isActive = true
-        view.topAnchor.constraint(equalTo: parent.topAnchor, constant: 0).isActive = true
-
+        // I can't get the little drawings in the top right here.
     }
     
     func setGradientBackground() {
@@ -90,7 +67,7 @@ class HomeController: UIViewController {
         self.view.layer.insertSublayer(gradientLayer, at:0)
     }
     
-    lazy var sprite: UIImageView = {
+    lazy var icon: UIImageView = {
         var img = UIImageView()
         img.image = UIImage(named: "Sprite")
         
@@ -99,7 +76,7 @@ class HomeController: UIViewController {
         view.addSubview(img)
         
         NSLayoutConstraint.activate([
-            img.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: -30),
+            img.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 30),
             img.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 20),
             img.heightAnchor.constraint(equalToConstant: CGFloat(60)),
             img.widthAnchor.constraint(equalToConstant: CGFloat(60))
@@ -162,15 +139,16 @@ class HomeController: UIViewController {
         var hello = UILabel()
         hello.text = "Hi, [Name]"
         hello.textColor = #colorLiteral(red: 0, green: 0, blue: 0, alpha: 1)
-        hello.font = .systemFont(ofSize: 36, weight: .bold)
+        hello.font = UIFont(name: "Futura", size: 30.0)
+//        hello.font = .systemFont(ofSize: 36, weight: .bold)
         
         hello.translatesAutoresizingMaskIntoConstraints = false
         
         view.addSubview(hello)
         
         NSLayoutConstraint.activate([
-            hello.leadingAnchor.constraint(equalTo: sprite.leadingAnchor, constant: 0),
-            hello.topAnchor.constraint(equalTo: sprite.bottomAnchor, constant: 20),
+            hello.leadingAnchor.constraint(equalTo: icon.leadingAnchor, constant: 0),
+            hello.topAnchor.constraint(equalTo: icon.bottomAnchor, constant: 20),
             hello.centerXAnchor.constraint(equalTo: view.safeAreaLayoutGuide.centerXAnchor, constant: 0)
         ])
 

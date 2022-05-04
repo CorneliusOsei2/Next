@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		652812EF282076C5004CA27D /* HomeController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 652812EE282076C4004CA27D /* HomeController.swift */; };
+		656938062822DAAF00E1518F /* CourseController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 656938052822DAAF00E1518F /* CourseController.swift */; };
 		65D736A4281DE5F80092AAA6 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65D736A3281DE5F80092AAA6 /* AppDelegate.swift */; };
 		65D736A6281DE5F80092AAA6 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65D736A5281DE5F80092AAA6 /* SceneDelegate.swift */; };
 		65D736A8281DE5F80092AAA6 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65D736A7281DE5F80092AAA6 /* ViewController.swift */; };
@@ -19,6 +20,7 @@
 
 /* Begin PBXFileReference section */
 		652812EE282076C4004CA27D /* HomeController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeController.swift; sourceTree = "<group>"; };
+		656938052822DAAF00E1518F /* CourseController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CourseController.swift; sourceTree = "<group>"; };
 		65D736A0281DE5F80092AAA6 /* Testing.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Testing.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		65D736A3281DE5F80092AAA6 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		65D736A5281DE5F80092AAA6 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -65,6 +67,7 @@
 				65D736BB281DF1050092AAA6 /* LoginController.swift */,
 				652812EE282076C4004CA27D /* HomeController.swift */,
 				65D736A7281DE5F80092AAA6 /* ViewController.swift */,
+				656938052822DAAF00E1518F /* CourseController.swift */,
 				65D736A9281DE5F80092AAA6 /* Main.storyboard */,
 				65D736AC281DE5FA0092AAA6 /* Assets.xcassets */,
 				65D736AE281DE5FA0092AAA6 /* LaunchScreen.storyboard */,
@@ -145,6 +148,7 @@
 			files = (
 				65D736A8281DE5F80092AAA6 /* ViewController.swift in Sources */,
 				65D736BC281DF1050092AAA6 /* LoginController.swift in Sources */,
+				656938062822DAAF00E1518F /* CourseController.swift in Sources */,
 				65D736A4281DE5F80092AAA6 /* AppDelegate.swift in Sources */,
 				65D736A6281DE5F80092AAA6 /* SceneDelegate.swift in Sources */,
 				652812EF282076C5004CA27D /* HomeController.swift in Sources */,

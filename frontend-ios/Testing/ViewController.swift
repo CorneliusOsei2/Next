@@ -16,7 +16,7 @@ class ViewController: UIViewController {
         let _ = loginButton
         let _ = developerMode
         let _ = randomText
-        navigationController?.isNavigationBarHidden = false
+        navigationController?.isNavigationBarHidden = true
         navigationController?.navigationBar.prefersLargeTitles = true
         navigationController?.navigationBar.largeTitleTextAttributes = [
             .foregroundColor: UIColor.black
