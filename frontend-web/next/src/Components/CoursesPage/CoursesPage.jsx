@@ -10,7 +10,7 @@ const CoursesPage = ({getTimeslots, user_id}) => {
     }
 
     const getCourses = () => {
-        fetch(`http://0.0.0.0:4500/next/${user_id}/courses/`, {
+        fetch(`http://0.0.0.0:4500/next/dev/${user_id}/courses/`, {
           "methods" : "GET",
           headers: {
               "Content-Type": "applications/json"
