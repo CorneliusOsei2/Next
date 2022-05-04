@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Bucket
+   uuid = "AAA5DEFF-088B-4B07-B23A-9FEFB7C8B5DD"
+   type = "1"
+   version = "2.0">
+   <Breakpoints>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "54414AB7-7C16-42D0-92F3-9347E4D3CBE4"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Testing/ViewController.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "65"
+            endingLineNumber = "65"
+            landmarkName = "developerMode"
+            landmarkType = "24">
+            <Locations>
+               <Location
+                  uuid = "54414AB7-7C16-42D0-92F3-9347E4D3CBE4 - f557ba9f6cff4540"
+                  shouldBeEnabled = "No"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "Testing.ViewController.developerMode.getter : __C.UIButton"
+                  moduleName = "Testing"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/derek/appdev/ios/Testing/Testing/ViewController.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "45"
+                  endingLineNumber = "45"
+                  offsetFromSymbolStart = "152">
+               </Location>
+               <Location
+                  uuid = "54414AB7-7C16-42D0-92F3-9347E4D3CBE4 - 90d25e71aff0d86d"
+                  shouldBeEnabled = "No"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #1 () -&gt; __C.UIButton in Testing.ViewController.developerMode.getter : __C.UIButton"
+                  moduleName = "Testing"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/derek/appdev/ios/Testing/Testing/ViewController.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "46"
+                  endingLineNumber = "46"
+                  offsetFromSymbolStart = "60">
+               </Location>
+               <Location
+                  uuid = "54414AB7-7C16-42D0-92F3-9347E4D3CBE4 - 287ff5f985d652bc"
+                  shouldBeEnabled = "No"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "Testing.ViewController.developerMode.setter : __C.UIButton"
+                  moduleName = "Testing"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/derek/appdev/ios/Testing/Testing/ViewController.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "45"
+                  endingLineNumber = "45"
+                  offsetFromSymbolStart = "132">
+               </Location>
+               <Location
+                  uuid = "54414AB7-7C16-42D0-92F3-9347E4D3CBE4 - 47fbbd505aee8c80"
+                  shouldBeEnabled = "No"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "Testing.ViewController.developerMode.modify : __C.UIButton"
+                  moduleName = "Testing"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/derek/appdev/ios/Testing/Testing/ViewController.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "0"
+                  endingLineNumber = "0"
+                  offsetFromSymbolStart = "16">
+               </Location>
+               <Location
+                  uuid = "54414AB7-7C16-42D0-92F3-9347E4D3CBE4 - 4c8bfa608158d8bc"
+                  shouldBeEnabled = "No"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "Testing.ViewController.developerMode.modify : __C.UIButton with unmangled suffix &quot;.resume.0&quot;"
+                  moduleName = "Testing"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/derek/appdev/ios/Testing/Testing/ViewController.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "45"
+                  endingLineNumber = "45"
+                  offsetFromSymbolStart = "36">
+               </Location>
+               <Location
+                  uuid = "54414AB7-7C16-42D0-92F3-9347E4D3CBE4 - 2df8314268f3ccc0"
+                  shouldBeEnabled = "No"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "Testing.ViewController.init(nibName: Swift.Optional&lt;Swift.String&gt;, bundle: Swift.Optional&lt;__C.NSBundle&gt;) -&gt; Testing.ViewController"
+                  moduleName = "Testing"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/derek/appdev/ios/Testing/Testing/ViewController.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "45"
+                  endingLineNumber = "45"
+                  offsetFromSymbolStart = "116">
+               </Location>
+               <Location
+                  uuid = "54414AB7-7C16-42D0-92F3-9347E4D3CBE4 - b49b082ced874756"
+                  shouldBeEnabled = "No"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "Testing.ViewController.init(coder: __C.NSCoder) -&gt; Swift.Optional&lt;Testing.ViewController&gt;"
+                  moduleName = "Testing"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/derek/appdev/ios/Testing/Testing/ViewController.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "45"
+                  endingLineNumber = "45"
+                  offsetFromSymbolStart = "92">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+   </Breakpoints>
+</Bucket>
