@@ -125,7 +125,7 @@ class HomeController: UIViewController {
     }()
     
     @objc func courseButtonPress() {
-        let coursepage = LoginaController()
+        let coursepage = LoginController()
         self.navigationController?.pushViewController(coursepage, animated: true)
     }
 }
