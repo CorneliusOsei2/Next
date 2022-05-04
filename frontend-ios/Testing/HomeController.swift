@@ -17,9 +17,34 @@ class HomeController: UIViewController {
 //        view.backgroundColor = #colorLiteral(red: 0.2318199277, green: 0.8869469762, blue: 0.7684106231, alpha: 1)
         print("Home Controller!")
         
+        
+        // This spawns in the UIObjects that are to be displayed on the home page.
         let _ = sprite
         let _ = greeting
         
+        //
+        // Code below generates the list of courses based on networking data. courseNames is dummy data.
+        //
+        
+        // Default course color scheme. Can change if you want to.
+        let colorScheme: [CGColor] = [#colorLiteral(red: 0.5568627715, green: 0.3529411852, blue: 0.9686274529, alpha: 1), #colorLiteral(red: 0.8078431487, green: 0.02745098062, blue: 0.3333333433, alpha: 1), #colorLiteral(red: 0.9254902005, green: 0.2352941185, blue: 0.1019607857, alpha: 1), #colorLiteral(red: 0.2588235438, green: 0.7568627596, blue: 0.9686274529, alpha: 1), #colorLiteral(red: 0.721568644, green: 0.8862745166, blue: 0.5921568871, alpha: 1), #colorLiteral(red: 0.1019607857, green: 0.2784313858, blue: 0.400000006, alpha: 1)]
+        
+        var courses:[UIButton] = []
+        let courseNames: [String] = ["CS1110", "CS2110", "CS3110", "CS2800", "CS3410"] // [NETWORKING], fill in with course names.
+        let numberOfCourses = courseNames.count // [NETWORKING], put in the number of courses.
+        
+        assert(courseNames.count == numberOfCourses)
+        
+        for i in 0...numberOfCourses - 1 {
+            if (i == 0) {
+                courses.append(createAButton(constraint1: greeting.bottomAnchor, constraint2: 30, text: courseNames[i], color: colorScheme[Int.random(in: 0..<colorScheme.count)]))
+            }
+            else {
+                courses.append(createAButton(constraint1: courses[i-1].bottomAnchor, constraint2: 30, text: courseNames[i], color: colorScheme[Int.random(in: 0..<colorScheme.count)]))
+            }
+        }
+        
+        // Everything below here is crap
         var view = UILabel()
         view.frame = CGRect(x: 100, y: 100, width: 118.59, height: 120.41)
         view.backgroundColor = .white
@@ -83,9 +108,37 @@ class HomeController: UIViewController {
         return img
     }()
     
+    func createAButton(constraint1: NSLayoutYAxisAnchor, constraint2: Int, text: String, color: CGColor = #colorLiteral(red: 0.2318199277, green: 0.8869469762, blue: 0.7684106231, alpha: 1)) -> UIButton {
+        let button = UIButton()
+        button.setTitle(text, for: .normal)
+        button.titleLabel?.font = UIFont.systemFont(ofSize: 20, weight: UIFont.Weight.bold)
+        button.contentHorizontalAlignment = .left
+        button.contentEdgeInsets = UIEdgeInsets(top: 0, left: 10, bottom: 0, right: 0)
+        button.setTitleColor(.black, for: .normal)
+        button.layer.backgroundColor = color
+        button.layer.borderWidth = 1
+        button.layer.borderColor = color
+        button.layer.cornerRadius = 20
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.addTarget(self, action: #selector(courseButtonPress), for: .touchUpInside)
+        view.addSubview(button)
+        
+        NSLayoutConstraint.activate([
+            button.topAnchor.constraint(equalTo: constraint1, constant: CGFloat(constraint2)),
+            button.centerXAnchor.constraint(equalTo: view.safeAreaLayoutGuide.centerXAnchor, constant: 0),
+            button.widthAnchor.constraint(equalToConstant: 350),
+            button.heightAnchor.constraint(equalToConstant: 75)
+        ])
+        
+        return button
+    }
+    
     lazy var sampleCourse1: UIButton = {
         let button = UIButton()
         button.setTitle("CS1110", for: .normal)
+        button.titleLabel?.font = UIFont.systemFont(ofSize: 20, weight: UIFont.Weight.bold)
+        button.contentHorizontalAlignment = .left
+        button.contentEdgeInsets = UIEdgeInsets(top: 0, left: 10, bottom: 0, right: 0)
         button.setTitleColor(.black, for: .normal)
         button.layer.backgroundColor = #colorLiteral(red: 0.2318199277, green: 0.8869469762, blue: 0.7684106231, alpha: 1)
         button.layer.borderWidth = 1
@@ -97,10 +150,10 @@ class HomeController: UIViewController {
         view.addSubview(button)
         
         NSLayoutConstraint.activate([
-            button.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
+            button.topAnchor.constraint(equalTo: greeting.bottomAnchor, constant: 20),
             button.centerXAnchor.constraint(equalTo: view.safeAreaLayoutGuide.centerXAnchor, constant: 0),
-            button.widthAnchor.constraint(equalToConstant: 175),
-            button.heightAnchor.constraint(equalToConstant: 40)
+            button.widthAnchor.constraint(equalToConstant: 350),
+            button.heightAnchor.constraint(equalToConstant: 75)
         ])
         return button
     }()
@@ -125,7 +178,7 @@ class HomeController: UIViewController {
     }()
     
     @objc func courseButtonPress() {
-        let coursepage = LoginaController()
+        let coursepage = CourseController()
         self.navigationController?.pushViewController(coursepage, animated: true)
     }
 }
