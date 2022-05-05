@@ -1,11 +1,7 @@
-from crypt import methods
-import enum
 import json
-from time import time
 from flask import Flask, request
 from Tables import db, Day, Month, Timeslot, User, Course, Timestamp
 from gen import month_names, gen_name, gen_netid, gen_course
-from utils import response, Debug
 from flask_cors import CORS
 from datetime import date
 import json
@@ -16,16 +12,17 @@ from datetime import datetime
 app = Flask(__name__)
 CORS(app)
 
-# DB config
-db_filename = "next.db"
-app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///%s" % db_filename
-app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
-app.config["SQLALCHEMY_ECHO"] = True
-db.init_app(app)
-with app.app_context():
-    db.create_all()
-
-
+def init_db():
+    # DB config
+    db_filename = "next.db"
+    app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///%s" % db_filename
+    app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
+    app.config["SQLALCHEMY_ECHO"] = True
+    db.init_app(app)
+    with app.app_context():
+        db.create_all()
+    
+   
 ############################################# HELPERS  ##############################################################
 
 def extract_token(request):
@@ -99,6 +96,7 @@ def gen_courses():
             db.session.commit()
 
 
+
 ############################################# DEV ONLY ENDPOINTS ######################################################
 
 @app.route("/", methods=["GET"])
@@ -107,8 +105,6 @@ def fill_database():
     Endpoint for generating data for database.
     """
     try:
-        gen_days()
-        gen_courses()
         return "Done",200
     except Exception as e:
         return e
@@ -434,7 +430,7 @@ def delete_timeslot(course_id, timeslot_id):
     db.session.commit()
     return response({"timeslot": timeslot.serialize()}, success=True, code=200)
 
-# Added for testing purposes. Drop all tables
+######################################## Added for testing purposes. Drop all tables #############################################
 @app.route("/next/drop/", methods=["POST"])
 def drop_tables():
     """
@@ -444,5 +440,19 @@ def drop_tables():
     return response(res=[], success=True, code=201)
 
 
+########################################## Fill our database! #######################################################
+
+@app.before_first_request
+def fill_database():
+    '''
+    Initialize database with dummy data
+    '''
+    gen_days()
+    gen_courses()
+
+
 if __name__ == '__main__':
+    init_db()
     app.run(host='0.0.0.0', port=4500)
+
+    
