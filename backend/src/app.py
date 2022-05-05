@@ -8,7 +8,6 @@ from gen import month_names, gen_name, gen_netid, gen_course
 from utils import response, Debug
 from flask_cors import CORS
 from datetime import date
-import requests
 import json
 import users_dao
 from datetime import datetime
@@ -27,9 +26,8 @@ with app.app_context():
     db.create_all()
 
 
-
-
 ############################################# HELPERS  ##############################################################
+
 def extract_token(request):
     """
     Helper to extract token from header of request.
@@ -43,15 +41,15 @@ def extract_token(request):
     return True, bearer_token
 
 
-
 ############################################# HELPERS FOR INTITIALIZATION #############################################
+
 def gen_months():
     """
     Helper for auto-generateing months.
     """
     months = month_names()
-
     i = 1
+
     for month_name, num_days in months.items():
         month = Month(name=month_name, number = i, num_days = num_days, active= True)
         db.session.add(month)
@@ -100,11 +98,9 @@ def gen_courses():
             db.session.add(course)
             db.session.commit()
 
-def gen_timeslots():
-    pass
 
+############################################# DEV ONLY ENDPOINTS ######################################################
 
-############################################# DEV ONLY ########################################################
 @app.route("/", methods=["GET"])
 def fill_database():
     """
@@ -113,10 +109,10 @@ def fill_database():
     try:
         gen_days()
         gen_courses()
-        
-        return "Done"
+        return "Done",200
     except Exception as e:
         return e
+
 
 @app.route("/dev/next/users/", methods=["GET"])
 def get_all_users():
@@ -124,7 +120,8 @@ def get_all_users():
     (DEV ONLY) Endpoint to get all users.
     """
     users = User.query.all()
-    return response(res={"users": [user.serialize() for user in users]})
+    return response(res={"users": [user.serialize() for user in users]}, success=True, code=200)
+
 
 @app.route("/dev/next/courses/", methods=["GET"])
 def get_courses():
@@ -132,7 +129,8 @@ def get_courses():
     (DEV ONLY) Endpoint to get all courses.
     """
     courses = Course.query.all()
-    return response(res={"courses": [course.serialize(include_users=True) for course in courses]})
+    return response(res={"courses": [course.serialize(include_users=True) for course in courses]}, success=True, code=200)
+
 
 @app.route("/dev/next/timeslots/", methods=["GET"])
 def get_all_timeslots():
@@ -140,7 +138,8 @@ def get_all_timeslots():
     (DEV ONLY) Endpoint to get all timeslots.
     """
     timeslots = Timeslot.query.all()
-    return response(res={"timeslots": [timeslot.serialize() for timeslot in timeslots]})
+    return response(res={"timeslots": [timeslot.serialize() for timeslot in timeslots]}, success=True, code=200)
+
 
 @app.route("/next/<string:course_id>/users/", methods=["GET"])
 def get_course_users(course_id):
@@ -153,14 +152,13 @@ def get_course_users(course_id):
         "instructors": [instructor.serialize() for instructor in instructors],
         "students": [student.serialize() for student in students]
     }
-    return response(res=res)
+    return response(res=res, success=True, code=200)
 
 
-############################################# PUBLIC ROUTES ##############################################
+################################################## PUBLIC ROUTES ##############################################
 
 @app.route("/next/login/", methods=["POST"])
 def login():
-    # TESTED
     """
     Endpoint for logging in a user.
     """
@@ -178,13 +176,13 @@ def login():
     
     user = users_dao.renew_session(user.update_token)
     return response(
-        {
+        res={
             "user_id": user.id,
             "session_token": user.session_token,
             "session_expiration": str(user.session_expiration),
             "update_token": user.update_token
 
-        }, code=201)
+        }, success=True, code=201)
 
 
 @app.route("/next/session/", methods=["POST"])
@@ -207,13 +205,12 @@ def update_session():
             "session_token": user.session_token,
             "session_expiration": str(user.session_expiration),
             "update_token": user.update_token
-        }, code=201
+        }, success=True, code=201
     )
 
 
 @app.route("/next/logout/", methods=["POST"])
 def logout():
-    # TESTED
     """
     Endpoint to log out a user.
     """
@@ -228,7 +225,7 @@ def logout():
     user.session_expiration = datetime.now()
     db.session.commit()
 
-    return response({"response": "Successfully logged out"}, code=201)
+    return response({"response": "Successfully logged out"}, success=True, code=201)
 
 
 @app.route("/next/months/", methods=["GET"])
@@ -237,7 +234,7 @@ def get_months():
     Endpoint to get months.
     """
     months = Month.query.all()
-    return response(res={"months": [month.serialize() for month in months]})
+    return response(res={"months": [month.serialize() for month in months]}, success=True, code=200)
 
 
 @app.route("/next/<string:month_number>/days/", methods=["GET"])
@@ -253,7 +250,7 @@ def get_days(month_number):
             day.active = False
             db.session.commit()
         
-    return response(res={"days": [day.serialize() for day in month.days]})
+    return response(res={"days": [day.serialize() for day in month.days]}, success=True, code=200)
 
 @app.route("/next/courses/", methods=["GET"])
 def get_courses_for_user():
@@ -275,7 +272,7 @@ def get_courses_for_user():
         "courses_as_instructor": [course.serialize() for course in user.courses_as_instructor],
         "courses_as_student":  [course.serialize() for course in user.courses_as_student]
     }
-    return response(user_info)
+    return response(res=user_info, success=True, code=200)
 
 @app.route("/next/courses/<string:course_id>/<int:month_id>/<int:day_id>/timeslots/", methods=["GET"])
 def get_timeslots_for_course_on_date(course_id, month_id, day_id):
@@ -343,7 +340,7 @@ def join_queue(course_id, timeslot_id):
     db.session.add(timestamp)
     db.session.commit()
 
-    return response({"timestamp": timestamp.serialize()}, code=201)
+    return response({"timestamp": timestamp.serialize()}, success=True, code=201)
 
 @app.route("/next/courses/<string:course_id>/timeslots/add/", methods=["POST"])
 def add_timeslot(course_id):
@@ -357,6 +354,7 @@ def add_timeslot(course_id):
     was_successful, session_token = extract_token(request)
     if not was_successful:
         return session_token
+
     user = users_dao.get_user_by_session_token(session_token)
     if user is None or not user.verify_session_token(session_token):
         return response("Invalid session token.", success=False, code=401)
@@ -367,12 +365,10 @@ def add_timeslot(course_id):
 
     if start_time is None or end_time is None:
         return response("Must provide both [start_time] and [end_time]. ", success=False, code=404) 
-
     if start_time >= end_time:
         return response("Invalid time range. ", success=False, code=404)
 
     course = Course.query.filter_by(id=course_id).first()
-
     if course is None:
         return response("course not found. ", success=False, code=404)
 
@@ -384,7 +380,7 @@ def add_timeslot(course_id):
     db.session.add(time_slot)
     db.session.commit()
     
-    return response({"timeslot": time_slot.serialize()}, code=201)
+    return response({"timeslot": time_slot.serialize()}, success=True, code=201)
 
 @app.route("/next/courses/<string:course_id>/timeslots/<string:timeslot_id>/", methods=["DELETE"])
 def delete_timeslot(course_id, timeslot_id):
@@ -396,12 +392,12 @@ def delete_timeslot(course_id, timeslot_id):
     was_successful, session_token = extract_token(request)
     if not was_successful:
         return session_token
+
     user = users_dao.get_user_by_session_token(session_token)
     if user is None or not user.verify_session_token(session_token):
         return response("Invalid session token.", success=False, code=401) 
 
     course = Course.query.filter_by(id=course_id).first()
-
     if course is None:
         return response("course not found. ", success=False, code=404)
 
@@ -415,16 +411,15 @@ def delete_timeslot(course_id, timeslot_id):
     
     db.session.delete(timeslot)
     db.session.commit()
-    return response({"timeslot": timeslot.serialize()})
+    return response({"timeslot": timeslot.serialize()}, success=True, code=200)
 
 # Added for testing purposes. Drop all tables
 @app.route("/next/drop/", methods=["POST"])
-def drop_table():
+def drop_tables():
     """
-    Drop tables
+    Drop all tables
     """
     db.drop_all(bind=None)
-
     return response(res=[], success=True, code=201)
 
 
