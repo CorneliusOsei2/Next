@@ -1,3 +1,4 @@
+from email.policy import default
 from flask_sqlalchemy import SQLAlchemy
 import bcrypt
 import uuid
@@ -63,11 +64,13 @@ class Month(db.Model):
     active = db.Column(db.Boolean, nullable=False)
     days = db.relationship("Day", cascade="delete")
 
+
     def __init__(self, **kwargs):
         self.name = kwargs.get("name")
         self.number = kwargs.get("number")
         self.num_days = kwargs.get("num_days")
         self.active = kwargs.get("active")
+
 
     def serialize(self):
         return {
@@ -86,12 +89,14 @@ class Day(db.Model):
     number = db.Column(db.Integer, nullable=False)
     active = db.Column(db.Boolean, nullable=False)
    
+
     def __init__(self, **kwargs):
         self.month_id = kwargs.get("month_id")
         self.month_name = kwargs.get("month_name")
         self.number = kwargs.get("number")
         self.active = kwargs.get("active")
         
+
     def serialize(self):
         return {
             "id": self.id,
@@ -128,7 +133,6 @@ class Timeslot(db.Model):
         dt_start_time = datetime.datetime.fromtimestamp(start_time_epoch)
         start_time_str = f"{dt_start_time.hour}:{dt_start_time.minute}"
         dt_start_time_hm = datetime.datetime.strptime(start_time_str, "%H:%M")
-
         dt_end_time = datetime.datetime.fromtimestamp(end_time_epoch)
         end_time_str = f"{dt_end_time.hour}:{dt_end_time.minute}"
         dt_end_time_hm = datetime.datetime.strptime(end_time_str, "%H:%M")
@@ -162,12 +166,14 @@ class Timestamp(db.Model):
     joined_at = db.Column(db.DateTime, nullable=False)
     status = db.Column(db.String, nullable=False)
    
+
     def __init__(self, **kwargs) -> None:
         self.user_id = kwargs.get("user_id")
         self.timeslot_id = kwargs.get("timeslot_id")
         self.joined_at = datetime.datetime.now()
         self.status = "joined"  # Accepted values ["joined", "completed", ""]
     
+
     def serialize(self):
         return {
             "user_id": self.timeslot_id,
@@ -181,10 +187,12 @@ class Course(db.Model):
     id = db.Column('id', db.String, default=lambda: str(uuid.uuid4()), primary_key=True)
     name = db.Column(db.String, nullable=False)
     code = db.Column(db.String, nullable=False)
+    color = db.Column(db.String, default="#ff0000")
 
     # Many-to-many relationship
     students = db.relationship("User", secondary=StudentCourse, back_populates="courses_as_student")
     instructors = db.relationship("User", secondary=InstructorCourse, back_populates="courses_as_instructor")
+
 
     def __init__(self, **kwargs):
         """
@@ -193,24 +201,25 @@ class Course(db.Model):
         self.code = kwargs.get("code")
         self.name = kwargs.get("name")
 
+
     def serialize(self, include_users=False):
         """
         Serialize Course object
         """
+        out = {
+            "id":self.id,
+            "code":self.code,
+            "name":self.name,
+            "color": self.color
+        }
         if include_users:
-            return {
-                "id":self.id,
-                "code":self.code,
-                "name":self.name,
-                "instructors": [i.serialize() for i in self.instructors],
-                "students": [s.serialize() for s in self.students]
-            }
-        else:
-            return {
-                "id":self.id,
-                "code":self.code,
-                "name":self.name
-            }
+            out["instructors"] = [i.serialize() for i in self.instructors]
+            out["students"] = [s.serialize() for s in self.students]
+        
+        return out
+                
+        
+       
 
 
 class User(db.Model):
@@ -230,9 +239,9 @@ class User(db.Model):
     # Many-to-many Relationships
     courses_as_student = db.relationship("Course", secondary=StudentCourse, back_populates="students")
     courses_as_instructor = db.relationship("Course", secondary=InstructorCourse, back_populates="instructors")
-    
     timeslots_as_student = db.relationship("Timeslot", secondary=StudentTimeslot, back_populates="students_in_timeslot")
     timeslots_as_instructor = db.relationship("Timeslot", secondary=InstructorTimeslot, back_populates="instructors_in_timeslot")
+
 
     def __init__(self, **kwargs):
         """
@@ -244,11 +253,13 @@ class User(db.Model):
         self.password_digest = bcrypt.hashpw(kwargs.get("password").encode("utf8"), bcrypt.gensalt(rounds=13))
         self.renew_session()
 
+
     def _urlsafe_base_64(self):
         """
         Randomly generates hashed tokens (for session/update tokens)
         """
         return hashlib.sha1(os.urandom(64)).hexdigest()
+
 
     def renew_session(self):
         """
@@ -261,17 +272,20 @@ class User(db.Model):
         self.session_expiration = datetime.datetime.now() + datetime.timedelta(days=1)
         self.update_token = self._urlsafe_base_64()
 
+
     def verify_password(self, password):
         """
         Verifies password for a user.
         """
         return bcrypt.checkpw(password.encode("utf8"), self.password_digest)
 
+
     def verify_session_token(self, session_token):
         """
         Verifies session token of a user.
         """
         return session_token == self.session_token and datetime.datetime.now() < self.session_expiration
+
 
     def verify_update_token(self, update_token):
         """
@@ -280,63 +294,24 @@ class User(db.Model):
         return update_token == self.update_token
 
     
-    # def serialize(self, include_courses=False, include_timeslots=False):
-    #     """
-    #     Serialize User object
-    #     """
-    #     if include_courses and include_timeslots:
-    #         return {
-    #             "id": self.id,
-    #             "name": self.name,
-    #             "username": self.username,
-    #             "courses_as_student": [c.serialize() for c in self.courses_as_student],
-    #             "courses_as_instructor": [c.serialize() for c in self.courses_as_instructor],
-    #             "timeslots_as_student": [t.serialize() for t in self.timeslots_as_student],
-    #             "timeslots_as_instructor": [t.serialize() for t in self.timeslots_as_instructor],
-    #         }
-    #     elif include_courses:
-    #         return {
-    #             "id": self.id,
-    #             "name": self.name,
-    #             "username": self.username,
-    #             "courses_as_student": [c.serialize() for c in self.courses_as_student],
-    #             "courses_as_instructor": [c.serialize() for c in self.courses_as_instructor]
-    #         }
-    
     def serialize(self, include_courses=False, include_timeslots=False):
         """
         Serialize User object
         """
-
-        if include_courses and include_timeslots:
-            return {
+        out = {
                 "id": self.id,
                 "name": self.name,
-                "username": self.username,
-                "courses_as_student": [c.serialize() for c in self.courses_as_student],
-                "courses_as_instructor": [c.serialize() for c in self.courses_as_instructor],
-                "timeslots_as_student": [t.serialize() for t in self.timeslots_as_student],
-                "timeslots_as_instructor": [t.serialize() for t in self.timeslots_as_instructor],
+                "username": self.username
             }
-        elif include_courses:
-            return {
-                "id": self.id,
-                "name": self.name,
-                "username": self.username,
-                "courses_as_student": [c.serialize() for c in self.courses_as_student],
-                "courses_as_instructor": [c.serialize() for c in self.courses_as_instructor]
-            }
-        elif include_timeslots:
-            return {
-                "id": self.id,
-                "name": self.name,
-                "username": self.username,
-                "timeslots_as_student": [t.serialize() for t in self.timeslots_as_student],
-                "timeslots_as_instructor": [t.serialize() for t in self.timeslots_as_instructor],
-            }
-        else:
-            return {
-                "id": self.id,
-                "name": self.name,
-                "username": self.username,
-            }
+            
+        if include_courses:
+            out["courses_as_student"] = [c.serialize() for c in self.courses_as_student]
+            out["courses_as_instructor"] = [c.serialize() for c in self.courses_as_instructor]
+            
+        if include_timeslots:
+            out["timeslots_as_student"] = [t.serialize() for t in self.timeslots_as_student]
+            out["timeslots_as_instructor"] = [t.serialize() for t in self.timeslots_as_instructor]
+        
+        return out
+            
+        

@@ -10,6 +10,7 @@
 		33BD82F42823065C00A6E23D /* CourseCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33BD82F32823065C00A6E23D /* CourseCollectionViewCell.swift */; };
 		33BD82F828238B0000A6E23D /* Manager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33BD82F628238B0000A6E23D /* Manager.swift */; };
 		33BD82F928238B0000A6E23D /* Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33BD82F728238B0000A6E23D /* Models.swift */; };
+		33BD82FC282468AE00A6E23D /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33BD82FB282468AE00A6E23D /* Constants.swift */; };
 		33D3C3B028222F2E00436286 /* CustomTabBarViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33D3C3AF28222F2D00436286 /* CustomTabBarViewController.swift */; };
 		652812EF282076C5004CA27D /* HomeController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 652812EE282076C4004CA27D /* HomeController.swift */; };
 		65D736A4281DE5F80092AAA6 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65D736A3281DE5F80092AAA6 /* AppDelegate.swift */; };
@@ -27,6 +28,7 @@
 		33BD82F32823065C00A6E23D /* CourseCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CourseCollectionViewCell.swift; sourceTree = "<group>"; };
 		33BD82F628238B0000A6E23D /* Manager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Manager.swift; sourceTree = "<group>"; };
 		33BD82F728238B0000A6E23D /* Models.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Models.swift; sourceTree = "<group>"; };
+		33BD82FB282468AE00A6E23D /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		33D3C3AF28222F2D00436286 /* CustomTabBarViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomTabBarViewController.swift; sourceTree = "<group>"; };
 		45A79259ACA86A669E3F4914 /* Pods_Testing.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Testing.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		652812EE282076C4004CA27D /* HomeController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeController.swift; sourceTree = "<group>"; };
@@ -104,6 +106,7 @@
 				65D736AE281DE5FA0092AAA6 /* LaunchScreen.storyboard */,
 				65D736B1281DE5FA0092AAA6 /* Info.plist */,
 				33D3C3AF28222F2D00436286 /* CustomTabBarViewController.swift */,
+				33BD82FB282468AE00A6E23D /* Constants.swift */,
 			);
 			path = Testing;
 			sourceTree = "<group>";
@@ -244,6 +247,7 @@
 				33D3C3B028222F2E00436286 /* CustomTabBarViewController.swift in Sources */,
 				33BD82F828238B0000A6E23D /* Manager.swift in Sources */,
 				33BD82F42823065C00A6E23D /* CourseCollectionViewCell.swift in Sources */,
+				33BD82FC282468AE00A6E23D /* Constants.swift in Sources */,
 				65D736A4281DE5F80092AAA6 /* AppDelegate.swift in Sources */,
 				33BD82F928238B0000A6E23D /* Models.swift in Sources */,
 				65D736A6281DE5F80092AAA6 /* SceneDelegate.swift in Sources */,
