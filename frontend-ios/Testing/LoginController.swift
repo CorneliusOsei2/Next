@@ -11,6 +11,12 @@ import SwiftUI
 
 class LoginController: UIViewController {
     
+    // UserDefaults initialization for storing session tokens
+    let userDefaults = UserDefaults.standard
+    
+    let buttonHeight = 40
+    let textFieldHeight = 66
+    
     private let titleLabel = UILabel()
     
     lazy var header: UILabel = {
@@ -20,41 +26,24 @@ class LoginController: UIViewController {
         title.font = .systemFont(ofSize: 72, weight: .bold)
         
         title.translatesAutoresizingMaskIntoConstraints = false
-        
         view.addSubview(title)
         
-        NSLayoutConstraint.activate([
-            title.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 100),
-            title.centerXAnchor.constraint(equalTo: view.safeAreaLayoutGuide.centerXAnchor, constant: 0)
-        ])
-
         return title
     }()
     
     lazy var sprite: UIImageView = {
         var img = UIImageView()
         img.image = UIImage(named: "Sprite")
-//        img.contentMode = .scaleAspectFit
-//        img.clipsToBounds = true
-        // Make pretty rounded edges
-        img.layer.cornerRadius = 5
-        
+        img.layer.cornerRadius = 40
+        img.layer.masksToBounds = true
         img.translatesAutoresizingMaskIntoConstraints = false
-        
         view.addSubview(img)
-        
-        NSLayoutConstraint.activate([
-            img.bottomAnchor.constraint(equalTo: header.topAnchor, constant: -10),
-            img.centerXAnchor.constraint(equalTo: view.safeAreaLayoutGuide.centerXAnchor, constant: 0),
-            img.heightAnchor.constraint(equalToConstant: CGFloat(100)),
-            img.widthAnchor.constraint(equalToConstant: CGFloat(100))
-        ])
         
         return img
     }()
     
-    lazy var userField: UILabel = {
-        var user = UILabel()
+    lazy var userField: UITextField = {
+        var user = UITextField()
         user.frame = CGRect(x: 0, y: 0, width: 313, height: 66)
         user.backgroundColor = .white
 
@@ -63,25 +52,16 @@ class LoginController: UIViewController {
         user.layer.borderWidth = 1
         user.layer.borderColor = UIColor(red: 0, green: 0, blue: 0, alpha: 1).cgColor
 
-        user.text = "   Cornell NetID"
+        user.placeholder = "  Cornell NetID"
         user.textColor = .gray
-    
-        view.addSubview(user)
-    
         user.translatesAutoresizingMaskIntoConstraints = false
-        
-        NSLayoutConstraint.activate([
-            user.widthAnchor.constraint(equalToConstant: 350), // Fix these magic numbers later
-            user.heightAnchor.constraint(equalToConstant: 66),
-            user.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 30),
-            user.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 290),
-        ])
-        
+        view.addSubview(user)
+
         return user
     }()
     
-    lazy var passwordField: UILabel = {
-        var user = UILabel()
+    lazy var passwordField: UITextField = {
+        var user = UITextField()
         user.frame = CGRect(x: 0, y: 0, width: 313, height: 66)
         user.backgroundColor = .white
 
@@ -90,26 +70,18 @@ class LoginController: UIViewController {
         user.layer.borderWidth = 1
         user.layer.borderColor = UIColor(red: 0, green: 0, blue: 0, alpha: 1).cgColor
 
-        user.text = "   Password"
+        user.placeholder = "  Password"
         user.textColor = .gray
-    
-        view.addSubview(user)
-    
         user.translatesAutoresizingMaskIntoConstraints = false
-        
-        NSLayoutConstraint.activate([
-            user.widthAnchor.constraint(equalToConstant: 350), // Fix these magic numbers later
-            user.heightAnchor.constraint(equalToConstant: 66),
-            user.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 30),
-            user.topAnchor.constraint(equalTo: userField.bottomAnchor, constant: 25),
-        ])
+        view.addSubview(user)
         
         return user
     }()
     
     lazy var loginButton: UIButton = {
         let button = UIButton()
-        button.setTitle("    LOG IN    ", for: .normal)
+        button.setTitle("LOG IN", for: .normal)
+        button.titleLabel?.textAlignment = .center
         button.setTitleColor(.white, for: .normal)
         button.layer.backgroundColor = #colorLiteral(red: 0.2318199277, green: 0.8869469762, blue: 0.7684106231, alpha: 1)
         button.layer.borderWidth = 1
@@ -119,13 +91,6 @@ class LoginController: UIViewController {
         button.addTarget(self, action: #selector(loginAction), for: .touchUpInside)
         
         view.addSubview(button)
-        
-        NSLayoutConstraint.activate([
-            button.topAnchor.constraint(equalTo: passwordField.bottomAnchor, constant: 50),
-            button.centerXAnchor.constraint(equalTo: view.safeAreaLayoutGuide.centerXAnchor, constant: 0),
-            button.widthAnchor.constraint(equalToConstant: 175),
-            button.heightAnchor.constraint(equalToConstant: 40)
-        ])
         return button
     }()
     
@@ -159,22 +124,54 @@ class LoginController: UIViewController {
     }
     
     func setupConstraints() {
-        // add contraints
+        sprite.snp.makeConstraints { make in
+            make.top.equalToSuperview().offset(140)
+            make.height.width.equalTo(80)
+            make.centerX.equalToSuperview()
+        }
+        header.snp.makeConstraints { make in
+            make.top.equalTo(sprite.snp.bottom).offset(12)
+            make.centerX.equalToSuperview()
+        }
+        userField.snp.makeConstraints { make in
+            make.top.equalTo(header.snp.bottom).offset(18)
+            make.width.equalTo(view.frame.width * (313.0 / 375.0))
+            make.height.equalTo(textFieldHeight)
+            make.centerX.equalToSuperview()
+        }
+        passwordField.snp.makeConstraints { make in
+            make.top.equalTo(userField.snp.bottom).offset(30)
+            make.width.equalTo(view.frame.width * (313.0 / 375.0))
+            make.height.equalTo(textFieldHeight)
+            make.centerX.equalToSuperview()
+        }
+        loginButton.snp.makeConstraints { make in
+            make.top.equalTo(passwordField.snp.bottom).offset(54)
+            make.height.equalTo(buttonHeight)
+            make.width.equalTo(view.frame.width * (165.0 / 375.0))
+            make.centerX.equalToSuperview()
+        }
+        
     }
     
     @objc func loginAction() {
-        print("login")
-        UIApplication.shared.windows.first?.rootViewController = CustomTabBarViewController()
-        UIApplication.shared.windows.first?.makeKeyAndVisible()
+        let username = userField.text ?? ""
+        let password = passwordField.text ?? ""
+        
+        NetworkManager.login(forUsername: username, forPassword: password) { loginResponse in
+            self.userDefaults.set(loginResponse.session_token, forKey: Constants.UserDefaults.sessionToken)
+            self.userDefaults.set(loginResponse.update_token, forKey: Constants.UserDefaults.updateToken)
+            
+            // Login successful
+            UIApplication.shared.windows.first?.rootViewController = CustomTabBarViewController()
+            UIApplication.shared.windows.first?.makeKeyAndVisible()
+        }
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        // TODO: add code to check if session token exists
     }
     
 }
 
-struct LoginController_Previews: PreviewProvider {
-    static var previews: some View {
-        /*@START_MENU_TOKEN@*/Group {
-            Text("Hello, World!")
-            Text("Hello, World!")
-        }/*@END_MENU_TOKEN@*/
-    }
-}
+

@@ -26,6 +26,26 @@ struct NetworkManager{
         case uncategorized
         case decodingError(Error)
     }
+    
+    static func login(forUsername username: String, forPassword password: String, completion: @escaping (LoginResponse) -> Void) {
+        let loginURL = api + "login/"
+        let parameters : Parameters = [
+            "username": username,
+            "password": password
+        ]
+        
+        AF.request(loginURL, method: .post, parameters: parameters, encoding: JSONEncoding.default).validate().responseData { (response) in
+            switch response.result {
+            case .success(let data):
+                let decoder = JSONDecoder()
+                if let loginResponse = try? decoder.decode(LoginResponse.self, from: data) {
+                    completion(loginResponse)
+                }
+            case .failure(let error):
+                print(error.localizedDescription)
+            }
+        }
+    }
 
     static func get_courses(fromSessionToken sessionToken: String, completion: @escaping (UserCoursesResponse) -> Void ) {
         let headers : HTTPHeaders = [

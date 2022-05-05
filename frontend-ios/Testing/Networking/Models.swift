@@ -2,6 +2,14 @@
 import Foundation
 import UIKit
 
+
+struct LoginResponse: Codable {
+    let user_id: String
+    let session_token: String
+    let session_expiration: String
+    let update_token: String
+}
+
 struct User{
     let id: String
     let name: String
@@ -23,4 +31,5 @@ struct Course: Codable {
     let code: String
     let name: String
 }
+
 
