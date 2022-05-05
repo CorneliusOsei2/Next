@@ -150,9 +150,11 @@ class CourseController: UIViewController {
         }
         
         for day in days {
-            day.setTitle("\(currentDay)" + "\(nextWeekday(currentWeekday))", for: .normal)
+            day.setTitle("\(currentDay)\n\(nextWeekday(currentWeekday))", for: .normal)
+            day.titleLabel!.numberOfLines = 0; // Dynamic number of lines
             day.setTitleColor(.black, for: .normal)
-            day.titleLabel?.font = UIFont.systemFont(ofSize: 14, weight: UIFont.Weight.bold)
+            day.contentHorizontalAlignment = .center
+            day.titleLabel?.font = UIFont.systemFont(ofSize: 26, weight: UIFont.Weight.bold)
             day.layer.backgroundColor = self.themeColor
             day.layer.borderWidth = 1
             day.layer.borderColor = self.themeColor
@@ -173,6 +175,79 @@ class CourseController: UIViewController {
             currentWeekday = (currentWeekday + 1)%7
         }
         return days
+    }()
+    
+    lazy var ongoing: UILabel = {
+        let title = UILabel()
+        title.text = "Ongoing"
+        title.textColor = #colorLiteral(red: 0, green: 0, blue: 0, alpha: 1)
+        title.font = .systemFont(ofSize: 48, weight: .bold)
+        
+        title.translatesAutoresizingMaskIntoConstraints = false
+        
+        view.addSubview(title)
+        
+        NSLayoutConstraint.activate([
+            title.topAnchor.constraint(equalTo: dayBlocks[0].bottomAnchor, constant: 20),
+            title.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 10),
+        ])
+        
+        return title
+    }()
+    
+    lazy var timeslots: [UILabel] = {
+        var timeslots: [UILabel] = [UILabel(), UILabel(), UILabel(),UILabel(), UILabel()]
+        
+        let date = Date()
+        let calendar = Calendar.current
+        
+        var currentHour = calendar.component(.hour, from: date)
+        // First time-line starts t minus 1 hour and last is t plus 3 hours
+        currentHour -= 1
+        
+        var currentTopAnchor = ongoing.bottomAnchor
+        
+        for label in timeslots {
+            let title = UILabel()
+            if currentHour >= 12 {
+                if (currentHour == 12) { title.text = "12:00 PM" }
+                else if (currentHour == 24) { title.text = "12:00 AM"}
+                else { title.text = String(currentHour - 12) + ":00 PM" }
+            }
+            else { title.text = String(currentHour) + ":00 AM" }
+            title.textColor = .gray
+            title.font = .systemFont(ofSize: 18, weight: .bold)
+            
+            title.translatesAutoresizingMaskIntoConstraints = false
+            
+            view.addSubview(title)
+            
+            NSLayoutConstraint.activate([
+                title.topAnchor.constraint(equalTo: currentTopAnchor, constant: 40),
+                title.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 10),
+            ])
+            currentHour += 1
+            currentTopAnchor = title.bottomAnchor
+        }
+        return timeslots
+    }()
+    
+    lazy var line: UIImageView = {
+        var img = UIImageView()
+        img.image = UIImage(named: "greyline")
+        img.translatesAutoresizingMaskIntoConstraints = false
+        
+        view.addSubview(img)
+        
+        NSLayoutConstraint.activate([
+            img.topAnchor.constraint(equalTo: ongoing.bottomAnchor, constant: 40),
+            img.centerXAnchor.constraint(equalTo: view.safeAreaLayoutGuide.centerXAnchor, constant: 0),
+//            img.leadingAnchor.constraint(equalTo: timeslots[0].leadingAnchor, constant: 10),
+//            img.bottomAnchor.constraint(equalTo: timeslots[timeslots.count - 1].bottomAnchor)
+            img.heightAnchor.constraint(equalToConstant: CGFloat(400)),
+            img.widthAnchor.constraint(equalToConstant: CGFloat(400))
+        ])
+        return img
     }()
     
     init() {
@@ -205,6 +280,9 @@ class CourseController: UIViewController {
         let _ = leftMonth
         let _ = thisMonth
         let _ = dayBlocks
+        let _ = ongoing
+        let _ = timeslots
+        let _ = line
     }
 }
 
