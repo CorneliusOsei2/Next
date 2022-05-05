@@ -49,19 +49,25 @@ class CourseCollectionViewCell: UICollectionViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
+    /// Assigns Course code and user status for cell.
+    func configure(code: String, userType: String) {
+        self.courseCodeLabel.text = "  " + code
+        self.courseUserTypeLabel.text = userType
+    }
+    
     func setUpConstraints() {
         courseCodeLabel.snp.makeConstraints { make in
-            make.top.equalToSuperview().offset(15)
+            make.top.equalToSuperview().offset(16)
             make.left.equalToSuperview().offset(12)
             make.width.equalTo(92)
-            make.height.equalTo(31)
+            make.height.equalTo(32)
         }
         
         courseUserTypeLabel.snp.makeConstraints { make in
             make.top.equalToSuperview().offset(20)
             make.right.equalToSuperview().offset(-20)
-            make.width.equalTo(61)
-            make.height.equalTo(23)
+            make.width.equalTo(64)
+            make.height.equalTo(24)
         }
     }
 }
