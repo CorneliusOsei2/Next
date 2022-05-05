@@ -1,4 +1,7 @@
 
+import Foundation
+import Alamofire
+import SwiftyJSON
 
 struct NetworkManager{
     static let api = "http://0.0.4500/next/"
