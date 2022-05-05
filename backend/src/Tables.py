@@ -1,15 +1,15 @@
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import ForeignKey, null
-import uuid
 import bcrypt
+import uuid
 import hashlib
 import os
 import datetime
 
-
+# Initialization
 db = SQLAlchemy()
 
-# Association Tables
+############################################# ASSOCIATION TABLES  ##############################################################
+
 InstructorCourse = db.Table(
   "instructor_course_association",
     db.Model.metadata,
@@ -38,19 +38,21 @@ InstructorTimeslot = db.Table(
   db.Column("course_id", db.String, db.ForeignKey("timeslots.id"))
 )
 
-StudentJoinedQueue = db.Table(
-"student_joined_queue_association",
+StudentJoinedTimeslot = db.Table(
+"student_joined_timeslot_association",
   db.Model.metadata,
   db.Column("user_id", db.String, db.ForeignKey("users.id")),
-  db.Column("queue_id", db.String, db.ForeignKey("queue.id"))
+  db.Column("timeslot_id", db.String, db.ForeignKey("timeslots.id"))
 )
 
-StudentCompletedQueue = db.Table(
-"student_completed_queue_association",
+StudentCompletedTimeslot = db.Table(
+"student_completed_timeslot_association",
   db.Model.metadata,
   db.Column("user_id", db.String, db.ForeignKey("users.id")),
-  db.Column("queue_id", db.String, db.ForeignKey("queue.id"))
+  db.Column("timeslot_id", db.String, db.ForeignKey("timeslots.id"))
 )
+
+############################################# MODEL TABLES  ##############################################################
 
 class Month(db.Model):
     __tablename__ = "months"
@@ -75,6 +77,7 @@ class Month(db.Model):
             "days": [day.serialize() for day in self.days]
         }
 
+
 class Day(db.Model):
     __tablename__ = "days"
     id = db.Column('id', db.String, default=lambda: str(uuid.uuid4()), primary_key=True)
@@ -89,7 +92,6 @@ class Day(db.Model):
         self.number = kwargs.get("number")
         self.active = kwargs.get("active")
         
-
     def serialize(self):
         return {
             "id": self.id,
@@ -99,18 +101,16 @@ class Day(db.Model):
         }
 
 
-
 class Timeslot(db.Model):
     __tablename__ = "timeslots"
     id = db.Column('id', db.String, default=lambda: str(uuid.uuid4()), primary_key=True)
-    start_time = db.Column(db.Integer, nullable=False)
-    end_time = db.Column(db.Integer, nullable=False)
+    date = db.Column(db.String, nullable=False)
+    start_time = db.Column(db.String, nullable=False)
+    end_time = db.Column(db.String, nullable=False)
+    start_time_epoch = db.Column(db.Integer, nullable=False)
+    end_time_epoch = db.Column(db.Integer, nullable=False)
     course_id = db.Column(db.String, db.ForeignKey("courses.id"), nullable=False)
     course = db.relationship("Course", cascade="delete")
-    queue_id = db.Column(db.String, db.ForeignKey("queue.id"), nullable=False)
-    students_joined = db.relationship("User", secondary=StudentJoinedQueue, back_populates="queues_joined")
-    students_completed = db.relationship("User", secondary=StudentCompletedQueue)
-
 
     # Many-to-many relationship
     students_in_timeslot = db.relationship("User", secondary=StudentTimeslot, back_populates="timeslots_as_student")
@@ -120,10 +120,25 @@ class Timeslot(db.Model):
         """
         Initialize Timeslot object
         """
-        self.start_time = kwargs.get("start_time")
-        self.end_time = kwargs.get("end_time")
+        # Parameters
+        start_time_epoch = kwargs.get("start_time")
+        end_time_epoch = kwargs.get("end_time")
+
+        # Getting datetime values
+        dt_start_time = datetime.datetime.fromtimestamp(start_time_epoch)
+        start_time_str = f"{dt_start_time.hour}:{dt_start_time.minute}"
+        dt_start_time_hm = datetime.datetime.strptime(start_time_str, "%H:%M")
+
+        dt_end_time = datetime.datetime.fromtimestamp(end_time_epoch)
+        end_time_str = f"{dt_end_time.hour}:{dt_end_time.minute}"
+        dt_end_time_hm = datetime.datetime.strptime(end_time_str, "%H:%M")
+
+        self.start_time_epoch = start_time_epoch
+        self.end_time_epoch = end_time_epoch
+        self.start_time = dt_start_time_hm.strftime("%I:%M %p")
+        self.end_time = dt_end_time_hm.strftime("%I:%M %p")
         self.course_id = kwargs.get("course_id")
-        self.queue_id = kwargs.get("queue_id")
+        self.date = f"{dt_start_time.month}-{dt_start_time.day}"
 
     def serialize(self):
         """
@@ -132,11 +147,11 @@ class Timeslot(db.Model):
         return {
             "id": self.id,
             "course_id": self.course_id,
+            "date": self.date,
             "start_time": self.start_time,
             "end_time": self.end_time,
-            "queue_id": self.queue_id
+            "total_joined": len(self.students_in_timeslot)
         }
-
 
 
 class Timestamp(db.Model):
@@ -144,15 +159,21 @@ class Timestamp(db.Model):
     id = db.Column('id', db.String, default=lambda: str(uuid.uuid4()), primary_key=True)
     user_id = db.Column(db.String, db.ForeignKey("users.id"))
     timeslot_id = db.Column(db.String, nullable=False)
+    joined_at = db.Column(db.DateTime, nullable=False)
+    status = db.Column(db.String, nullable=False)
    
     def __init__(self, **kwargs) -> None:
-        self.course_id = kwargs.get("course_id")
+        self.user_id = kwargs.get("user_id")
+        self.timeslot_id = kwargs.get("timeslot_id")
+        self.joined_at = datetime.datetime.now()
+        self.status = "joined"  # Accepted values ["joined", "completed", ""]
     
     def serialize(self):
         return {
-            "course_id": self.course_id,
-            "joined_students": [s.serialize() for s in self.students_joined],
-            "completed_students": [s.serialize() for s in self.students_completed]
+            "user_id": self.timeslot_id,
+            "timeslot_id": self.timeslot_id,
+            "joined_at": str(self.joined_at),
+            "status": self.status
         }
 
 class Course(db.Model):
@@ -209,9 +230,9 @@ class User(db.Model):
     # Many-to-many Relationships
     courses_as_student = db.relationship("Course", secondary=StudentCourse, back_populates="students")
     courses_as_instructor = db.relationship("Course", secondary=InstructorCourse, back_populates="instructors")
+    
     timeslots_as_student = db.relationship("Timeslot", secondary=StudentTimeslot, back_populates="students_in_timeslot")
     timeslots_as_instructor = db.relationship("Timeslot", secondary=InstructorTimeslot, back_populates="instructors_in_timeslot")
-    queues_joined = db.relationship("Queue", secondary=StudentJoinedQueue, back_populates="students_joined")
 
     def __init__(self, **kwargs):
         """
@@ -221,6 +242,7 @@ class User(db.Model):
         self.username = kwargs.get("username")
         # Storing pasword
         self.password_digest = bcrypt.hashpw(kwargs.get("password").encode("utf8"), bcrypt.gensalt(rounds=13))
+        self.renew_session()
 
     def _urlsafe_base_64(self):
         """
@@ -257,6 +279,29 @@ class User(db.Model):
         """
         return update_token == self.update_token
 
+    
+    # def serialize(self, include_courses=False, include_timeslots=False):
+    #     """
+    #     Serialize User object
+    #     """
+    #     if include_courses and include_timeslots:
+    #         return {
+    #             "id": self.id,
+    #             "name": self.name,
+    #             "username": self.username,
+    #             "courses_as_student": [c.serialize() for c in self.courses_as_student],
+    #             "courses_as_instructor": [c.serialize() for c in self.courses_as_instructor],
+    #             "timeslots_as_student": [t.serialize() for t in self.timeslots_as_student],
+    #             "timeslots_as_instructor": [t.serialize() for t in self.timeslots_as_instructor],
+    #         }
+    #     elif include_courses:
+    #         return {
+    #             "id": self.id,
+    #             "name": self.name,
+    #             "username": self.username,
+    #             "courses_as_student": [c.serialize() for c in self.courses_as_student],
+    #             "courses_as_instructor": [c.serialize() for c in self.courses_as_instructor]
+    #         }
     
     def serialize(self, include_courses=False, include_timeslots=False):
         """

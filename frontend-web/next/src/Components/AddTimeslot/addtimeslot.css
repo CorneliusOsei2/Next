@@ -1,0 +1,17 @@
+
+
+label {
+    display: block;
+    font: 1rem 'Fira Sans', sans-serif;
+}
+
+input,
+label {
+    margin: .4rem 0;
+}
+
+.time{
+    width: 150px;
+    margin: auto;
+    margin-top: 2%;
+}

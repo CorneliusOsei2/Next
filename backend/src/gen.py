@@ -21,19 +21,16 @@ def month_names():
     }
 
 
-def gen_name():
+def gen_name(i):
     names = ["A", "B", "C", "D"]
+    return names[i]
 
-    return names[randint(0, 3)]
 
-
-def gen_netid():
+def gen_netid(i):
     netids = ["a3", "b5", "c9"]
+    return netids[i]
 
-    return netids[randint(0, 2)]
 
-
-def gen_course():
+def gen_course(i):
     courses = ["CS 1110", "CS 2110", "CS 3110"]
-
-    return courses[randint(0,2)]
+    return courses[i]
