@@ -10,17 +10,11 @@ import SwiftUI
 import SnapKit
 
 class HomeController: UIViewController {
+    let userDefaults = UserDefaults.standard
     
-    // TODO: Uncomment below when ready to inplement session token
-//    var sessionToken = "08b9e8d621c2284ddd111b1faf0be73751098a3a"
-//    var coursesAsStudent: [Course] = []
-//    var coursesAsInstructor: [Course] = []
-    var coursesAsStudent: [Course] = [Course(id: "1", code: "CS 2110", name: "Programming"),
-                                      Course(id: "2", code: "CS 3110", name: "Programming"),
-                                      Course(id: "3", code: "CS 3410", name: "Programming")]
-
-    var coursesAsInstructor: [Course] = [Course(id: "4", code: "CS 1110", name: "Programming")]
-        
+    var coursesAsStudent: [Course] = []
+    var coursesAsInstructor: [Course] = []
+    
     var logo: UIImageView!
     var header: UILabel!
     var collectionView: UICollectionView!
@@ -70,12 +64,19 @@ class HomeController: UIViewController {
     }
     
     func getAllCourses() {
-        // TODO: Uncomment below when ready to inplement session token
-//        NetworkManager.get_courses(fromSessionToken: sessionToken) { userCoursesResponse in
-//            self.coursesAsStudent = userCoursesResponse.courses_as_student
-//            self.coursesAsInstructor = userCoursesResponse.courses_as_instructor
-//            self.collectionView.reloadData()
-//        }
+        if let sessionToken = userDefaults.value(forKey: Constants.UserDefaults.sessionToken) as? String {
+            NetworkManager.get_courses(fromSessionToken: sessionToken) { userCoursesResponse in
+                self.coursesAsStudent = userCoursesResponse.courses_as_student
+                self.coursesAsInstructor = userCoursesResponse.courses_as_instructor
+                DispatchQueue.main.async {
+                self.collectionView.reloadData()
+                }
+            }
+        } else {
+            // Session token doesn't exist
+            UIApplication.shared.windows.first?.rootViewController = LoginController()
+            UIApplication.shared.windows.first?.makeKeyAndVisible()
+        }
     }
     
     func setGradientBackground() {
@@ -121,7 +122,6 @@ extension HomeController: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: coursesReuseIdentifier, for: indexPath) as! CourseCollectionViewCell
         
-        // TODO: uncomment below once connected to backend
         if indexPath.item < self.coursesAsStudent.count {
             let course = self.coursesAsStudent[indexPath.item]
             cell.configure(code: course.code, userType: "Student")
