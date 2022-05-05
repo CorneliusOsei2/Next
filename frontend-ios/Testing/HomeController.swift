@@ -11,8 +11,15 @@ import SnapKit
 
 class HomeController: UIViewController {
     
-    var userId = "f071516a-4aaf-4736-aa54-34480bc074a3"
-    var courses: [Course] = []
+    // TODO: Uncomment below when ready to inplement session token
+//    var sessionToken = "08b9e8d621c2284ddd111b1faf0be73751098a3a"
+//    var coursesAsStudent: [Course] = []
+//    var coursesAsInstructor: [Course] = []
+    var coursesAsStudent: [Course] = [Course(id: "1", code: "CS 2110", name: "Programming"),
+                                      Course(id: "2", code: "CS 3110", name: "Programming"),
+                                      Course(id: "3", code: "CS 3410", name: "Programming")]
+
+    var coursesAsInstructor: [Course] = [Course(id: "4", code: "CS 1110", name: "Programming")]
         
     var logo: UIImageView!
     var header: UILabel!
@@ -63,9 +70,12 @@ class HomeController: UIViewController {
     }
     
     func getAllCourses() {
-        NetworkManager.get_user(fromUserId: userId) { userCoursesResponse in
-            self.courses += userCoursesResponse.courses_as_student + userCoursesResponse.courses_as_instructor
-        }
+        // TODO: Uncomment below when ready to inplement session token
+//        NetworkManager.get_courses(fromSessionToken: sessionToken) { userCoursesResponse in
+//            self.coursesAsStudent = userCoursesResponse.courses_as_student
+//            self.coursesAsInstructor = userCoursesResponse.courses_as_instructor
+//            self.collectionView.reloadData()
+//        }
     }
     
     func setGradientBackground() {
@@ -105,14 +115,21 @@ class HomeController: UIViewController {
 
 extension HomeController: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-//        return self.courses.count
-        return 8
+        return self.coursesAsStudent.count + self.coursesAsInstructor.count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: coursesReuseIdentifier, for: indexPath) as! CourseCollectionViewCell
-        // TODO: add cell initialization
-
+        
+        // TODO: uncomment below once connected to backend
+        if indexPath.item < self.coursesAsStudent.count {
+            let course = self.coursesAsStudent[indexPath.item]
+            cell.configure(code: course.code, userType: "Student")
+        } else {
+            let course = self.coursesAsInstructor[indexPath.item - self.coursesAsStudent.count]
+            cell.configure(code: course.code, userType: "Instructor")
+        }
+            
         return cell
     }
 }

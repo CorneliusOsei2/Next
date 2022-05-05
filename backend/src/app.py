@@ -123,7 +123,7 @@ def get_all_users():
     return response(res={"users": [user.serialize() for user in users]}, success=True, code=200)
 
 
-@app.route("/dev/next/courses/", methods=["GET"])
+@app.route("/dev/next/courses/all/", methods=["GET"])
 def get_courses():
     """
     (DEV ONLY) Endpoint to get all courses.
@@ -156,11 +156,14 @@ def get_course_users(course_id):
 
 
 # TESTING GETTING COURSES BY USER ID (unitl we get session token in frontend)
-@app.route("/next/courses/<string:user_id>/", methods=["GET"])
+@app.route("/dev/next/courses/<string:user_id>/", methods=["GET"])
 def get_courses_for_user_id(user_id):
     """
     (DEV ONLY) To display courses for user without session token.
     """
+    # body = json.loads(request.data)
+    # user_id = body.get("user_id")
+
     user = User.query.filter_by(id=user_id).first()
     if user is None:
         return response("user not found", success=False, code=404)
