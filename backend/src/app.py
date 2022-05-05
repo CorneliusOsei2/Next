@@ -1,12 +1,13 @@
 import json
 from flask import Flask, request
-from Tables import db, Day, Month, Timeslot, User, Course, Timestamp
-from gen import month_names, gen_name, gen_netid, gen_course
 from flask_cors import CORS
 from datetime import date
 import json
 import users_dao
 from datetime import datetime
+from Tables import db, Day, Month, Timeslot, User, Course, Timestamp
+from gen import month_names, gen_name, gen_netid, gen_course
+from utils import response
 
 # Initialize Flask and CORS
 app = Flask(__name__)
