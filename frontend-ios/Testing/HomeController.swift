@@ -7,49 +7,52 @@
 
 import UIKit
 import SwiftUI
+import SnapKit
 
 class HomeController: UIViewController {
+    
+    var logo: UIImageView!
+    var header: UILabel!
+    var collectionView: UICollectionView!
+    
+    let cellPadding:CGFloat = 24
+    
+    // Reuse identifiers
+    let coursesReuseIdentifier = "coursesReuseIdentifier"
     
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
         setGradientBackground()
-//        view.backgroundColor = #colorLiteral(red: 0.2318199277, green: 0.8869469762, blue: 0.7684106231, alpha: 1)
-        print("Home Controller!")
         
-        let _ = sprite
-        let _ = greeting
+        logo = UIImageView(image: UIImage(named: "Sprite"))
+        logo.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(logo)
         
-        var view = UILabel()
-        view.frame = CGRect(x: 100, y: 100, width: 118.59, height: 120.41)
-        view.backgroundColor = .white
-
-
-        var parent = self.view!
-        parent.addSubview(view)
-        view.translatesAutoresizingMaskIntoConstraints = false
-        view.widthAnchor.constraint(equalToConstant: 118.59).isActive = true
-        view.heightAnchor.constraint(equalToConstant: 120.41).isActive = true
-        view.leadingAnchor.constraint(equalTo: parent.leadingAnchor, constant: 256.41).isActive = true
-        view.topAnchor.constraint(equalTo: parent.topAnchor, constant: 0).isActive = true
-
-
-
-        // Vector 18
-
-        view = UILabel()
-        view.frame = CGRect(x: 0, y: 0, width: 156.51, height: 178.14)
-        view.backgroundColor = .white
-
-
-        parent = self.view!
-        parent.addSubview(view)
-        view.translatesAutoresizingMaskIntoConstraints = false
-        view.widthAnchor.constraint(equalToConstant: 156.51).isActive = true
-        view.heightAnchor.constraint(equalToConstant: 178.14).isActive = true
-        view.leadingAnchor.constraint(equalTo: parent.leadingAnchor, constant: 216.99).isActive = true
-        view.topAnchor.constraint(equalTo: parent.topAnchor, constant: 0).isActive = true
-
+        header = UILabel()
+        header.textAlignment = .left
+        header.text = "Hi, [User's name]"
+        header.font = UIFont.boldSystemFont(ofSize: 22)
+        header.numberOfLines = 0
+        header.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(header)
+        
+        let verticalLayout = UICollectionViewFlowLayout()
+        verticalLayout.scrollDirection = .vertical
+        verticalLayout.minimumLineSpacing = cellPadding
+        verticalLayout.minimumInteritemSpacing = cellPadding
+        
+        collectionView = UICollectionView(frame: .zero, collectionViewLayout: verticalLayout)
+        collectionView.backgroundColor = .none
+        
+        collectionView.register(CourseCollectionViewCell.self, forCellWithReuseIdentifier: coursesReuseIdentifier)
+        
+        collectionView.delegate = self
+        collectionView.dataSource = self
+        collectionView.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(collectionView)
+        
+        setUpConstraints()
     }
     
     func setGradientBackground() {
@@ -65,75 +68,53 @@ class HomeController: UIViewController {
         self.view.layer.insertSublayer(gradientLayer, at:0)
     }
     
-    lazy var sprite: UIImageView = {
-        var img = UIImageView()
-        img.image = UIImage(named: "Sprite")
+    func setUpConstraints() {
+        logo.snp.makeConstraints { make in
+            make.top.equalTo(view.safeAreaLayoutGuide)
+            make.left.equalToSuperview().offset(6)
+            make.width.height.equalTo(32)
+        }
         
-        img.translatesAutoresizingMaskIntoConstraints = false
+        header.snp.makeConstraints { make in
+            make.top.equalTo(logo.snp.bottom).offset(8)
+            make.left.equalToSuperview().offset(12)
+            make.right.equalToSuperview()
+        }
         
-        view.addSubview(img)
-        
-        NSLayoutConstraint.activate([
-            img.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: -30),
-            img.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 20),
-            img.heightAnchor.constraint(equalToConstant: CGFloat(60)),
-            img.widthAnchor.constraint(equalToConstant: CGFloat(60))
-        ])
-        
-        return img
-    }()
-    
-    lazy var sampleCourse1: UIButton = {
-        let button = UIButton()
-        button.setTitle("CS1110", for: .normal)
-        button.setTitleColor(.black, for: .normal)
-        button.layer.backgroundColor = #colorLiteral(red: 0.2318199277, green: 0.8869469762, blue: 0.7684106231, alpha: 1)
-        button.layer.borderWidth = 1
-        button.layer.borderColor = #colorLiteral(red: 0.2318199277, green: 0.8869469762, blue: 0.7684106231, alpha: 1)
-        button.layer.cornerRadius = 20
-        button.translatesAutoresizingMaskIntoConstraints = false
-        button.addTarget(self, action: #selector(courseButtonPress), for: .touchUpInside)
-        
-        view.addSubview(button)
-        
-        NSLayoutConstraint.activate([
-            button.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
-            button.centerXAnchor.constraint(equalTo: view.safeAreaLayoutGuide.centerXAnchor, constant: 0),
-            button.widthAnchor.constraint(equalToConstant: 175),
-            button.heightAnchor.constraint(equalToConstant: 40)
-        ])
-        return button
-    }()
-    
-    lazy var greeting: UILabel = {
-        var hello = UILabel()
-        hello.text = "Hi, [Name]"
-        hello.textColor = #colorLiteral(red: 0, green: 0, blue: 0, alpha: 1)
-        hello.font = .systemFont(ofSize: 36, weight: .bold)
-        
-        hello.translatesAutoresizingMaskIntoConstraints = false
-        
-        view.addSubview(hello)
-        
-        NSLayoutConstraint.activate([
-            hello.leadingAnchor.constraint(equalTo: sprite.leadingAnchor, constant: 0),
-            hello.topAnchor.constraint(equalTo: sprite.bottomAnchor, constant: 20),
-            hello.centerXAnchor.constraint(equalTo: view.safeAreaLayoutGuide.centerXAnchor, constant: 0)
-        ])
-
-        return hello
-    }()
-    
-    @objc func courseButtonPress() {
-        let coursepage = LoginController()
-        self.navigationController?.pushViewController(coursepage, animated: true)
+        collectionView.snp.makeConstraints { (make) in
+            make.top.equalTo(header.snp.bottom).offset(24)
+            make.bottom.equalToSuperview()
+            make.leading.equalToSuperview()
+            make.trailing.equalToSuperview()
+        }
     }
 }
 
+extension HomeController: UICollectionViewDataSource {
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        return 8
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: coursesReuseIdentifier, for: indexPath) as! CourseCollectionViewCell
+        // TODO: add cell initialization
 
+        return cell
+    }
+}
 
-struct HomeController_Previews: PreviewProvider {
-    static var previews: some View {
-        /*@START_MENU_TOKEN@*/Text("Hello, World!")/*@END_MENU_TOKEN@*/
+extension HomeController: UICollectionViewDelegate {
+    
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        // TODO: add request to fetch course timeslots
+        
+    }
+    
+}
+
+extension HomeController: UICollectionViewDelegateFlowLayout {
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+        let size = collectionView.frame.width - 32
+        return CGSize(width: size, height: 66)
     }
 }
