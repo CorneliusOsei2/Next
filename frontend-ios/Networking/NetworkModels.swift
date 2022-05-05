@@ -1,7 +1,7 @@
 
 
 struct User{
-    let id: String
+    let id: UUID?
     let name: String
     let username: String
     let courses_as_student: [Course]
@@ -10,11 +10,24 @@ struct User{
     let timeslots_as_instructor: [Timeslot]
 }
 
-
-
 struct Course {
-    let id: String
+    let id: UUID?
     let code: String
     let name: String
-    let instructors: Array
+    let instructors: [User]
+    let students: [User]
+}
+
+struct Month {
+    let id: Int
+    let number: Int
+    let active: Int
+    let days: [Day]
+}
+
+struct Day {
+    let id: Int
+    let number: Int
+    let active: Int
+    let month: Int
 }

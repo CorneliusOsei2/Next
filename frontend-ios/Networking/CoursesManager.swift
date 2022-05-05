@@ -1,5 +1,5 @@
 
-struct NetworkManager{
+struct CoursesManager{
     static let api = "http://0.0.4500/next/"
     static let defaultSession = URLSession(configuration: .default)
 
@@ -23,14 +23,17 @@ struct NetworkManager{
         case decodingError(Error)
     }
 
-    static func getAllMonths(completionHandler: @escaping (Result<[Month], RequestError>) -> Void) throws {
-        try networkingCall(route: "months/", requestType: .get, completionHandler: completionHandler)
+    static func getUserMonths(userId: UUID, completionHandler: @escaping (Result<[Month], RequestError>) -> Void) throws {
+        // Authorization for User
+
+
+        let route:String? = userId + "/" + courses + "/"
+        try networkingCall(route: route, requestType: .get, parameters: userId, completionHandler: completionHandler)
+        
     }
 
 
-
-
-    private static func networkingCall<T: Codable>(route: String = "", requestType: RequestType, content: Song? = nil, parameters: CustomStringConvertible..., completionHandler: @escaping (Result<T, RequestError>) -> Void) throws {
+    private static func networkingCall<T: Codable>(route: String = "", requestType: RequestType, content: Course? = nil, parameters: CustomStringConvertible..., completionHandler: @escaping (Result<T, RequestError>) -> Void) throws {
         guard let url = URL(string: api + route + parameters.map({$0.description + "/"}).reduce("", +)) else { return }
         
         var request = URLRequest(url: url)
