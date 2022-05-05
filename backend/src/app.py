@@ -155,6 +155,24 @@ def get_course_users(course_id):
     return response(res=res, success=True, code=200)
 
 
+# TESTING GETTING COURSES BY USER ID (unitl we get session token in frontend)
+@app.route("/next/courses/<string:user_id>/", methods=["GET"])
+def get_courses_for_user_id(user_id):
+    """
+    (DEV ONLY) To display courses for user without session token.
+    """
+    user = User.query.filter_by(id=user_id).first()
+    if user is None:
+        return response("user not found", success=False, code=404)
+    
+    user_info = {
+        "user_id": user.id,
+        "courses_as_instructor": [course.serialize() for course in user.courses_as_instructor],
+        "courses_as_student":  [course.serialize() for course in user.courses_as_student]
+    }
+    return response(res=user_info, success=True, code=200)
+    
+
 ################################################## PUBLIC ROUTES ##############################################
 
 @app.route("/next/login/", methods=["POST"])

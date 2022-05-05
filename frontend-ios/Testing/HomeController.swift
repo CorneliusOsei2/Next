@@ -11,6 +11,9 @@ import SnapKit
 
 class HomeController: UIViewController {
     
+    var userId = "f071516a-4aaf-4736-aa54-34480bc074a3"
+    var courses: [Course] = []
+        
     var logo: UIImageView!
     var header: UILabel!
     var collectionView: UICollectionView!
@@ -55,6 +58,16 @@ class HomeController: UIViewController {
         setUpConstraints()
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        getAllCourses()
+    }
+    
+    func getAllCourses() {
+        NetworkManager.get_user(fromUserId: userId) { userCoursesResponse in
+            self.courses += userCoursesResponse.courses_as_student + userCoursesResponse.courses_as_instructor
+        }
+    }
+    
     func setGradientBackground() {
         let gradientLayer = CAGradientLayer()
         gradientLayer.colors = [
@@ -92,6 +105,7 @@ class HomeController: UIViewController {
 
 extension HomeController: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+//        return self.courses.count
         return 8
     }
     
