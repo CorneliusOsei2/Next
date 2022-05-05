@@ -11,10 +11,15 @@ import SnapKit
 
 class HomeController: UIViewController {
     
-    var sessionToken = "08b9e8d621c2284ddd111b1faf0be73751098a3a"
-    
-    var coursesAsStudent: [Course] = []
-    var coursesAsInstructor: [Course] = []
+    // TODO: Uncomment below when ready to inplement session token
+//    var sessionToken = "08b9e8d621c2284ddd111b1faf0be73751098a3a"
+//    var coursesAsStudent: [Course] = []
+//    var coursesAsInstructor: [Course] = []
+    var coursesAsStudent: [Course] = [Course(id: "1", code: "CS 2110", name: "Programming"),
+                                      Course(id: "2", code: "CS 3110", name: "Programming"),
+                                      Course(id: "3", code: "CS 3410", name: "Programming")]
+
+    var coursesAsInstructor: [Course] = [Course(id: "4", code: "CS 1110", name: "Programming")]
         
     var logo: UIImageView!
     var header: UILabel!
@@ -65,11 +70,12 @@ class HomeController: UIViewController {
     }
     
     func getAllCourses() {
-        NetworkManager.get_courses(fromSessionToken: sessionToken) { userCoursesResponse in
-            self.coursesAsStudent = userCoursesResponse.courses_as_student
-            self.coursesAsInstructor = userCoursesResponse.courses_as_instructor
-            self.collectionView.reloadData()
-        }
+        // TODO: Uncomment below when ready to inplement session token
+//        NetworkManager.get_courses(fromSessionToken: sessionToken) { userCoursesResponse in
+//            self.coursesAsStudent = userCoursesResponse.courses_as_student
+//            self.coursesAsInstructor = userCoursesResponse.courses_as_instructor
+//            self.collectionView.reloadData()
+//        }
     }
     
     func setGradientBackground() {
@@ -110,7 +116,6 @@ class HomeController: UIViewController {
 extension HomeController: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return self.coursesAsStudent.count + self.coursesAsInstructor.count
-//        return 8
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {

@@ -4,7 +4,7 @@ import Alamofire
 import SwiftyJSON
 
 struct NetworkManager{
-    static let api = "http://0.0.0.0:4500/"
+    static let api = "http://0.0.0.0:4500/next/"
     static let defaultSession = URLSession(configuration: .default)
 
     static var decoder: JSONDecoder = {
@@ -32,8 +32,7 @@ struct NetworkManager{
             "Authorization" : "Bearer " + sessionToken
         ]
 
-        let getUserCourseURL = api + "next/courses/"
-
+        let getUserCourseURL = api + "courses/"
         AF.request(getUserCourseURL, method: .get, parameters: [:], headers: headers).validate().responseData { (response) in
             switch response.result {
             case .success(let data):
