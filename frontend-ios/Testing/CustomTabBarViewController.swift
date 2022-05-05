@@ -9,18 +9,18 @@ import UIKit
 
 class CustomTabBarViewController: UITabBarController {
     
-    let bookImage = UIImage(systemName: "book.fill")
+    let homeTabImage = UIImage(systemName: "person.circle")
+    let homeTitle = "Home"
     
     override func viewDidLoad() {
         super.viewDidLoad()
     
         let homeView = HomeController()
         let homeViewNavController = UINavigationController(rootViewController: homeView)
-        homeViewNavController.tabBarItem = UITabBarItem(title: "Home", image:bookImage, selectedImage: bookImage)
+        homeViewNavController.tabBarItem = UITabBarItem(title: homeTitle, image:homeTabImage, selectedImage: homeTabImage)
         homeViewNavController.navigationBar.barTintColor = .white
         homeViewNavController.navigationBar.backgroundColor = .none
         
-        // TODO: change tint color
         homeViewNavController.navigationBar.tintColor = .black
         
         tabBar.tintColor = .black
