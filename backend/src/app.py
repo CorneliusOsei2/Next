@@ -340,6 +340,7 @@ def get_queue_info(course_id, timeslot_id):
     timestamps_in_queue = Timestamp.query.filter(Timestamp.status==TimestampStatus.InQueue and Timestamp.timeslot_id==timeslot_id).count()
     timestamps_ongoing = Timestamp.query.filter(Timestamp.status==TimestampStatus.Ongoing and Timestamp.timeslot_id==timeslot_id).count()
     timestamps_completed = Timestamp.query.filter(Timestamp.completed==True and Timestamp.timeslot_id==timeslot_id).count()
+    
     # Student specific info about queue
     if user in course.students:
         return response(res={
@@ -474,7 +475,7 @@ def add_timeslot(course_id):
         return response(*err.InvalidTimeRange)
 
     if title is None or title.strip() == "":
-        return response(*MissingTitle)
+        return response(*err.MissingTitle)
 
     course = Course.query.filter_by(id=course_id).first()
     if course is None:

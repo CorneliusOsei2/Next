@@ -4,7 +4,7 @@ import Alamofire
 import SwiftyJSON
 
 struct NetworkManager{
-    static let api = "http://0.0.0.0:5000/next/"
+    static let baseUrl = "http://0.0.0.0:5000/next/"
     static let defaultSession = URLSession(configuration: .default)
 
     static var decoder: JSONDecoder = {
@@ -28,7 +28,7 @@ struct NetworkManager{
     }
     
     static func login(forUsername username: String, forPassword password: String, completion: @escaping (LoginResponse) -> Void) {
-        let loginURL = api + "login/"
+        let loginURL = baseUrl + "login/"
         let parameters : Parameters = [
             "username": username,
             "password": password
@@ -52,7 +52,7 @@ struct NetworkManager{
             "Authorization" : "Bearer " + sessionToken
         ]
 
-        let getUserCourseURL = api + "courses/"
+        let getUserCourseURL = baseUrl + "courses/"
         AF.request(getUserCourseURL, method: .get, parameters: [:], headers: headers).validate().responseData { (response) in
             switch response.result {
             case .success(let data):
@@ -71,7 +71,7 @@ struct NetworkManager{
             "Authorization" : "Bearer " + sessionToken
         ]
 
-        let getTimeslotsUrl = api + "courses/" + courseId + "/" + month + "/" + day + "/timeslots/"
+        let getTimeslotsUrl = baseUrl + "courses/" + courseId + "/" + month + "/" + day + "/timeslots/"
         AF.request(getTimeslotsUrl, method: .get, parameters: [:], headers: headers).validate().responseData { (response) in
             switch response.result {
             case .success(let data):
@@ -90,7 +90,7 @@ struct NetworkManager{
             "Authorization" : "Bearer " + sessionToken
         ]
 
-        let getQueueInfoUrl = api + "courses/" + courseId + "/queues/" + timeslotId + "/"
+        let getQueueInfoUrl = baseUrl + "courses/" + courseId + "/queues/" + timeslotId + "/"
         AF.request(getQueueInfoUrl, method: .get, parameters: [:], headers: headers).validate().responseData { (response) in
             switch response.result {
             case .success(let data):
@@ -104,12 +104,11 @@ struct NetworkManager{
         }
     }
 
-
 //    static func join_queue(fromSessionToken sessionToken: String, forCourseId courseId: String, forTimeslotId timeslotId: String, completion: @escaping (JoinQueueResponse) -> Void) {
 //        let headers : HTTPHeaders = [
 //            "Authorization" : "Bearer " + sessionToken
 //        ]
-//        let joinQueueUrl = api + "courses/" + courseId + "/timeslots/" + timeslotId + "/join/"
+//        let joinQueueUrl = baseUrl + "courses/" + courseId + "/timeslots/" + timeslotId + "/join/"
 //
 //        AF.request(joinQueueUrl, method: .post, parameters: [:], encoding: JSONEncoding.default).validate().responseData { (response) in
 //            switch response.result {
@@ -123,13 +122,12 @@ struct NetworkManager{
 //            }
 //        }
 //    }
-   
-    // /next/courses/<string:course_id>/timeslots/<string:timeslot_id>/leave/
+//
 //    static func leave_queue(fromSessionToken sessionToken: String, forCourseId courseId: String, forTimeslotId timeslotId: String, completion: @escaping (LeaveQueueResponse) -> Void) {
 //        let headers : HTTPHeaders = [
 //            "Authorization" : "Bearer " + sessionToken
 //        ]
-//        let leaveQueueUrl = api + "courses/" + courseId + "/timeslots/" + timeslotId + "/leave/"
+//        let leaveQueueUrl = baseUrl + "courses/" + courseId + "/timeslots/" + timeslotId + "/leave/"
 //
 //        AF.request(leaveQueueUrl, method: .post, parameters: [:], encoding: JSONEncoding.default).validate().responseData { (response) in
 //            switch response.result {
@@ -137,6 +135,30 @@ struct NetworkManager{
 //                let decoder = JSONDecoder()
 //                if let leaveQueueResponse = try? decoder.decode(LeaveQueueResponse.self, from: data) {
 //                    completion(leaveQueueResponse)
+//                }
+//            case .failure(let error):
+//                print(error.localizedDescription)
+//            }
+//        }
+//    }
+
+
+//    static func add_timeslot(fromSessionToken sessionToken: String, forCourseId courseId: String, forTimeslotId timeslotId: String, completion: @escaping (AddTimeslotResponse) -> Void) {
+//        let headers : HTTPHeaders = [
+//            "Authorization" : "Bearer " + sessionToken
+//        ]
+//        let addTimeslotUrl = baseUrl + "/courses/" + courseId + "/timeslots/" + timeslotId + "/"
+//        let parameters : Parameters = [
+//            "start_time": start_time,
+//            "end_time": end_time
+//        ]
+//
+//        AF.request(loginURL, method: .post, parameters: parameters, encoding: JSONEncoding.default).validate().responseData { (response) in
+//            switch response.result {
+//            case .success(let data):
+//                let decoder = JSONDecoder()
+//                if let addTimeslotResponse = try? decoder.decode(AddTimeslotResponse.self, from: data) {
+//                    completion(addTimeslotResponse)
 //                }
 //            case .failure(let error):
 //                print(error.localizedDescription)
