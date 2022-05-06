@@ -20,6 +20,9 @@ def month_names():
      "December": 31
     }
 
+def gen_color(i):
+    colors = ["#DE9FF5", "#F59F9F", "#85DEFC"]
+    return colors[i]
 
 def gen_name(i):
     names = ["A", "B", "C", "D"]

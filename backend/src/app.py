@@ -72,7 +72,7 @@ def gen_courses():
     users = User.query.all()
 
     for i in range(3):
-        course = Course(code=gen_course(i), name="Programming")
+        course = Course(code=gen_course(i), name="Programming", color=gen_color(i))
         db.session.add(course)
         db.session.commit()
 
