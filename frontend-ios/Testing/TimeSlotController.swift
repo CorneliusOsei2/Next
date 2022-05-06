@@ -18,8 +18,18 @@ class TimeslotController: UIViewController {
     var waiting = UIButton()
     var ongoing = UIButton()
     var tas = UIButton()
-    var liveupdates = UILabel()
+//    var liveupdates = UILabel()
     var updatetickers : [String : UILabel] = [:]
+    
+    var icon: UIImageView!
+    var courseCodeLabel: UILabel!
+    var joinButton: UIButton!
+    var liveUpatesLabel: UILabel!
+    
+    var doneLabel: UILabel!
+    var waitingLabel: UILabel!
+    var ongoingLabel: UILabel!
+    var instructorsCountLabel: UILabel!
     
     init() {
         super.init(nibName: nil, bundle: nil)
@@ -34,64 +44,139 @@ class TimeslotController: UIViewController {
         super.viewDidLoad()
         view.backgroundColor = .white
         
-        let _ = icon
-        let _ = courseControllerName
-        let _ = subheader
-        let _ = joinButton
-        let _ = joinButtonlabels
+        icon = UIImageView()
+        icon.image = UIImage(named: "Sprite")
+        icon.layer.cornerRadius = 5
+        icon.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(icon)
+        
+        courseCodeLabel = UILabel()
+        courseCodeLabel.text = "CS 1110"
+        courseCodeLabel.textColor = #colorLiteral(red: 0, green: 0, blue: 0, alpha: 1)
+        courseCodeLabel.font = .systemFont(ofSize: 36, weight: .bold)
+        courseCodeLabel.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(courseCodeLabel)
+        
+        joinButton = UIButton()
+        joinButton.layer.backgroundColor = #colorLiteral(red: 0.8722903132, green: 0.6250726581, blue: 0.9617945552, alpha: 1)
+        joinButton.layer.borderWidth = 1
+        joinButton.layer.borderColor = #colorLiteral(red: 0.8722903132, green: 0.6250726581, blue: 0.9617945552, alpha: 1)
+        joinButton.layer.cornerRadius = 20
+
+        joinButton.addTarget(self, action: #selector(joinQueue), for: .touchUpInside)
+        joinButton.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(joinButton)
+
+        liveUpatesLabel = UILabel()
+        liveUpatesLabel.text = "Live Updates"
+        liveUpatesLabel.textColor = #colorLiteral(red: 0, green: 0, blue: 0, alpha: 1)
+        liveUpatesLabel.font = .systemFont(ofSize: 36, weight: .bold)
+        liveUpatesLabel.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(liveUpatesLabel)
+        
+        setUpTickers()
+        
+        setUpConstraints()
+    }
+    
+    func setUpTickers() {
+        doneLabel = UILabel()
+        doneLabel.backgroundColor = .gray
+        doneLabel.textColor = .white
+        doneLabel.font = .systemFont(ofSize: 36, weight: .bold)
+        
+        doneLabel.layer.cornerRadius = 24
+        doneLabel.layer.masksToBounds = true
+        doneLabel.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(doneLabel)
+        
+        ongoingLabel = UILabel()
+        ongoingLabel.backgroundColor = .gray
+        ongoingLabel.textColor = .white
+        ongoingLabel.font = .systemFont(ofSize: 36, weight: .bold)
+        ongoingLabel.layer.cornerRadius = 24
+        ongoingLabel.layer.masksToBounds = true
+        ongoingLabel.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(ongoingLabel)
+        
+        waitingLabel = UILabel()
+        waitingLabel.backgroundColor = .gray
+        waitingLabel.textColor = .white
+        waitingLabel.font = .systemFont(ofSize: 36, weight: .bold)
+        waitingLabel.layer.cornerRadius = 24
+        waitingLabel.layer.masksToBounds = true
+        waitingLabel.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(waitingLabel)
+        
+        instructorsCountLabel = UILabel()
+        instructorsCountLabel.backgroundColor = .gray
+        instructorsCountLabel.textColor = .white
+        instructorsCountLabel.font = .systemFont(ofSize: 36, weight: .bold)
+        instructorsCountLabel.layer.cornerRadius = 24
+        instructorsCountLabel.layer.masksToBounds = true
+        instructorsCountLabel.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(instructorsCountLabel)
+    }
+    
+    func setUpConstraints() {
+        icon.snp.makeConstraints { make in
+            make.top.equalTo(view.safeAreaLayoutGuide).offset(10)
+            make.left.equalToSuperview().offset(10)
+            make.width.height.equalTo(40)
+        }
+        
+        courseCodeLabel.snp.makeConstraints { make in
+            make.top.equalTo(icon.snp.bottom).offset(10)
+            make.left.equalToSuperview().offset(10)
+        }
+        
+        joinButton.snp.makeConstraints { make in
+            make.top.equalTo(courseCodeLabel.snp.bottom).offset(40)
+            make.centerX.equalToSuperview()
+            make.height.equalTo(90)
+            make.width.equalTo(view.frame.width * (313.0/375.0))
+        }
+        
+        liveUpatesLabel.snp.makeConstraints { make in
+            make.top.equalTo(joinButton.snp.bottom).offset(34)
+            make.left.equalToSuperview().offset(22)
+        }
         
         
-        setupUpdates()
-        setNotQueued()
+        let innerSpacing = view.frame.width * (24.0 / 375)
+        let width = (view.frame.width - (innerSpacing * 3)) / 2
+        
+        doneLabel.snp.makeConstraints { make in
+            make.top.equalTo(liveUpatesLabel.snp.bottom).offset(22)
+            make.height.equalTo(108)
+            make.width.equalTo(width)
+            make.left.equalTo(innerSpacing)
+        }
+        
+        ongoingLabel.snp.makeConstraints { make in
+            make.top.equalTo(doneLabel.snp.bottom).offset(30)
+            make.height.equalTo(160)
+            make.width.equalTo(width)
+            make.left.equalToSuperview().offset(innerSpacing)
+        }
+        
+        waitingLabel.snp.makeConstraints { make in
+            make.top.equalTo(doneLabel.snp.top)
+            make.height.equalTo(180)
+            make.width.equalTo(width)
+            make.right.equalToSuperview().offset(-innerSpacing)
+        }
+        
+        instructorsCountLabel.snp.makeConstraints { make in
+            make.bottom.equalTo(ongoingLabel.snp.bottom)
+            make.height.equalTo(77)
+            make.width.equalTo(width)
+            make.right.equalToSuperview().offset(-innerSpacing)
+        }
+        
         
     }
     
-    func setupTickers() -> [UILabel] {
-        var sdone = UILabel()
-        var swaiting = UILabel()
-        var stas = UILabel()
-        var songoing = UILabel()
-        
-        sdone.text = "1"
-        sdone.textColor = #colorLiteral(red: 0, green: 0, blue: 0, alpha: 1)
-        sdone.font = .systemFont(ofSize: 36, weight: .bold)
-        sdone.translatesAutoresizingMaskIntoConstraints = false
-            
-        swaiting.text = "2"
-        swaiting.textColor = #colorLiteral(red: 0, green: 0, blue: 0, alpha: 1)
-        swaiting.font = .systemFont(ofSize: 36, weight: .bold)
-        swaiting.font = .systemFont(ofSize: 36, weight: .bold)
-        swaiting.translatesAutoresizingMaskIntoConstraints = false
-        
-        stas.text = "3"
-        stas.textColor = #colorLiteral(red: 0, green: 0, blue: 0, alpha: 1)
-        stas.font = .systemFont(ofSize: 36, weight: .bold)
-        stas.translatesAutoresizingMaskIntoConstraints = false
-        
-        songoing.text = "4"
-        songoing.textColor = #colorLiteral(red: 0, green: 0, blue: 0, alpha: 1)
-        songoing.font = .systemFont(ofSize: 36, weight: .bold)
-        songoing.translatesAutoresizingMaskIntoConstraints = false
-        
-        
-        view.addSubview(sdone)
-        view.addSubview(swaiting)
-        view.addSubview(stas)
-        view.addSubview(songoing)
-        
-        NSLayoutConstraint.activate([
-            sdone.centerXAnchor.constraint(equalTo: done.centerXAnchor, constant: 0),
-            sdone.centerYAnchor.constraint(equalTo: done.centerYAnchor, constant: -20),
-            songoing.centerXAnchor.constraint(equalTo: sdone.centerXAnchor, constant: 0),
-            songoing.centerYAnchor.constraint(equalTo: ongoing.centerYAnchor, constant: -20),
-            stas.centerXAnchor.constraint(equalTo: tas.centerXAnchor, constant: 0),
-            stas.centerYAnchor.constraint(equalTo: tas.centerYAnchor, constant: -20),
-            swaiting.centerXAnchor.constraint(equalTo: waiting.centerXAnchor, constant:0),
-            swaiting.centerYAnchor.constraint(equalTo: waiting.centerYAnchor, constant: -20)
-        ])
-        
-        return [sdone, songoing, stas, swaiting]
-    }
     
     func setNotQueued() {
         status.setTitle("   NOT QUEUED  ", for: .normal)
@@ -113,82 +198,6 @@ class TimeslotController: UIViewController {
         ])
     }
     
-    lazy var icon: UIImageView = {
-        var img = UIImageView()
-        img.image = UIImage(named: "Sprite")
-        img.layer.cornerRadius = 5
-        img.translatesAutoresizingMaskIntoConstraints = false
-        view.addSubview(img)
-        NSLayoutConstraint.activate([
-            img.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 10),
-            img.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 10),
-            img.heightAnchor.constraint(equalToConstant: CGFloat(40)),
-            img.widthAnchor.constraint(equalToConstant: CGFloat(40))
-        ])
-        return img
-    }()
-    
-    lazy var courseControllerName: UILabel = {
-        let title = UILabel()
-        title.text = "CS 1110"
-        title.textColor = #colorLiteral(red: 0, green: 0, blue: 0, alpha: 1)
-        title.font = .systemFont(ofSize: 36, weight: .bold)
-        
-        title.translatesAutoresizingMaskIntoConstraints = false
-        
-        view.addSubview(title)
-        
-        NSLayoutConstraint.activate([
-            title.topAnchor.constraint(equalTo: icon.bottomAnchor, constant: 10),
-            title.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 10)
-        ])
-
-        return title
-    }()
-    
-    lazy var subheader: UIButton = {
-        let button = UIButton()
-        button.setTitle("    12:00 PM Office Hours    ", for: .normal)
-        button.setTitleColor(.white, for: .normal)
-        button.layer.backgroundColor = #colorLiteral(red: 0.8722903132, green: 0.6250726581, blue: 0.9617945552, alpha: 1)
-        button.layer.borderWidth = 1
-        button.layer.borderColor = #colorLiteral(red: 0.8722903132, green: 0.6250726581, blue: 0.9617945552, alpha: 1)
-        button.layer.cornerRadius = 20
-        button.translatesAutoresizingMaskIntoConstraints = false
-        button.titleLabel?.font = UIFont.systemFont(ofSize: 14, weight: UIFont.Weight.bold)
-
-        view.addSubview(button)
-        
-        NSLayoutConstraint.activate([
-            button.topAnchor.constraint(equalTo: courseControllerName.bottomAnchor, constant: 10),
-            button.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 10),
-            button.widthAnchor.constraint(equalToConstant: 250),
-            button.heightAnchor.constraint(equalToConstant: 40)
-        ])
-        return button
-    }()
-    
-    lazy var joinButton: UIButton = {
-        let button = UIButton()
-        button.layer.backgroundColor = #colorLiteral(red: 0.8722903132, green: 0.6250726581, blue: 0.9617945552, alpha: 1)
-        button.layer.borderWidth = 1
-        button.layer.borderColor = #colorLiteral(red: 0.8722903132, green: 0.6250726581, blue: 0.9617945552, alpha: 1)
-        button.layer.cornerRadius = 20
-        
-        button.addTarget(self, action: #selector(joinQueue), for: .touchUpInside)
-        button.translatesAutoresizingMaskIntoConstraints = false
-        
-        view.addSubview(button)
-        
-        NSLayoutConstraint.activate([
-            button.topAnchor.constraint(equalTo: subheader.bottomAnchor, constant: 40),
-            button.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 30),
-            button.widthAnchor.constraint(equalToConstant: 350),
-            button.heightAnchor.constraint(equalToConstant: 120)
-        ])
-        
-        return button
-    }()
     
     @objc func joinQueue() {
         if pressed {
@@ -268,54 +277,54 @@ class TimeslotController: UIViewController {
     
     
     
-    lazy var joinButtonlabels: [UILabel] = {
-        let title = UILabel()
-        title.text = "Consulting Hours"
-        title.textColor = #colorLiteral(red: 1, green: 1, blue: 1, alpha: 1)
-        title.font = .systemFont(ofSize: 24, weight: .bold)
-        
-        
-        let subtitle = UILabel()
-        subtitle.text = "Derek and Cornelius         this looks trash ik ->"
-        subtitle.textColor = #colorLiteral(red: 1, green: 1, blue: 1, alpha: 1)
-        subtitle.font = .systemFont(ofSize: 12)
-        
-        let now = UILabel()
-        now.text = "Now"
-        now.textColor = #colorLiteral(red: 1, green: 1, blue: 1, alpha: 1)
-        now.font = .systemFont(ofSize: 16, weight: .bold)
+//    lazy var joinButtonlabels: [UILabel] = {
+//        let title = UILabel()
+//        title.text = "Consulting Hours"
+//        title.textColor = #colorLiteral(red: 1, green: 1, blue: 1, alpha: 1)
+//        title.font = .systemFont(ofSize: 24, weight: .bold)
+//
+//
+//        let subtitle = UILabel()
+//        subtitle.text = "Derek and Cornelius         this looks trash ik ->"
+//        subtitle.textColor = #colorLiteral(red: 1, green: 1, blue: 1, alpha: 1)
+//        subtitle.font = .systemFont(ofSize: 12)
+//
+//        let now = UILabel()
+//        now.text = "Now"
+//        now.textColor = #colorLiteral(red: 1, green: 1, blue: 1, alpha: 1)
+//        now.font = .systemFont(ofSize: 16, weight: .bold)
 
-        let liveupdates = UILabel()
-        liveupdates.text = "Live Updates"
-        liveupdates.textColor = #colorLiteral(red: 0, green: 0, blue: 0, alpha: 1)
-        liveupdates.font = .systemFont(ofSize: 36, weight: .bold)
+//        let liveupdates = UILabel()
+//        liveupdates.text = "Live Updates"
+//        liveupdates.textColor = #colorLiteral(red: 0, green: 0, blue: 0, alpha: 1)
+//        liveupdates.font = .systemFont(ofSize: 36, weight: .bold)
+//
+//
+//        title.translatesAutoresizingMaskIntoConstraints = false
+//        subtitle.translatesAutoresizingMaskIntoConstraints = false
+//        now.translatesAutoresizingMaskIntoConstraints = false
+//
+//        liveupdates.translatesAutoresizingMaskIntoConstraints = false
         
+//        view.addSubview(title)
+//        view.addSubview(subtitle)
+//        view.addSubview(now)
+//        view.addSubview(liveupdates)
         
-        title.translatesAutoresizingMaskIntoConstraints = false
-        subtitle.translatesAutoresizingMaskIntoConstraints = false
-        now.translatesAutoresizingMaskIntoConstraints = false
-        
-        liveupdates.translatesAutoresizingMaskIntoConstraints = false
-        
-        view.addSubview(title)
-        view.addSubview(subtitle)
-        view.addSubview(now)
-        view.addSubview(liveupdates)
-        
-        NSLayoutConstraint.activate([
-            title.topAnchor.constraint(equalTo: joinButton.topAnchor, constant: 10),
-            title.leadingAnchor.constraint(equalTo: joinButton.leadingAnchor, constant: 10),
-            subtitle.topAnchor.constraint(equalTo: title.bottomAnchor, constant: 5),
-            subtitle.leadingAnchor.constraint(equalTo: joinButton.leadingAnchor, constant: 10),
-            now.trailingAnchor.constraint(equalTo: joinButton.trailingAnchor, constant: -10),
-            now.bottomAnchor.constraint(equalTo: joinButton.bottomAnchor, constant: -10),
-            liveupdates.topAnchor.constraint(equalTo: joinButton.bottomAnchor, constant: 35),
-            liveupdates.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 15)
-
-        ])
-        
-        return [title, subtitle, liveupdates]
-    }()
+//        NSLayoutConstraint.activate([
+//            title.topAnchor.constraint(equalTo: joinButton.topAnchor, constant: 10),
+//            title.leadingAnchor.constraint(equalTo: joinButton.leadingAnchor, constant: 10),
+//            subtitle.topAnchor.constraint(equalTo: title.bottomAnchor, constant: 5),
+//            subtitle.leadingAnchor.constraint(equalTo: joinButton.leadingAnchor, constant: 10),
+//            now.trailingAnchor.constraint(equalTo: joinButton.trailingAnchor, constant: -10),
+//            now.bottomAnchor.constraint(equalTo: joinButton.bottomAnchor, constant: -10),
+//            liveupdates.topAnchor.constraint(equalTo: joinButton.bottomAnchor, constant: 35),
+//            liveupdates.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 15)
+//
+//        ])
+//
+//        return [title, subtitle, liveupdates]
+//    }()
 }
 
 
