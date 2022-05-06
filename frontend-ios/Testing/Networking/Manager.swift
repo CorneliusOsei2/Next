@@ -136,7 +136,7 @@ struct NetworkManager{
             case .success(let data):
                 let decoder = JSONDecoder()
                 if let leaveQueueResponse = try? decoder.decode(LeaveQueueResponse.self, from: data) {
-                    completion(loginResponse)
+                    completion(leaveQueueResponse)
                 }
             case .failure(let error):
                 print(error.localizedDescription)
