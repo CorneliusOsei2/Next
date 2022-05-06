@@ -345,6 +345,7 @@ def get_queue_info(course_id, timeslot_id):
     if user in course.students:
         return response(res={
             "queue": [],
+            "is_student": True,
             "instructor_count": len(timeslot.instructors_in_timeslot),
             "waiting": timestamps_in_queue,
             "ongoing": timestamps_ongoing,
@@ -355,6 +356,7 @@ def get_queue_info(course_id, timeslot_id):
         return response(res=
         {
             "queue": [t.serialize() for t in timestamps],
+            "is_student": False,
             "instructor_count": len(timeslot.instructors_in_timeslot),
             "waiting": timestamps_in_queue,
             "ongoing": timestamps_ongoing,

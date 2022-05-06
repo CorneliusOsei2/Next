@@ -13,6 +13,7 @@ class CourseController: UIViewController {
     
     var courseCode: String = ""
     var courseColor: UIColor = .white
+    var courseId: String = ""
     var timeslots: [Timeslot] = []
     
     var icon: UIImageView!
@@ -195,6 +196,7 @@ class CourseController: UIViewController {
         super .init(nibName: nil, bundle: nil)
         self.courseCode = courseCode
         self.courseColor = courseColor
+        self.courseId = courseId
         
         let date = Date()
         let calendar = Calendar.current
@@ -322,7 +324,8 @@ extension CourseController: UICollectionViewDelegate {
 //        } else {
 //            course = self.coursesAsInstructor[indexPath.item - self.coursesAsStudent.count]
 //        }
-        self.navigationController?.pushViewController(TimeslotController(), animated: true)
+        let timeslot = self.timeslots[indexPath.item]
+        self.navigationController?.pushViewController(TimeslotController(timeslotId: timeslot.id, courseId: self.courseId, courseCode: self.courseCode, courseColor: self.courseColor), animated: true)
     }
     
 }
