@@ -6,7 +6,7 @@ import json
 import users_dao
 from datetime import datetime
 from Tables import db, Day, Month, Timeslot, User, Course, Timestamp
-from gen import month_names, gen_name, gen_netid, gen_course
+from gen import month_names, gen_name, gen_netid, gen_course, gen_color
 from utils import response, extract_token
 
 # Initialize Flask and CORS
