@@ -227,9 +227,6 @@ class Course(db.Model):
         
         return out
                 
-        
-       
-
 
 class User(db.Model):
     __tablename__ = "users"

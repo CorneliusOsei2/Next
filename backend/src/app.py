@@ -3,11 +3,16 @@ from flask import Flask, request
 from flask_cors import CORS
 from datetime import date
 import json
+from Next.backend.src.errors import 
 import users_dao
 from datetime import datetime
 from Tables import db, Day, Month, Timeslot, User, Course, Timestamp, TimestampStatus
 from gen import month_names, gen_name, gen_netid, gen_course, gen_color
 from utils import response, extract_token
+# from errors import CourseNotFound, TimeslotNotFound, IncorrectCredentials, InvalidSessionToken, StudentInQueue, \
+#     InvalidTimeRange, MissingCredentials, MissingTimes, StudentNotFound, UnauthorizedAccess, UserNotFound
+from errors import *
+
 
 # Initialize Flask and CORS
 app = Flask(__name__)
@@ -148,7 +153,7 @@ def get_courses_for_user_id(user_id):
 
     user = User.query.filter_by(id=user_id).first()
     if user is None:
-        return response("user not found", success=False, code=404)
+        return response(*UserNotFound)
     
     user_info = {
         "user_id": user.id,
@@ -170,12 +175,12 @@ def login():
     password = body.get("password")
     
     if username is None or password is None:
-        return response("Credentials missing, username and/or password. ", success=False, code=404)
+        return response(*MissingCredentials)
 
     was_successful, user = users_dao.verify_credentials(username, password)
 
     if not was_successful:
-        return response("Incorrect username or password", success=False, code=401)
+        return response(*IncorrectCredentials)
     
     user = users_dao.renew_session(user.update_token)
     return response(
@@ -202,13 +207,12 @@ def update_session():
     except Exception as e:
         return response(f"Invalid update token: {str(e)}")
     
-    return response(
-        {
+    return response(res={
             "session_token": user.session_token,
             "session_expiration": str(user.session_expiration),
             "update_token": user.update_token
-        }, success=True, code=201
-    )
+            }, success=True, code=201
+        )
 
 
 @app.route("/next/logout/", methods=["POST"])
@@ -222,12 +226,12 @@ def logout():
     
     user = users_dao.get_user_by_session_token(session_token)
     if not user or not user.verify_session_token(session_token):
-        return response("Invalid session token", success=False, code=404)
+        return response(*InvalidSessionToken)
     
     user.session_expiration = datetime.now()
     db.session.commit()
 
-    return response({"response": "Successfully logged out"}, success=True, code=201)
+    return response(res={"response": "Successfully logged out"}, success=True, code=201)
 
 
 @app.route("/next/months/", methods=["GET"])
@@ -254,6 +258,7 @@ def get_days(month_number):
         
     return response(res={"days": [day.serialize() for day in month.days]}, success=True, code=200)
 
+
 @app.route("/next/courses/", methods=["GET"])
 def get_courses_for_user():
     """
@@ -266,7 +271,7 @@ def get_courses_for_user():
     
     user = users_dao.get_user_by_session_token(session_token)
     if user is None or not user.verify_session_token(session_token):
-        return response("Invalid session token.", success=False, code=404)
+        return response(*InvalidSessionToken)
     
     user_info = {
         "user_id": user.id,
@@ -274,6 +279,7 @@ def get_courses_for_user():
         "courses_as_student":  [course.serialize() for course in user.courses_as_student]
     }
     return response(res=user_info, success=True, code=200)
+
 
 @app.route("/next/courses/<string:course_id>/<int:month_id>/<int:day_id>/timeslots/", methods=["GET"])
 def get_timeslots_for_course_on_date(course_id, month_id, day_id):
@@ -287,6 +293,7 @@ def get_timeslots_for_course_on_date(course_id, month_id, day_id):
     timeslots = Timeslot.query.filter(Timeslot.date==date and Timeslot.course==course_id).order_by(Timeslot.start_time_epoch.asc())
     return response(res={"timeslots": [t.serialize() for t in timeslots]}, success=True, code=200)
 
+
 @app.route("/next/queues/<string:timeslot_id>/", methods=["GET"])
 def get_queue(timeslot_id):
     # TODO: add authorization; add course_id to url to verify if user is able to get queue
@@ -296,12 +303,13 @@ def get_queue(timeslot_id):
     """
     timeslot = Timeslot.query.filter_by(id=timeslot_id).first()
     if timeslot is None:
-        return response("timeslot not found", success=False, code=400)
+        return response(*TimeslotNotFound)
     
     # Retrieve timestamps in ascending time order
     timestamps = Timestamp.query.filter_by(timeslot_id=timeslot_id).order_by(Timestamp.joined_at.asc())
     return response(res={"queue": [t.serialize() for t in timestamps]}, success=True, code=200)
    
+
 @app.route("/next/courses/<string:course_id>/timeslots/<string:timeslot_id>/join/", methods=["POST"])
 def join_queue(course_id, timeslot_id):
     # TESTED
@@ -314,20 +322,20 @@ def join_queue(course_id, timeslot_id):
         return session_token
     user = users_dao.get_user_by_session_token(session_token)
     if user is None or not user.verify_session_token(session_token):
-        return response("Invalid session token.", success=False, code=401)
+        return response(*InvalidSessionToken)
 
     # Get parameters from request body
     course = Course.query.filter_by(id=course_id).first()
     if course is None:
-        return response("course not found", success=False, code=404)
+        return response(*CourseNotFound)
 
     timeslot = Timeslot.query.filter(Timeslot.id==timeslot_id and Timeslot.course_id==course_id).first()
     if timeslot is None:
-        return response("timeslot not found", success=False, code=404)
+        return response(*TimeslotNotFound)
     
     # Check if user is in course
     if user not in course.students:
-        return response("not a student for this course", success=False, code=401)
+        return response(*StudentNotFound)
     
     # Check if user is not already in queue
     optional_timestamp = Timestamp.query.filter(Timestamp.user_id==user.id).first()
@@ -345,7 +353,7 @@ def join_queue(course_id, timeslot_id):
         return response({"timestamp": optional_timestamp.serialize()}, success=True, code=201)
     else:
         # user is in queue or being helped
-        return response("already in queue", success=False, code=400)
+        return response(*StudentInQueue)
 
 
 @app.route("/next/courses/<string:course_id>/timeslots/<string:timeslot_id>/leave/", methods=["POST"])
@@ -359,25 +367,25 @@ def leave_queue(course_id, timeslot_id):
         return session_token
     user = users_dao.get_user_by_session_token(session_token)
     if user is None or not user.verify_session_token(session_token):
-        return response("Invalid session token.", success=False, code=401)
+        return response(*InvalidSessionToken)
 
     # Get parameters from request body
     course = Course.query.filter_by(id=course_id).first()
     if course is None:
-        return response("course not found", success=False, code=404)
+        return response(*CourseNotFound)
 
     timeslot = Timeslot.query.filter(Timeslot.id==timeslot_id and Timeslot.course_id==course_id).first()
     if timeslot is None:
-        return response("timeslot not found", success=False, code=404)
+        return response(*TimeslotNotFound)
     
     # Check if user is in course
     if user not in course.students:
-        return response("not a student for this course", success=False, code=401)
+        return response(*StudentNotFound)
 
     # Check if user is not already in queue
     optional_timestamp = Timestamp.query.filter(Timestamp.user_id==user.id and Timestamp.id==timeslot_id).first()
     if optional_timestamp is None or optional_timestamp.status==TimestampStatus.OutOfQueue:
-        return response("student not in queue", success=False, code=400)
+        return response(*StudentNotFound)
 
     # Mark as completed if being helped by Instructor
     if optional_timestamp.status == TimestampStatus.Ongoing:
@@ -387,6 +395,7 @@ def leave_queue(course_id, timeslot_id):
     optional_timestamp.status = TimestampStatus.OutOfQueue
     db.session.commit()
     return response({"timestamp": optional_timestamp.serialize()}, success=True, code=200)
+
 
 @app.route("/next/courses/<string:course_id>/timeslots/add/", methods=["POST"])
 def add_timeslot(course_id):
@@ -402,30 +411,30 @@ def add_timeslot(course_id):
 
     user = users_dao.get_user_by_session_token(session_token)
     if user is None or not user.verify_session_token(session_token):
-        return response("Invalid session token.", success=False, code=401)
+        return response(*InvalidSessionToken)
 
     body = json.loads(request.data)
     start_time = body.get("start_time")
     end_time = body.get("end_time")
-
     if start_time is None or end_time is None:
-        return response("Must provide both [start_time] and [end_time]. ", success=False, code=404) 
+        return response(*MissingTimes) 
     if start_time >= end_time:
-        return response("Invalid time range. ", success=False, code=404)
+        return response(*InvalidTimeRange)
 
     course = Course.query.filter_by(id=course_id).first()
     if course is None:
-        return response("course not found. ", success=False, code=404)
+        return response(*CourseNotFound)
 
     # Check if user is an instructor for the course
     if user not in course.instructors:
-        return response("user is not authorized to add a timeslot ", success=False, code=401)
+        return response(*UnauthorizedAccess)
     
     time_slot = Timeslot(start_time=start_time, end_time=end_time, course_id=course_id)
     db.session.add(time_slot)
     db.session.commit()
     
     return response({"timeslot": time_slot.serialize()}, success=True, code=201)
+
 
 @app.route("/next/courses/<string:course_id>/timeslots/<string:timeslot_id>/", methods=["DELETE"])
 def delete_timeslot(course_id, timeslot_id):
@@ -440,25 +449,26 @@ def delete_timeslot(course_id, timeslot_id):
 
     user = users_dao.get_user_by_session_token(session_token)
     if user is None or not user.verify_session_token(session_token):
-        return response("Invalid session token.", success=False, code=401) 
+        return response(*InvalidSessionToken) 
 
     course = Course.query.filter_by(id=course_id).first()
     if course is None:
-        return response("course not found. ", success=False, code=404)
+        return response(*CourseNotFound)
 
     # Check if user is an instructor for the course
     if user not in course.instructors:
-        return response("user is not authorized to delete a timeslot ", success=False, code=401)
+        return response(*UnauthorizedAccess)
 
     timeslot = Timeslot.query.filter_by(id=timeslot_id).first()
     if timeslot is None:
-        return response("timeslot not found", success=False, code=404)
+        return response(*TimeslotNotFound)
     
     db.session.delete(timeslot)
     db.session.commit()
     return response({"timeslot": timeslot.serialize()}, success=True, code=200)
 
 ######################################## Added for testing purposes. Drop all tables #############################################
+
 @app.route("/next/drop/", methods=["POST"])
 def drop_tables():
     """
@@ -482,5 +492,3 @@ def drop_tables():
 if __name__ == '__main__':
     # init_db()
     app.run(host='0.0.0.0', port=4500)
-
-    
