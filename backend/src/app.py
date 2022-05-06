@@ -8,7 +8,7 @@ from datetime import datetime
 from Tables import db, Day, Month, Timeslot, User, Course, Timestamp, TimestampStatus
 from gen import month_names, gen_name, gen_netid, gen_course, gen_color
 from utils import response, extract_token
-from errors import *
+import err_msgs as err
 
 
 # Initialize Flask and CORS
@@ -153,7 +153,7 @@ def get_courses_for_user_id(user_id):
     
     user = User.query.filter_by(id=user_id).first()
     if user is None:
-        return response(*UserNotFound)
+        return response(*err.UserNotFound)
     
     user_info = {
         "user_id": user.id,
@@ -175,12 +175,12 @@ def login():
     password = body.get("password")
     
     if username is None or password is None:
-        return response(*MissingCredentials)
+        return response(*err.MissingCredentials)
 
     was_successful, user = users_dao.verify_credentials(username, password)
 
     if not was_successful:
-        return response(*IncorrectCredentials)
+        return response(*err.IncorrectCredentials)
     
     user = users_dao.renew_session(user.update_token)
     return response(
@@ -204,8 +204,8 @@ def update_session():
     
     try: 
         user = users_dao.renew_session(update_token)
-    except Exception as e:
-        return response(f"Invalid update token: {str(e)}")
+    except:
+        return response(*err.InvalidUpdateToken)
     
     return response(res={
             "session_token": user.session_token,
@@ -226,7 +226,7 @@ def logout():
     
     user = users_dao.get_user_by_session_token(session_token)
     if not user or not user.verify_session_token(session_token):
-        return response(*InvalidSessionToken)
+        return response(*err.InvalidSessionToken)
     
     user.session_expiration = datetime.now()
     db.session.commit()
@@ -271,7 +271,7 @@ def get_courses_for_user():
     
     user = users_dao.get_user_by_session_token(session_token)
     if user is None or not user.verify_session_token(session_token):
-        return response(*InvalidSessionToken)
+        return response(*err.InvalidSessionToken)
     
     user_info = {
         "user_id": user.id,
@@ -294,15 +294,15 @@ def get_timeslots_for_course_on_date(course_id, month_id, day_id):
         return session_token
     user = users_dao.get_user_by_session_token(session_token)
     if user is None or not user.verify_session_token(session_token):
-        return response(*InvalidSessionToken)
+        return response(*err.InvalidSessionToken)
 
     course = Course.query.filter_by(id=course_id).first()
     if course is None:
-        return response(*CourseNotFound)
+        return response(*err.CourseNotFound)
     
     # Only students or instructors can view the timeslots
     if user not in course.students and user not in course.instructors:
-        return response(*UnauthorizedAccess)
+        return response(*err.UnauthorizedAccess)
     
     # Get timeslots by ascending order
     timeslots = Timeslot.query.filter(Timeslot.date==date and Timeslot.course==course_id).order_by(Timeslot.start_time_epoch.asc())
@@ -321,34 +321,33 @@ def get_queue_info(course_id, timeslot_id):
         return session_token
     user = users_dao.get_user_by_session_token(session_token)
     if user is None or not user.verify_session_token(session_token):
-        return response(*InvalidSessionToken)
+        return response(*err.InvalidSessionToken)
 
     course = Course.query.filter_by(id=course_id).first()
     if course is None:
-        return response(*CourseNotFound)
+        return response(*err.CourseNotFound)
     
     # Only students can get queue info
     if user not in course.students and user not in course.instructors:
-        return response(*UnauthorizedAccess)
+        return response(*err.UnauthorizedAccess)
     
     # Check if timeslot exists
     timeslot = Timeslot.query.filter_by(id=timeslot_id).first()
     if timeslot is None:
-        return response(*TimeslotNotFound)
+        return response(*err.TimeslotNotFound)
 
     timestamps_in_queue = Timestamp.query.filter(Timestamp.status==TimestampStatus.InQueue and Timestamp.timeslot_id==timeslot_id).count()
     timestamps_ongoing = Timestamp.query.filter(Timestamp.status==TimestampStatus.Ongoing and Timestamp.timeslot_id==timeslot_id).count()
     timestamps_completed = Timestamp.query.filter(Timestamp.completed==True and Timestamp.timeslot_id==timeslot_id).count()
     # Student specific info about queue
     if user in course.students:
-        return response(res=
-        {
+        return response(res={
             "queue": [],
             "instructor_count": len(timeslot.instructors_in_timeslot),
             "waiting": timestamps_in_queue,
             "ongoing": timestamps_ongoing,
             "completed": timestamps_completed
-        }, success=True, code=200)
+            }, success=True, code=200)
     else:  # Instructor specific info about queue
         timestamps = Timestamp.query.filter(Timestamp.status==TimestampStatus.InQueue and Timestamp.timeslot_id==timeslot_id).order_by(Timestamp.joined_at.asc())
         return response(res=
@@ -362,7 +361,6 @@ def get_queue_info(course_id, timeslot_id):
 
 @app.route("/next/courses/<string:course_id>/timeslots/<string:timeslot_id>/join/", methods=["POST"])
 def join_queue(course_id, timeslot_id):
-    # TESTED
     """
     Endpoint for adding user to queue for timeslot id.
     """
@@ -372,20 +370,20 @@ def join_queue(course_id, timeslot_id):
         return session_token
     user = users_dao.get_user_by_session_token(session_token)
     if user is None or not user.verify_session_token(session_token):
-        return response(*InvalidSessionToken)
+        return response(*err.InvalidSessionToken)
 
     # Get parameters from request body
     course = Course.query.filter_by(id=course_id).first()
     if course is None:
-        return response(*CourseNotFound)
+        return response(*err.CourseNotFound)
 
     timeslot = Timeslot.query.filter(Timeslot.id==timeslot_id and Timeslot.course_id==course_id).first()
     if timeslot is None:
-        return response(*TimeslotNotFound)
+        return response(*err.TimeslotNotFound)
     
     # Check if user is in course
     if user not in course.students:
-        return response(*StudentNotFound)
+        return response(*err.StudentNotFound)
     
     # Check if user is not already in queue
     optional_timestamp = Timestamp.query.filter(Timestamp.user_id==user.id).first()
@@ -403,7 +401,7 @@ def join_queue(course_id, timeslot_id):
         return response({"timestamp": optional_timestamp.serialize()}, success=True, code=201)
     else:
         # user is in queue or being helped
-        return response(*StudentInQueue)
+        return response(*err.StudentInQueue)
 
 
 @app.route("/next/courses/<string:course_id>/timeslots/<string:timeslot_id>/leave/", methods=["POST"])
@@ -417,25 +415,25 @@ def leave_queue(course_id, timeslot_id):
         return session_token
     user = users_dao.get_user_by_session_token(session_token)
     if user is None or not user.verify_session_token(session_token):
-        return response(*InvalidSessionToken)
+        return response(*err.InvalidSessionToken)
 
     # Get parameters from request body
     course = Course.query.filter_by(id=course_id).first()
     if course is None:
-        return response(*CourseNotFound)
+        return response(*err.CourseNotFound)
 
     timeslot = Timeslot.query.filter(Timeslot.id==timeslot_id and Timeslot.course_id==course_id).first()
     if timeslot is None:
-        return response(*TimeslotNotFound)
+        return response(*err.TimeslotNotFound)
     
     # Check if user is in course
     if user not in course.students:
-        return response(*StudentNotFound)
+        return response(*err.StudentNotFound)
 
     # Check if user is not already in queue
     optional_timestamp = Timestamp.query.filter(Timestamp.user_id==user.id and Timestamp.id==timeslot_id).first()
     if optional_timestamp is None or optional_timestamp.status==TimestampStatus.OutOfQueue:
-        return response(*StudentNotFound)
+        return response(*err.StudentNotFound)
 
     # Mark as completed if being helped by Instructor
     if optional_timestamp.status == TimestampStatus.Ongoing:
@@ -461,27 +459,27 @@ def add_timeslot(course_id):
 
     user = users_dao.get_user_by_session_token(session_token)
     if user is None or not user.verify_session_token(session_token):
-        return response(*InvalidSessionToken)
+        return response(*err.InvalidSessionToken)
 
     body = json.loads(request.data)
     start_time = body.get("start_time")
     end_time = body.get("end_time")
     title = body.get("title")
     if start_time is None or end_time is None:
-        return response(*MissingTimes) 
+        return response(*err.MissingTimes) 
     if start_time >= end_time:
-        return response(*InvalidTimeRange)
+        return response(*err.InvalidTimeRange)
 
     if title is None or title.strip() == "":
         return response(*MissingTitle)
 
     course = Course.query.filter_by(id=course_id).first()
     if course is None:
-        return response(*CourseNotFound)
+        return response(*err.CourseNotFound)
 
     # Check if user is an instructor for the course
     if user not in course.instructors:
-        return response(*UnauthorizedAccess)
+        return response(*err.UnauthorizedAccess)
     
     time_slot = Timeslot(start_time=start_time, end_time=end_time, course_id=course_id, title=title)
     time_slot.instructors_in_timeslot.append(user)
@@ -503,19 +501,19 @@ def delete_timeslot(course_id, timeslot_id):
 
     user = users_dao.get_user_by_session_token(session_token)
     if user is None or not user.verify_session_token(session_token):
-        return response(*InvalidSessionToken) 
+        return response(*err.InvalidSessionToken) 
 
     course = Course.query.filter_by(id=course_id).first()
     if course is None:
-        return response(*CourseNotFound)
+        return response(*err.CourseNotFound)
 
     # Check if user is an instructor for the course
     if user not in course.instructors:
-        return response(*UnauthorizedAccess)
+        return response(*err.UnauthorizedAccess)
 
     timeslot = Timeslot.query.filter_by(id=timeslot_id).first()
     if timeslot is None:
-        return response(*TimeslotNotFound)
+        return response(*err.TimeslotNotFound)
     
     db.session.delete(timeslot)
     db.session.commit()
