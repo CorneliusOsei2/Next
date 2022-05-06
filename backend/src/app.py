@@ -275,6 +275,7 @@ def get_courses_for_user():
     
     user_info = {
         "user_id": user.id,
+        "user_name": user.name,
         "courses_as_instructor": [course.serialize() for course in user.courses_as_instructor],
         "courses_as_student":  [course.serialize() for course in user.courses_as_student]
     }

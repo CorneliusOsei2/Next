@@ -35,7 +35,7 @@ class HomeController: UIViewController {
         
         header = UILabel()
         header.textAlignment = .left
-        header.text = "Hi, [User's name]"
+        header.text = "Hi, "
         header.font = UIFont.boldSystemFont(ofSize: 22)
         header.numberOfLines = 0
         header.translatesAutoresizingMaskIntoConstraints = false
@@ -66,6 +66,7 @@ class HomeController: UIViewController {
     func getAllCourses() {
         if let sessionToken = userDefaults.value(forKey: Constants.UserDefaults.sessionToken) as? String {
             NetworkManager.get_courses(fromSessionToken: sessionToken) { userCoursesResponse in
+                self.header.text = "Hi, " + userCoursesResponse.user_name
                 self.coursesAsStudent = userCoursesResponse.courses_as_student
                 self.coursesAsInstructor = userCoursesResponse.courses_as_instructor
                 DispatchQueue.main.async {
