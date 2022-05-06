@@ -11,6 +11,7 @@ import UIKit
 import SwiftUI
 
 class TimeslotController: UIViewController {
+    let userDefaults = UserDefaults.standard
     
     var status = UIButton()
     var pressed = false
@@ -20,6 +21,10 @@ class TimeslotController: UIViewController {
     var tas = UIButton()
 //    var liveupdates = UILabel()
     var updatetickers : [String : UILabel] = [:]
+
+    var timeslotId: String = ""
+    var courseCode: String = ""
+    var courseColor: UIColor = .white
     
     var icon: UIImageView!
     var courseCodeLabel: UILabel!
@@ -51,16 +56,15 @@ class TimeslotController: UIViewController {
         view.addSubview(icon)
         
         courseCodeLabel = UILabel()
-        courseCodeLabel.text = "CS 1110"
+        courseCodeLabel.text = self.courseCode
         courseCodeLabel.textColor = #colorLiteral(red: 0, green: 0, blue: 0, alpha: 1)
         courseCodeLabel.font = .systemFont(ofSize: 36, weight: .bold)
         courseCodeLabel.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(courseCodeLabel)
         
         joinButton = UIButton()
-        joinButton.layer.backgroundColor = #colorLiteral(red: 0.8722903132, green: 0.6250726581, blue: 0.9617945552, alpha: 1)
+        joinButton.backgroundColor = courseColor
         joinButton.layer.borderWidth = 1
-        joinButton.layer.borderColor = #colorLiteral(red: 0.8722903132, green: 0.6250726581, blue: 0.9617945552, alpha: 1)
         joinButton.layer.cornerRadius = 20
 
         joinButton.addTarget(self, action: #selector(joinQueue), for: .touchUpInside)
@@ -75,13 +79,34 @@ class TimeslotController: UIViewController {
         view.addSubview(liveUpatesLabel)
         
         setUpTickers()
-        
         setUpConstraints()
     }
     
+    init(timeslotId: String, courseId: String, courseCode: String, courseColor: UIColor) {
+        super .init(nibName: nil, bundle: nil)
+        self.timeslotId = timeslotId
+        self.courseCode = courseCode
+        self.courseColor = courseColor
+        
+        if let sessionToken = userDefaults.value(forKey: Constants.UserDefaults.sessionToken) as? String {
+            NetworkManager.get_queue_info(fromSessionToken: sessionToken, forCourseId: courseId, forTimeslotId: timeslotId) { queueInfoResponse in
+                self.ongoingLabel.text = String(queueInfoResponse.ongoing)
+                self.waitingLabel.text = String(queueInfoResponse.waiting)
+                self.doneLabel.text = String(queueInfoResponse.completed)
+                self.instructorsCountLabel.text = String(queueInfoResponse.instructor_count)
+            }
+        } else {
+            // Session token doesn't exist
+            UIApplication.shared.windows.first?.rootViewController = LoginController()
+            UIApplication.shared.windows.first?.makeKeyAndVisible()
+        }
+        
+    }
+    
+    
     func setUpTickers() {
         doneLabel = UILabel()
-        doneLabel.backgroundColor = .gray
+        doneLabel.backgroundColor = courseColor
         doneLabel.textColor = .white
         doneLabel.font = .systemFont(ofSize: 36, weight: .bold)
         
@@ -91,7 +116,7 @@ class TimeslotController: UIViewController {
         view.addSubview(doneLabel)
         
         ongoingLabel = UILabel()
-        ongoingLabel.backgroundColor = .gray
+        ongoingLabel.backgroundColor = courseColor
         ongoingLabel.textColor = .white
         ongoingLabel.font = .systemFont(ofSize: 36, weight: .bold)
         ongoingLabel.layer.cornerRadius = 24
@@ -100,7 +125,7 @@ class TimeslotController: UIViewController {
         view.addSubview(ongoingLabel)
         
         waitingLabel = UILabel()
-        waitingLabel.backgroundColor = .gray
+        waitingLabel.backgroundColor = courseColor
         waitingLabel.textColor = .white
         waitingLabel.font = .systemFont(ofSize: 36, weight: .bold)
         waitingLabel.layer.cornerRadius = 24
@@ -109,7 +134,7 @@ class TimeslotController: UIViewController {
         view.addSubview(waitingLabel)
         
         instructorsCountLabel = UILabel()
-        instructorsCountLabel.backgroundColor = .gray
+        instructorsCountLabel.backgroundColor = courseColor
         instructorsCountLabel.textColor = .white
         instructorsCountLabel.font = .systemFont(ofSize: 36, weight: .bold)
         instructorsCountLabel.layer.cornerRadius = 24

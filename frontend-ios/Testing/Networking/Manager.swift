@@ -105,44 +105,44 @@ struct NetworkManager{
     }
 
 
-    static func join_queue(fromSessionToken sessionToken: String, forCourseId courseId: String, forTimeslotId timeslotId: String, completion: @escaping (JoinQueueResponse) -> Void) {
-        let headers : HTTPHeaders = [
-            "Authorization" : "Bearer " + sessionToken
-        ]
-        let joinQueueUrl = api + "courses/" + courseId + "/timeslots/" + timeslotId + "/join/"
-
-        AF.request(joinQueueUrl, method: .post, parameters: [:], encoding: JSONEncoding.default).validate().responseData { (response) in
-            switch response.result {
-            case .success(let data):
-                let decoder = JSONDecoder()
-                if let joinQueueResponse = try? decoder.decode(JoinQueueResponse.self, from: data) {
-                    completion(joinQueueResponse)
-                }
-            case .failure(let error):
-                print(error.localizedDescription)
-            }
-        }
-    }
+//    static func join_queue(fromSessionToken sessionToken: String, forCourseId courseId: String, forTimeslotId timeslotId: String, completion: @escaping (JoinQueueResponse) -> Void) {
+//        let headers : HTTPHeaders = [
+//            "Authorization" : "Bearer " + sessionToken
+//        ]
+//        let joinQueueUrl = api + "courses/" + courseId + "/timeslots/" + timeslotId + "/join/"
+//
+//        AF.request(joinQueueUrl, method: .post, parameters: [:], encoding: JSONEncoding.default).validate().responseData { (response) in
+//            switch response.result {
+//            case .success(let data):
+//                let decoder = JSONDecoder()
+//                if let joinQueueResponse = try? decoder.decode(JoinQueueResponse.self, from: data) {
+//                    completion(joinQueueResponse)
+//                }
+//            case .failure(let error):
+//                print(error.localizedDescription)
+//            }
+//        }
+//    }
    
     // /next/courses/<string:course_id>/timeslots/<string:timeslot_id>/leave/
-    static func leave_queue(fromSessionToken sessionToken: String, forCourseId courseId: String, forTimeslotId timeslotId: String, completion: @escaping (LeaveQueueResponse) -> Void) {
-        let headers : HTTPHeaders = [
-            "Authorization" : "Bearer " + sessionToken
-        ]
-        let leaveQueueUrl = api + "courses/" + courseId + "/timeslots/" + timeslotId + "/leave/"
-
-        AF.request(leaveQueueUrl, method: .post, parameters: [:], encoding: JSONEncoding.default).validate().responseData { (response) in
-            switch response.result {
-            case .success(let data):
-                let decoder = JSONDecoder()
-                if let leaveQueueResponse = try? decoder.decode(LeaveQueueResponse.self, from: data) {
-                    completion(leaveQueueResponse)
-                }
-            case .failure(let error):
-                print(error.localizedDescription)
-            }
-        }
-    }
+//    static func leave_queue(fromSessionToken sessionToken: String, forCourseId courseId: String, forTimeslotId timeslotId: String, completion: @escaping (LeaveQueueResponse) -> Void) {
+//        let headers : HTTPHeaders = [
+//            "Authorization" : "Bearer " + sessionToken
+//        ]
+//        let leaveQueueUrl = api + "courses/" + courseId + "/timeslots/" + timeslotId + "/leave/"
+//
+//        AF.request(leaveQueueUrl, method: .post, parameters: [:], encoding: JSONEncoding.default).validate().responseData { (response) in
+//            switch response.result {
+//            case .success(let data):
+//                let decoder = JSONDecoder()
+//                if let leaveQueueResponse = try? decoder.decode(LeaveQueueResponse.self, from: data) {
+//                    completion(leaveQueueResponse)
+//                }
+//            case .failure(let error):
+//                print(error.localizedDescription)
+//            }
+//        }
+//    }
 
 
 }
