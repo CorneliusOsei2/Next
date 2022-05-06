@@ -8,7 +8,7 @@ from datetime import datetime
 from Tables import db, Day, Month, Timeslot, User, Course, Timestamp, TimestampStatus
 from gen import month_names, gen_name, gen_netid, gen_course, gen_color
 from utils import response, extract_token
-from errors import *
+from err_msgs import *
 
 
 # Initialize Flask and CORS
@@ -204,8 +204,8 @@ def update_session():
     
     try: 
         user = users_dao.renew_session(update_token)
-    except Exception as e:
-        return response(f"Invalid update token: {str(e)}")
+    except:
+        return response(*InvalidUpdateToken)
     
     return response(res={
             "session_token": user.session_token,
