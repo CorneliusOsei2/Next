@@ -124,6 +124,14 @@ def get_all_timeslots():
     timeslots = Timeslot.query.all()
     return response(res={"timeslots": [timeslot.serialize() for timeslot in timeslots]}, success=True, code=200)
 
+@app.route("/dev/next/timestamps/", methods=["GET"])
+def get_all_timestamps():
+    """
+    (DEV ONLY) Endpoint to get all timestamps.
+    """
+    timestamps = Timestamp.query.all()
+    return response(res={"timestamps": [timestamp.serialize() for timestamp in timestamps]}, success=True, code=200)
+
 
 @app.route("/next/<string:course_id>/users/", methods=["GET"])
 def get_course_users(course_id):
@@ -306,21 +314,55 @@ def get_timeslots_for_course_on_date(course_id, month_id, day_id):
     return response(res={"timeslots": [t.serialize() for t in timeslots]}, success=True, code=200)
 
 
-@app.route("/next/queues/<string:timeslot_id>/", methods=["GET"])
-def get_queue(timeslot_id):
-    # TODO: add authorization; add course_id to url to verify if user is able to get queue
+@app.route("/next/courses/<string:course_id>/queues/<string:timeslot_id>/", methods=["GET"])
+def get_queue_info(course_id, timeslot_id):
     # Tested
     """
     Get queue for timeslot given its id.
     """
+    # Get user from session
+    was_successful, session_token = extract_token(request)
+    if not was_successful:
+        return session_token
+    user = users_dao.get_user_by_session_token(session_token)
+    if user is None or not user.verify_session_token(session_token):
+        return response(*InvalidSessionToken)
+
+    course = Course.query.filter_by(id=course_id).first()
+    if course is None:
+        return response(*CourseNotFound)
+    
+    # Only students can get queue info
+    if user not in course.students and user not in course.instructors:
+        return response(*UnauthorizedAccess)
+    
+    # Check if timeslot exists
     timeslot = Timeslot.query.filter_by(id=timeslot_id).first()
     if timeslot is None:
         return response(*TimeslotNotFound)
-    
-    # Retrieve timestamps in ascending time order
-    timestamps = Timestamp.query.filter_by(timeslot_id=timeslot_id).order_by(Timestamp.joined_at.asc())
-    return response(res={"queue": [t.serialize() for t in timestamps]}, success=True, code=200)
-   
+
+    timestamps_in_queue = Timestamp.query.filter(Timestamp.status==TimestampStatus.InQueue and Timestamp.timeslot_id==timeslot_id).count()
+    timestamps_ongoing = Timestamp.query.filter(Timestamp.status==TimestampStatus.Ongoing and Timestamp.timeslot_id==timeslot_id).count()
+    timestamps_completed = Timestamp.query.filter(Timestamp.completed==True and Timestamp.timeslot_id==timeslot_id).count()
+    # Student specific info about queue
+    if user in course.students:
+        return response(res=
+        {
+            "instructor_count": len(timeslot.instructors_in_timeslot),
+            "waiting": timestamps_in_queue,
+            "ongoing": timestamps_ongoing,
+            "completed": timestamps_completed
+        }, success=True, code=200)
+    else:  # Instructor specific info about queue
+        timestamps = Timestamp.query.filter(Timestamp.status==TimestampStatus.InQueue and Timestamp.timeslot_id==timeslot_id).order_by(Timestamp.joined_at.asc())
+        return response(res=
+        {
+            "queue": [t.serialize() for t in timestamps],
+            "instructor_count": len(timeslot.instructors_in_timeslot),
+            "waiting": timestamps_in_queue,
+            "ongoing": timestamps_ongoing,
+            "completed": timestamps_completed
+        }, success=True, code=200)
 
 @app.route("/next/courses/<string:course_id>/timeslots/<string:timeslot_id>/join/", methods=["POST"])
 def join_queue(course_id, timeslot_id):
@@ -353,7 +395,7 @@ def join_queue(course_id, timeslot_id):
     optional_timestamp = Timestamp.query.filter(Timestamp.user_id==user.id).first()
     if optional_timestamp is None:
         # Creating instance in queue
-        timestamp = Timestamp(user_id=user.id, timeslot_id=timeslot_id)
+        timestamp = Timestamp(user_id=user.id, user_name=user.name, timeslot_id=timeslot_id)
         db.session.add(timestamp)
         db.session.commit()
         return response({"timestamp": timestamp.serialize()}, success=True, code=201)

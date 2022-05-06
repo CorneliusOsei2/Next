@@ -161,6 +161,7 @@ class Timestamp(db.Model):
     __tablename___ = "timestamps"
     id = db.Column('id', db.String, default=lambda: str(uuid.uuid4()), primary_key=True)
     user_id = db.Column(db.String, db.ForeignKey("users.id"))
+    user_name = db.Column(db.String, db.ForeignKey("users.name"))
     timeslot_id = db.Column(db.String, nullable=False)
     joined_at = db.Column(db.DateTime, nullable=False)
     status = db.Column(db.Integer, nullable=False)
@@ -169,6 +170,7 @@ class Timestamp(db.Model):
 
     def __init__(self, **kwargs) -> None:
         self.user_id = kwargs.get("user_id")
+        self.user_name = kwargs.get("user_name")
         self.timeslot_id = kwargs.get("timeslot_id")
         self.joined_at = datetime.datetime.now()
         self.status = TimestampStatus.InQueue 
@@ -177,9 +179,10 @@ class Timestamp(db.Model):
     def serialize(self):
         return {
             "user_id": self.timeslot_id,
+            "user_name": self.user_name,
             "timeslot_id": self.timeslot_id,
             "joined_at": str(self.joined_at),
-            "status": self.status,
+            "status": TimestampStatus(self.status).name,
             "completed": self.completed
         }
 
