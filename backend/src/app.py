@@ -473,7 +473,7 @@ def add_timeslot(course_id):
         return response(*err.InvalidTimeRange)
 
     if title is None or title.strip() == "":
-        return response(*MissingTitle)
+        return response(*err.MissingTitle)
 
     course = Course.query.filter_by(id=course_id).first()
     if course is None:
