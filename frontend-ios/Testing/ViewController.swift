@@ -16,7 +16,7 @@ class ViewController: UIViewController {
         let _ = loginButton
         let _ = developerMode
         let _ = randomText
-        navigationController?.isNavigationBarHidden = true
+        navigationController?.isNavigationBarHidden = false
         navigationController?.navigationBar.prefersLargeTitles = true
         navigationController?.navigationBar.largeTitleTextAttributes = [
             .foregroundColor: UIColor.black
@@ -83,16 +83,13 @@ class ViewController: UIViewController {
     
     
     @objc func loginAction() {
-        print("Trace loginButton()")
         let newLoginController = LoginController()
         self.navigationController?.pushViewController(newLoginController, animated: true)
-//        self.present(newLoginController, animated: true, completion: nil)
-        print("PUSH?")
     }
     
     @objc func developerOption() {
-        let newHomeController = HomeController()
-        self.navigationController?.pushViewController(newHomeController, animated: true)
+        UIApplication.shared.windows.first?.rootViewController = CustomTabBarViewController()
+        UIApplication.shared.windows.first?.makeKeyAndVisible()
     }
 }
 

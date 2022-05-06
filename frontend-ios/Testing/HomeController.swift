@@ -7,51 +7,69 @@
 
 import UIKit
 import SwiftUI
+import SnapKit
 
 class HomeController: UIViewController {
+    
+    var sessionToken = "08b9e8d621c2284ddd111b1faf0be73751098a3a"
+    
+    var coursesAsStudent: [Course] = []
+    var coursesAsInstructor: [Course] = []
+        
+    var logo: UIImageView!
+    var header: UILabel!
+    var collectionView: UICollectionView!
+    
+    let cellPadding:CGFloat = 24
+    
+    // Reuse identifiers
+    let coursesReuseIdentifier = "coursesReuseIdentifier"
     
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
         setGradientBackground()
-//        view.backgroundColor = #colorLiteral(red: 0.2318199277, green: 0.8869469762, blue: 0.7684106231, alpha: 1)
-        print("Home Controller!")
         
+        logo = UIImageView(image: UIImage(named: "Sprite"))
+        logo.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(logo)
         
-        // This spawns in the UIObjects that are to be displayed on the home page.
-        let _ = icon
-        let _ = greeting
+        header = UILabel()
+        header.textAlignment = .left
+        header.text = "Hi, [User's name]"
+        header.font = UIFont.boldSystemFont(ofSize: 22)
+        header.numberOfLines = 0
+        header.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(header)
         
+        let verticalLayout = UICollectionViewFlowLayout()
+        verticalLayout.scrollDirection = .vertical
+        verticalLayout.minimumLineSpacing = cellPadding
+        verticalLayout.minimumInteritemSpacing = cellPadding
         
-        var stroke = UIView()
-        stroke.bounds = view.bounds.insetBy(dx: -0.5, dy: -0.5)
-        stroke.center = view.center
-        view.addSubview(stroke)
+        collectionView = UICollectionView(frame: .zero, collectionViewLayout: verticalLayout)
+        collectionView.backgroundColor = .none
         
+        collectionView.register(CourseCollectionViewCell.self, forCellWithReuseIdentifier: coursesReuseIdentifier)
         
-        //
-        // Code below generates the list of courses based on networking data. courseNames is dummy data.
-        //
+        collectionView.delegate = self
+        collectionView.dataSource = self
+        collectionView.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(collectionView)
         
-        // Default course color scheme. Can change if you want to.
-        let colorScheme: [CGColor] = [#colorLiteral(red: 0.8722902536, green: 0.6250724792, blue: 0.9576098323, alpha: 1), #colorLiteral(red: 0.9619587064, green: 0.6241410375, blue: 0.6233865023, alpha: 1), #colorLiteral(red: 0.9254902005, green: 0.2352941185, blue: 0.1019607857, alpha: 1), #colorLiteral(red: 0.2588235438, green: 0.7568627596, blue: 0.9686274529, alpha: 1), #colorLiteral(red: 0.721568644, green: 0.8862745166, blue: 0.5921568871, alpha: 1), #colorLiteral(red: 0.1019607857, green: 0.2784313858, blue: 0.400000006, alpha: 1)]
-        
-        var courses:[UIButton] = []
-        let courseNames: [String] = ["CS1110", "CS2110", "CS3110", "CS2800", "CS3410"] // [NETWORKING], fill in with course names.
-        let numberOfCourses = courseNames.count // [NETWORKING], put in the number of courses.
-        
-        assert(courseNames.count == numberOfCourses)
-        
-        for i in 0...numberOfCourses - 1 {
-            if (i == 0) {
-                courses.append(createAButton(constraint1: greeting.bottomAnchor, constraint2: 30, text: courseNames[i], color: colorScheme[Int.random(in: 0..<colorScheme.count)]))
-            }
-            else {
-                courses.append(createAButton(constraint1: courses[i-1].bottomAnchor, constraint2: 30, text: courseNames[i], color: colorScheme[Int.random(in: 0..<colorScheme.count)]))
-            }
+        setUpConstraints()
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        getAllCourses()
+    }
+    
+    func getAllCourses() {
+        NetworkManager.get_courses(fromSessionToken: sessionToken) { userCoursesResponse in
+            self.coursesAsStudent = userCoursesResponse.courses_as_student
+            self.coursesAsInstructor = userCoursesResponse.courses_as_instructor
+            self.collectionView.reloadData()
         }
-        
-        // I can't get the little drawings in the top right here.
     }
     
     func setGradientBackground() {
@@ -67,104 +85,62 @@ class HomeController: UIViewController {
         self.view.layer.insertSublayer(gradientLayer, at:0)
     }
     
-    lazy var icon: UIImageView = {
-        var img = UIImageView()
-        img.image = UIImage(named: "Sprite")
+    func setUpConstraints() {
+        logo.snp.makeConstraints { make in
+            make.top.equalTo(view.safeAreaLayoutGuide)
+            make.left.equalToSuperview().offset(6)
+            make.width.height.equalTo(32)
+        }
         
-        img.translatesAutoresizingMaskIntoConstraints = false
+        header.snp.makeConstraints { make in
+            make.top.equalTo(logo.snp.bottom).offset(8)
+            make.left.equalToSuperview().offset(12)
+            make.right.equalToSuperview()
+        }
         
-        view.addSubview(img)
-        
-        NSLayoutConstraint.activate([
-            img.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 30),
-            img.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 20),
-            img.heightAnchor.constraint(equalToConstant: CGFloat(60)),
-            img.widthAnchor.constraint(equalToConstant: CGFloat(60))
-        ])
-        
-        return img
-    }()
-    
-    func createAButton(constraint1: NSLayoutYAxisAnchor, constraint2: Int, text: String, color: CGColor = #colorLiteral(red: 0.2318199277, green: 0.8869469762, blue: 0.7684106231, alpha: 1)) -> UIButton {
-        let button = UIButton()
-        button.setTitle(text, for: .normal)
-        button.titleLabel?.font = UIFont.systemFont(ofSize: 20, weight: UIFont.Weight.bold)
-        button.contentHorizontalAlignment = .left
-        button.contentEdgeInsets = UIEdgeInsets(top: 0, left: 10, bottom: 0, right: 0)
-        button.setTitleColor(.black, for: .normal)
-        button.layer.backgroundColor = color
-        button.layer.borderWidth = 1
-        button.layer.borderColor = color
-        button.layer.cornerRadius = 20
-        button.translatesAutoresizingMaskIntoConstraints = false
-        button.addTarget(self, action: #selector(courseButtonPress), for: .touchUpInside)
-        view.addSubview(button)
-        
-        NSLayoutConstraint.activate([
-            button.topAnchor.constraint(equalTo: constraint1, constant: CGFloat(constraint2)),
-            button.centerXAnchor.constraint(equalTo: view.safeAreaLayoutGuide.centerXAnchor, constant: 0),
-            button.widthAnchor.constraint(equalToConstant: 350),
-            button.heightAnchor.constraint(equalToConstant: 75)
-        ])
-        
-        return button
-    }
-    
-    lazy var sampleCourse1: UIButton = {
-        let button = UIButton()
-        button.setTitle("CS1110", for: .normal)
-        button.titleLabel?.font = UIFont.systemFont(ofSize: 20, weight: UIFont.Weight.bold)
-        button.contentHorizontalAlignment = .left
-        button.contentEdgeInsets = UIEdgeInsets(top: 0, left: 10, bottom: 0, right: 0)
-        button.setTitleColor(.black, for: .normal)
-        button.layer.backgroundColor = #colorLiteral(red: 0.2318199277, green: 0.8869469762, blue: 0.7684106231, alpha: 1)
-        button.layer.borderWidth = 1
-        button.layer.borderColor = #colorLiteral(red: 0.2318199277, green: 0.8869469762, blue: 0.7684106231, alpha: 1)
-        button.layer.cornerRadius = 20
-        button.translatesAutoresizingMaskIntoConstraints = false
-        button.addTarget(self, action: #selector(courseButtonPress), for: .touchUpInside)
-        
-        view.addSubview(button)
-        
-        NSLayoutConstraint.activate([
-            button.topAnchor.constraint(equalTo: greeting.bottomAnchor, constant: 20),
-            button.centerXAnchor.constraint(equalTo: view.safeAreaLayoutGuide.centerXAnchor, constant: 0),
-            button.widthAnchor.constraint(equalToConstant: 350),
-            button.heightAnchor.constraint(equalToConstant: 75)
-        ])
-        return button
-    }()
-    
-    lazy var greeting: UILabel = {
-        var hello = UILabel()
-        hello.text = "Hi, [Name]"
-        hello.textColor = #colorLiteral(red: 0, green: 0, blue: 0, alpha: 1)
-        hello.font = UIFont(name: "Futura", size: 30.0)
-//        hello.font = .systemFont(ofSize: 36, weight: .bold)
-        
-        hello.translatesAutoresizingMaskIntoConstraints = false
-        
-        view.addSubview(hello)
-        
-        NSLayoutConstraint.activate([
-            hello.leadingAnchor.constraint(equalTo: icon.leadingAnchor, constant: 0),
-            hello.topAnchor.constraint(equalTo: icon.bottomAnchor, constant: 20),
-            hello.centerXAnchor.constraint(equalTo: view.safeAreaLayoutGuide.centerXAnchor, constant: 0)
-        ])
-
-        return hello
-    }()
-    
-    @objc func courseButtonPress() {
-        let coursepage = CourseController()
-        self.navigationController?.pushViewController(coursepage, animated: true)
+        collectionView.snp.makeConstraints { (make) in
+            make.top.equalTo(header.snp.bottom).offset(24)
+            make.bottom.equalToSuperview()
+            make.leading.equalToSuperview()
+            make.trailing.equalToSuperview()
+        }
     }
 }
 
+extension HomeController: UICollectionViewDataSource {
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        return self.coursesAsStudent.count + self.coursesAsInstructor.count
+//        return 8
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: coursesReuseIdentifier, for: indexPath) as! CourseCollectionViewCell
+        
+        // TODO: uncomment below once connected to backend
+        if indexPath.item < self.coursesAsStudent.count {
+            let course = self.coursesAsStudent[indexPath.item]
+            cell.configure(code: course.code, userType: "Student")
+        } else {
+            let course = self.coursesAsInstructor[indexPath.item - self.coursesAsStudent.count]
+            cell.configure(code: course.code, userType: "Instructor")
+        }
+            
+        return cell
+    }
+}
 
+extension HomeController: UICollectionViewDelegate {
+    
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        // TODO: add request to fetch course timeslots
+        
+    }
+    
+}
 
-struct HomeController_Previews: PreviewProvider {
-    static var previews: some View {
-        /*@START_MENU_TOKEN@*/Text("Hello, World!")/*@END_MENU_TOKEN@*/
+extension HomeController: UICollectionViewDelegateFlowLayout {
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+        let size = collectionView.frame.width - 32
+        return CGSize(width: size, height: 66)
     }
 }
