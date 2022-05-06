@@ -427,6 +427,7 @@ def add_timeslot(course_id):
         return response(*UnauthorizedAccess)
     
     time_slot = Timeslot(start_time=start_time, end_time=end_time, course_id=course_id)
+    time_slot.instructors_in_timeslot.append(user)
     db.session.add(time_slot)
     db.session.commit()
     

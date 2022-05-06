@@ -31,13 +31,6 @@ StudentCourse = db.Table(
   db.Column("course_id", db.String, db.ForeignKey("courses.id"))
 )
 
-StudentTimeslot = db.Table(
-  "student_timeslot_association",
-  db.Model.metadata,
-  db.Column("user_id", db.String, db.ForeignKey("users.id")),
-  db.Column("course_id", db.String, db.ForeignKey("timeslots.id"))
-)
-
 InstructorTimeslot = db.Table(
   "instructor_timeslot_association",
   db.Model.metadata,
@@ -124,7 +117,6 @@ class Timeslot(db.Model):
     course = db.relationship("Course", cascade="delete")
 
     # Many-to-many relationship
-    students_in_timeslot = db.relationship("User", secondary=StudentTimeslot, back_populates="timeslots_as_student")
     instructors_in_timeslot = db.relationship("User", secondary=InstructorTimeslot, back_populates="timeslots_as_instructor")
 
     def __init__(self, **kwargs):
@@ -149,6 +141,7 @@ class Timeslot(db.Model):
         self.end_time = dt_end_time_hm.strftime("%I:%M %p")
         self.course_id = kwargs.get("course_id")
         self.date = f"{dt_start_time.month}-{dt_start_time.day}"
+        self.instructors_in_timeslot = []
 
     def serialize(self):
         """
@@ -160,7 +153,7 @@ class Timeslot(db.Model):
             "date": self.date,
             "start_time": self.start_time,
             "end_time": self.end_time,
-            "total_joined": len(self.students_in_timeslot)
+            "instructors": [i.serialize() for i in self.instructors_in_timeslot]
         }
 
 
@@ -245,9 +238,7 @@ class User(db.Model):
     # Many-to-many Relationships
     courses_as_student = db.relationship("Course", secondary=StudentCourse, back_populates="students")
     courses_as_instructor = db.relationship("Course", secondary=InstructorCourse, back_populates="instructors")
-    timeslots_as_student = db.relationship("Timeslot", secondary=StudentTimeslot, back_populates="students_in_timeslot")
     timeslots_as_instructor = db.relationship("Timeslot", secondary=InstructorTimeslot, back_populates="instructors_in_timeslot")
-
 
     def __init__(self, **kwargs):
         """
@@ -315,7 +306,6 @@ class User(db.Model):
             out["courses_as_instructor"] = [c.serialize() for c in self.courses_as_instructor]
             
         if include_timeslots:
-            out["timeslots_as_student"] = [t.serialize() for t in self.timeslots_as_student]
             out["timeslots_as_instructor"] = [t.serialize() for t in self.timeslots_as_instructor]
         
         return out
