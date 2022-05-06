@@ -90,13 +90,33 @@ struct NetworkManager{
             "Authorization" : "Bearer " + sessionToken
         ]
 
-        let getQueueInfoUrl = api + "courses/" + courseId + "/queues/" + timeslotId
+        let getQueueInfoUrl = api + "courses/" + courseId + "/queues/" + timeslotId + "/"
         AF.request(getTimeslotsUrl, method: .get, parameters: [:], headers: headers).validate().responseData { (response) in
             switch response.result {
             case .success(let data):
                 let decoder = JSONDecoder()
                 if let timeslotsResponse = try? decoder.decode(TimeslotsResponse.self, from: data) {
                     completion(timeslotsResponse.self)
+                }
+            case .failure(let error):
+                print(error.localizedDescription)
+            }
+        }
+    }
+
+
+    static func join_queue(fromSessionToken sessionToken: String, forCourseId courseId: String, forTimeslotId timeslotId: String, completion: @escaping (JoinQueueResponse) -> Void) {
+        let headers : HTTPHeaders = [
+            "Authorization" : "Bearer " + sessionToken
+        ]
+        let joinQueueUrl = api + "courses/" + courseId + "/timeslots/" + timeslotId + "/join/"
+
+        AF.request(loginURL, method: .post, parameters: [:], encoding: JSONEncoding.default).validate().responseData { (response) in
+            switch response.result {
+            case .success(let data):
+                let decoder = JSONDecoder()
+                if let loginResponse = try? decoder.decode(LoginResponse.self, from: data) {
+                    completion(loginResponse)
                 }
             case .failure(let error):
                 print(error.localizedDescription)
