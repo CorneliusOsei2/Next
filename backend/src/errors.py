@@ -7,5 +7,6 @@ MissingCredentials = "Missing Username and/or Password. ", False, 404
 InvalidSessionToken = "Invalid session token", False, 404
 UnauthorizedAccess = "Unauthorized Access ", False, 401
 MissingTimes = "Must provide both [start_time] and [end_time].", False, 404
+MissingTitle = "Must provide [title].", False, 404
 InvalidTimeRange = "Invalid time range. ", False, 404
 StudentInQueue = "Already in Queue", False, 400

@@ -4,7 +4,7 @@ import Alamofire
 import SwiftyJSON
 
 struct NetworkManager{
-    static let api = "http://0.0.0.0:4500/next/"
+    static let api = "http://0.0.0.0:5000/next/"
     static let defaultSession = URLSession(configuration: .default)
 
     static var decoder: JSONDecoder = {
@@ -65,7 +65,26 @@ struct NetworkManager{
             }
         }
     }
+    
+    static func get_timeslots(fromSessionToken sessionToken: String, forCourseId courseId: String, forMonth month: String, forDay day: String, completion: @escaping (TimeslotsResponse) -> Void) {
+        let headers : HTTPHeaders = [
+            "Authorization" : "Bearer " + sessionToken
+        ]
 
+        let getTimeslotsUrl = api + "courses/" + courseId + "/" + month + "/" + day + "/timeslots/"
+        AF.request(getTimeslotsUrl, method: .get, parameters: [:], headers: headers).validate().responseData { (response) in
+            switch response.result {
+            case .success(let data):
+                let decoder = JSONDecoder()
+                if let timeslotsResponse = try? decoder.decode(TimeslotsResponse.self, from: data) {
+                    completion(timeslotsResponse.self)
+                }
+            case .failure(let error):
+                print(error.localizedDescription)
+            }
+        }
+    }
+    
 //    static func getAllMonths(completionHandler: @escaping (Result<[Month], RequestError>) -> Void) throws {
 //        try networkingCall(route: "months/", requestType: .get, completionHandler: completionHandler)
 //    }

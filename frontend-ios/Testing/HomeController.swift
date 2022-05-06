@@ -139,7 +139,13 @@ extension HomeController: UICollectionViewDataSource {
 extension HomeController: UICollectionViewDelegate {
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        self.navigationController?.pushViewController(CourseController(), animated: true)
+        var course: CourseNoUsers!
+        if indexPath.item < self.coursesAsStudent.count {
+            course = self.coursesAsStudent[indexPath.item]
+        } else {
+            course = self.coursesAsInstructor[indexPath.item - self.coursesAsStudent.count]
+        }
+        self.navigationController?.pushViewController(CourseController(courseId: course.id, courseCode: course.code, courseColor: Utils.colorFromHexStr(hexStr: course.color)), animated: true)
     }
     
 }

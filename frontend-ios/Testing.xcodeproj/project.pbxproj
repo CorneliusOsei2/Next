@@ -11,6 +11,7 @@
 		33620ADB2825A3C500238642 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33620ADA2825A3C500238642 /* Constants.swift */; };
 		33620ADD2825A46400238642 /* CourseController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33620ADC2825A46400238642 /* CourseController.swift */; };
 		33620AE32825A6AE00238642 /* TimeslotController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33620AE22825A6AE00238642 /* TimeslotController.swift */; };
+		33620AE52825BEE300238642 /* TimeslotCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33620AE42825BEE300238642 /* TimeslotCollectionViewCell.swift */; };
 		33BD82F42823065C00A6E23D /* CourseCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33BD82F32823065C00A6E23D /* CourseCollectionViewCell.swift */; };
 		33BD82F828238B0000A6E23D /* Manager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33BD82F628238B0000A6E23D /* Manager.swift */; };
 		33BD82F928238B0000A6E23D /* Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33BD82F728238B0000A6E23D /* Models.swift */; };
@@ -33,6 +34,7 @@
 		33620ADA2825A3C500238642 /* Constants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		33620ADC2825A46400238642 /* CourseController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CourseController.swift; sourceTree = "<group>"; };
 		33620AE22825A6AE00238642 /* TimeslotController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeslotController.swift; sourceTree = "<group>"; };
+		33620AE42825BEE300238642 /* TimeslotCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeslotCollectionViewCell.swift; sourceTree = "<group>"; };
 		33BD82F32823065C00A6E23D /* CourseCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CourseCollectionViewCell.swift; sourceTree = "<group>"; };
 		33BD82F628238B0000A6E23D /* Manager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Manager.swift; sourceTree = "<group>"; };
 		33BD82F728238B0000A6E23D /* Models.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Models.swift; sourceTree = "<group>"; };
@@ -67,6 +69,7 @@
 			isa = PBXGroup;
 			children = (
 				33BD82F32823065C00A6E23D /* CourseCollectionViewCell.swift */,
+				33620AE42825BEE300238642 /* TimeslotCollectionViewCell.swift */,
 			);
 			path = Cells;
 			sourceTree = "<group>";
@@ -261,6 +264,7 @@
 				65D736A4281DE5F80092AAA6 /* AppDelegate.swift in Sources */,
 				33BD82F928238B0000A6E23D /* Models.swift in Sources */,
 				65D736A6281DE5F80092AAA6 /* SceneDelegate.swift in Sources */,
+				33620AE52825BEE300238642 /* TimeslotCollectionViewCell.swift in Sources */,
 				652812EF282076C5004CA27D /* HomeController.swift in Sources */,
 				33BD82FC282468AE00A6E23D /* (null) in Sources */,
 				33620AD92824921700238642 /* Utils.swift in Sources */,

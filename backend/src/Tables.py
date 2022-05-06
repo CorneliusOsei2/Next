@@ -104,6 +104,7 @@ class Day(db.Model):
 class Timeslot(db.Model):
     __tablename__ = "timeslots"
     id = db.Column('id', db.String, default=lambda: str(uuid.uuid4()), primary_key=True)
+    title = db.Column(db.String, nullable=False)
     date = db.Column(db.String, nullable=False)
     start_time = db.Column(db.String, nullable=False)
     end_time = db.Column(db.String, nullable=False)
@@ -136,6 +137,7 @@ class Timeslot(db.Model):
         self.start_time = dt_start_time_hm.strftime("%I:%M %p")
         self.end_time = dt_end_time_hm.strftime("%I:%M %p")
         self.course_id = kwargs.get("course_id")
+        self.title = kwargs.get("title")
         self.date = f"{dt_start_time.month}-{dt_start_time.day}"
         self.instructors_in_timeslot = []
 
@@ -145,6 +147,7 @@ class Timeslot(db.Model):
         """
         return {
             "id": self.id,
+            "title": self.title,
             "course_id": self.course_id,
             "date": self.date,
             "start_time": self.start_time,
