@@ -50,9 +50,10 @@ class CourseCollectionViewCell: UICollectionViewCell {
     }
     
     /// Assigns Course code and user status for cell.
-    func configure(code: String, userType: String) {
+    func configure(code: String, userType: String, color: UIColor) {
         self.courseCodeLabel.text = "  " + code
         self.courseUserTypeLabel.text = userType
+        self.contentView.backgroundColor = color
     }
     
     func setUpConstraints() {
