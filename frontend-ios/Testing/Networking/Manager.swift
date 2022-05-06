@@ -91,7 +91,7 @@ struct NetworkManager{
         ]
 
         let getQueueInfoUrl = api + "courses/" + courseId + "/queues/" + timeslotId + "/"
-        AF.request(getTimeslotsUrl, method: .get, parameters: [:], headers: headers).validate().responseData { (response) in
+        AF.request(getQueueInfoUrl, method: .get, parameters: [:], headers: headers).validate().responseData { (response) in
             switch response.result {
             case .success(let data):
                 let decoder = JSONDecoder()
@@ -111,12 +111,12 @@ struct NetworkManager{
         ]
         let joinQueueUrl = api + "courses/" + courseId + "/timeslots/" + timeslotId + "/join/"
 
-        AF.request(loginURL, method: .post, parameters: [:], encoding: JSONEncoding.default).validate().responseData { (response) in
+        AF.request(joinQueueUrl, method: .post, parameters: [:], encoding: JSONEncoding.default).validate().responseData { (response) in
             switch response.result {
             case .success(let data):
                 let decoder = JSONDecoder()
-                if let loginResponse = try? decoder.decode(LoginResponse.self, from: data) {
-                    completion(loginResponse)
+                if let joinQueueResponse = try? decoder.decode(JoinQueueResponse.self, from: data) {
+                    completion(joinQueueResponse)
                 }
             case .failure(let error):
                 print(error.localizedDescription)
@@ -124,6 +124,25 @@ struct NetworkManager{
         }
     }
    
+    // /next/courses/<string:course_id>/timeslots/<string:timeslot_id>/leave/
+    static func leave_queue(fromSessionToken sessionToken: String, forCourseId courseId: String, forTimeslotId timeslotId: String, completion: @escaping (LeaveQueueResponse) -> Void) {
+        let headers : HTTPHeaders = [
+            "Authorization" : "Bearer " + sessionToken
+        ]
+        let leaveQueueUrl = api + "courses/" + courseId + "/timeslots/" + timeslotId + "/leave/"
+
+        AF.request(leaveQueueUrl, method: .post, parameters: [:], encoding: JSONEncoding.default).validate().responseData { (response) in
+            switch response.result {
+            case .success(let data):
+                let decoder = JSONDecoder()
+                if let leaveQueueResponse = try? decoder.decode(LeaveQueueResponse.self, from: data) {
+                    completion(loginResponse)
+                }
+            case .failure(let error):
+                print(error.localizedDescription)
+            }
+        }
+    }
 
 
 }
