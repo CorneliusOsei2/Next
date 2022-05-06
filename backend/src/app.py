@@ -5,7 +5,7 @@ from datetime import date
 import json
 import users_dao
 from datetime import datetime
-from Tables import db, Day, Month, Timeslot, User, Course, Timestamp
+from Tables import db, Day, Month, Timeslot, User, Course, Timestamp, TimestampStatus
 from gen import month_names, gen_name, gen_netid, gen_course, gen_color
 from utils import response, extract_token
 
@@ -13,17 +13,17 @@ from utils import response, extract_token
 app = Flask(__name__)
 CORS(app)
 
-def init_db():
-    '''
-    DB init and config
-    '''
-    db_filename = "next.db"
-    app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///%s" % db_filename
-    app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
-    app.config["SQLALCHEMY_ECHO"] = True
-    db.init_app(app)
-    with app.app_context():
-        db.create_all()
+# def init_db():
+'''
+DB init and config
+'''
+db_filename = "next.db"
+app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///%s" % db_filename
+app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
+app.config["SQLALCHEMY_ECHO"] = True
+db.init_app(app)
+with app.app_context():
+    db.create_all()
     
    
 ############################################# HELPERS FOR INTITIALIZATION #############################################
@@ -91,6 +91,8 @@ def fill_database():
     """
     Base endpoint
     """
+    gen_days()
+    gen_courses()
     return response(res="Bienvenue Mon Ami(e)!", success=True, code=200)
    
 
@@ -300,7 +302,7 @@ def get_queue(timeslot_id):
     timestamps = Timestamp.query.filter_by(timeslot_id=timeslot_id).order_by(Timestamp.joined_at.asc())
     return response(res={"queue": [t.serialize() for t in timestamps]}, success=True, code=200)
    
-@app.route("/next/courses/<string:course_id>/timeslots/<string:timeslot_id>/", methods=["POST"])
+@app.route("/next/courses/<string:course_id>/timeslots/<string:timeslot_id>/join/", methods=["POST"])
 def join_queue(course_id, timeslot_id):
     # TESTED
     """
@@ -319,7 +321,7 @@ def join_queue(course_id, timeslot_id):
     if course is None:
         return response("course not found", success=False, code=404)
 
-    timeslot = Timeslot.query.filter_by(id=timeslot_id).first()
+    timeslot = Timeslot.query.filter(Timeslot.id==timeslot_id and Timeslot.course_id==course_id).first()
     if timeslot is None:
         return response("timeslot not found", success=False, code=404)
     
@@ -329,29 +331,42 @@ def join_queue(course_id, timeslot_id):
     
     # Check if user is not already in queue
     optional_timestamp = Timestamp.query.filter(Timestamp.user_id==user.id).first()
-    if optional_timestamp is not None:
-        if optional_timestamp.status != "":
-            return response("already in queue", success=False, code=400)
+    if optional_timestamp is None:
+        # Creating instance in queue
+        timestamp = Timestamp(user_id=user.id, timeslot_id=timeslot_id)
+        db.session.add(timestamp)
+        db.session.commit()
+        return response({"timestamp": timestamp.serialize()}, success=True, code=201)
 
-    # Creating instance in queue
-    timestamp = Timestamp(user_id=user.id, timeslot_id=timeslot.id)
-    db.session.add(timestamp)
-    db.session.commit()
+    if optional_timestamp.status==TimestampStatus.OutOfQueue:
+        # Update status
+        optional_timestamp.status = TimestampStatus.InQueue
+        db.session.commit()
+        return response({"timestamp": optional_timestamp.serialize()}, success=True, code=201)
+    else:
+        # user is in queue or being helped
+        return response("already in queue", success=False, code=400)
 
-    return response({"timestamp": timestamp.serialize()}, success=True, code=201)
 
-
-@app.route("next/courses/<string:course_id>/timeslots/<string:timeslot_id>/", methods=["DELETE"])
+@app.route("/next/courses/<string:course_id>/timeslots/<string:timeslot_id>/leave/", methods=["POST"])
 def leave_queue(course_id, timeslot_id):
     """
     Endpoint for user to leave a queue they are already in
     """
+    # Get user from session
+    was_successful, session_token = extract_token(request)
+    if not was_successful:
+        return session_token
+    user = users_dao.get_user_by_session_token(session_token)
+    if user is None or not user.verify_session_token(session_token):
+        return response("Invalid session token.", success=False, code=401)
+
     # Get parameters from request body
     course = Course.query.filter_by(id=course_id).first()
     if course is None:
         return response("course not found", success=False, code=404)
 
-    timeslot = Timeslot.query.filter_by(id=timeslot_id).first()
+    timeslot = Timeslot.query.filter(Timeslot.id==timeslot_id and Timeslot.course_id==course_id).first()
     if timeslot is None:
         return response("timeslot not found", success=False, code=404)
     
@@ -360,14 +375,18 @@ def leave_queue(course_id, timeslot_id):
         return response("not a student for this course", success=False, code=401)
 
     # Check if user is not already in queue
-    student_timestamp = Timestamp.query.filter(Timestamp.user_id==user.id).first()
-    if optional_timestamp is None or optional_timestamp.status == "":
+    optional_timestamp = Timestamp.query.filter(Timestamp.user_id==user.id and Timestamp.id==timeslot_id).first()
+    if optional_timestamp is None or optional_timestamp.status==TimestampStatus.OutOfQueue:
         return response("student not in queue", success=False, code=400)
 
-    # delete timestamp]
-    db.session.delete(student_timestamp)
+    # Mark as completed if being helped by Instructor
+    if optional_timestamp.status == TimestampStatus.Ongoing:
+        optional_timestamp.completed = True
+
+    # update status  
+    optional_timestamp.status = TimestampStatus.OutOfQueue
     db.session.commit()
-    return({"timestamp": timestamp.serialize()}, success=True, code=200)
+    return response({"timestamp": optional_timestamp.serialize()}, success=True, code=200)
 
 @app.route("/next/courses/<string:course_id>/timeslots/add/", methods=["POST"])
 def add_timeslot(course_id):
@@ -451,17 +470,17 @@ def drop_tables():
 
 ########################################## Fill our database! #######################################################
 
-@app.before_first_request
-def fill_database():
-    '''
-    Initialize database with dummy data
-    '''
-    gen_days()
-    gen_courses()
+# @app.before_first_request
+# def fill_database():
+#     '''
+#     Initialize database with dummy data
+#     '''
+#     gen_days()
+#     gen_courses()
 
 
 if __name__ == '__main__':
-    init_db()
+    # init_db()
     app.run(host='0.0.0.0', port=4500)
 
     

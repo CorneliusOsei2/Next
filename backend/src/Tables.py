@@ -1,12 +1,19 @@
+import enum
 from flask_sqlalchemy import SQLAlchemy
 import bcrypt
 import uuid
 import hashlib
 import os
 import datetime
+import enum
 
 # Initialization
 db = SQLAlchemy()
+
+class TimestampStatus(enum.IntEnum):
+    InQueue: int = 1
+    Ongoing: int = 2
+    OutOfQueue: int = 3
 
 ############################################# ASSOCIATION TABLES  ##############################################################
 
@@ -163,22 +170,24 @@ class Timestamp(db.Model):
     user_id = db.Column(db.String, db.ForeignKey("users.id"))
     timeslot_id = db.Column(db.String, nullable=False)
     joined_at = db.Column(db.DateTime, nullable=False)
-    status = db.Column(db.String, nullable=False)
+    status = db.Column(db.Integer, nullable=False)
+    completed = db.Column(db.Boolean, nullable=False)
    
 
     def __init__(self, **kwargs) -> None:
         self.user_id = kwargs.get("user_id")
         self.timeslot_id = kwargs.get("timeslot_id")
         self.joined_at = datetime.datetime.now()
-        self.status = "joined"  # Accepted values ["joined", "completed", ""]
-    
+        self.status = TimestampStatus.InQueue 
+        self.completed = False
 
     def serialize(self):
         return {
             "user_id": self.timeslot_id,
             "timeslot_id": self.timeslot_id,
             "joined_at": str(self.joined_at),
-            "status": self.status
+            "status": self.status,
+            "completed": self.completed
         }
 
 class Course(db.Model):
