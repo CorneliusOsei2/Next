@@ -18,6 +18,8 @@ class TimeSlotController: UIViewController {
     var waiting = UIButton()
     var ongoing = UIButton()
     var tas = UIButton()
+    var liveupdates = UILabel()
+    var updatetickers : [String : UILabel] = [:]
     
     init() {
         super.init(nibName: nil, bundle: nil)
@@ -37,9 +39,58 @@ class TimeSlotController: UIViewController {
         let _ = subheader
         let _ = joinButton
         let _ = joinButtonlabels
+        
+        
         setupUpdates()
         setNotQueued()
         
+    }
+    
+    func setupTickers() -> [UILabel] {
+        var sdone = UILabel()
+        var swaiting = UILabel()
+        var stas = UILabel()
+        var songoing = UILabel()
+        
+        sdone.text = "1"
+        sdone.textColor = #colorLiteral(red: 0, green: 0, blue: 0, alpha: 1)
+        sdone.font = .systemFont(ofSize: 36, weight: .bold)
+        sdone.translatesAutoresizingMaskIntoConstraints = false
+            
+        swaiting.text = "2"
+        swaiting.textColor = #colorLiteral(red: 0, green: 0, blue: 0, alpha: 1)
+        swaiting.font = .systemFont(ofSize: 36, weight: .bold)
+        swaiting.font = .systemFont(ofSize: 36, weight: .bold)
+        swaiting.translatesAutoresizingMaskIntoConstraints = false
+        
+        stas.text = "3"
+        stas.textColor = #colorLiteral(red: 0, green: 0, blue: 0, alpha: 1)
+        stas.font = .systemFont(ofSize: 36, weight: .bold)
+        stas.translatesAutoresizingMaskIntoConstraints = false
+        
+        songoing.text = "4"
+        songoing.textColor = #colorLiteral(red: 0, green: 0, blue: 0, alpha: 1)
+        songoing.font = .systemFont(ofSize: 36, weight: .bold)
+        songoing.translatesAutoresizingMaskIntoConstraints = false
+        
+        
+        view.addSubview(sdone)
+        view.addSubview(swaiting)
+        view.addSubview(stas)
+        view.addSubview(songoing)
+        
+        NSLayoutConstraint.activate([
+            sdone.centerXAnchor.constraint(equalTo: done.centerXAnchor, constant: 0),
+            sdone.centerYAnchor.constraint(equalTo: done.centerYAnchor, constant: -20),
+            songoing.centerXAnchor.constraint(equalTo: sdone.centerXAnchor, constant: 0),
+            songoing.centerYAnchor.constraint(equalTo: ongoing.centerYAnchor, constant: -20),
+            stas.centerXAnchor.constraint(equalTo: tas.centerXAnchor, constant: 0),
+            stas.centerYAnchor.constraint(equalTo: tas.centerYAnchor, constant: -20),
+            swaiting.centerXAnchor.constraint(equalTo: waiting.centerXAnchor, constant:0),
+            swaiting.centerYAnchor.constraint(equalTo: waiting.centerYAnchor, constant: -20)
+        ])
+        
+        return [sdone, songoing, stas, swaiting]
     }
     
     func setNotQueued() {
@@ -165,46 +216,57 @@ class TimeSlotController: UIViewController {
         done.translatesAutoresizingMaskIntoConstraints = false
         done.titleLabel?.font = UIFont.systemFont(ofSize: 14, weight: UIFont.Weight.bold)
         
-        waiting.setTitle("Done", for: .normal)
+        waiting.setTitle("Waiting", for: .normal)
         waiting.setTitleColor(.white, for: .normal)
         waiting.layer.backgroundColor = #colorLiteral(red: 0.8722903132, green: 0.6250726581, blue: 0.9617945552, alpha: 1)
         waiting.layer.cornerRadius = 20
         waiting.translatesAutoresizingMaskIntoConstraints = false
         waiting.titleLabel?.font = UIFont.systemFont(ofSize: 14, weight: UIFont.Weight.bold)
         
-        ongoing.setTitle("Done", for: .normal)
+        ongoing.setTitle("Ongoing", for: .normal)
         ongoing.setTitleColor(.white, for: .normal)
         ongoing.layer.backgroundColor = #colorLiteral(red: 0.8722903132, green: 0.6250726581, blue: 0.9617945552, alpha: 1)
         ongoing.layer.cornerRadius = 20
         ongoing.translatesAutoresizingMaskIntoConstraints = false
         ongoing.titleLabel?.font = UIFont.systemFont(ofSize: 14, weight: UIFont.Weight.bold)
         
-        tas.setTitle("Done", for: .normal)
+        tas.setTitle("TAs", for: .normal)
         tas.setTitleColor(.white, for: .normal)
         tas.layer.backgroundColor = #colorLiteral(red: 0.8722903132, green: 0.6250726581, blue: 0.9617945552, alpha: 1)
         tas.layer.cornerRadius = 20
         tas.translatesAutoresizingMaskIntoConstraints = false
         tas.titleLabel?.font = UIFont.systemFont(ofSize: 14, weight: UIFont.Weight.bold)
         
-//        NSLayoutConstraint.activate([
-//            done.topAnchor.constraint(equalTo: .bottomAnchor, constant:  -40),
-//            done.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 10),
-//            done.widthAnchor.constraint(equalToConstant: 200),
-//            done.heightAnchor.constraint(equalToConstant: 300),
-//            waiting.topAnchor.constraint(equalTo: done.topAnchor),
-//            waiting.leadingAnchor.constraint(equalTo: done.trailingAnchor, constant: 20),
-//            waiting.widthAnchor.constraint(equalTo: done.widthAnchor),
-//            ongoing.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -40),
-//            ongoing.widthAnchor.constraint(equalTo: done.widthAnchor),
-//            ongoing.topAnchor.constraint(equalTo: done.bottomAnchor, constant: -40),
-//            ongoing.leadingAnchor.constraint(equalTo: done.leadingAnchor),
-//            tas.leadingAnchor.constraint(equalTo: waiting.leadingAnchor),
-//            tas.topAnchor.constraint(equalTo: waiting.bottomAnchor, constant: -40),
-//            tas.bottomAnchor.constraint(equalTo: ongoing.bottomAnchor)
         
-//        ])
+        view.addSubview(done)
+        view.addSubview(waiting)
+        view.addSubview(ongoing)
+        view.addSubview(tas)
+        
+        NSLayoutConstraint.activate([
+//            done.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant:  200),
+            done.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 410),
+            done.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 30),
+            done.widthAnchor.constraint(equalToConstant: 150),
+            done.heightAnchor.constraint(equalToConstant: 170),
+            waiting.topAnchor.constraint(equalTo: done.topAnchor),
+            waiting.leadingAnchor.constraint(equalTo: done.trailingAnchor, constant: 40),
+            waiting.widthAnchor.constraint(equalTo: done.widthAnchor),
+            waiting.heightAnchor.constraint(equalToConstant: 100),
+            ongoing.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -10),
+            ongoing.widthAnchor.constraint(equalTo: done.widthAnchor),
+            ongoing.topAnchor.constraint(equalTo: done.bottomAnchor, constant: 20),
+            ongoing.leadingAnchor.constraint(equalTo: done.leadingAnchor),
+            tas.leadingAnchor.constraint(equalTo: waiting.leadingAnchor),
+            tas.trailingAnchor.constraint(equalTo: waiting.trailingAnchor),
+            tas.topAnchor.constraint(equalTo: waiting.bottomAnchor, constant: 20),
+            tas.bottomAnchor.constraint(equalTo: ongoing.bottomAnchor)
+        
+        ])
         
     }
+    
+    
     
     lazy var joinButtonlabels: [UILabel] = {
         let title = UILabel()
@@ -214,7 +276,7 @@ class TimeSlotController: UIViewController {
         
         
         let subtitle = UILabel()
-        subtitle.text = "Derek and Cornelius"
+        subtitle.text = "Derek and Cornelius         this looks trash ik ->"
         subtitle.textColor = #colorLiteral(red: 1, green: 1, blue: 1, alpha: 1)
         subtitle.font = .systemFont(ofSize: 12)
         
