@@ -12,6 +12,7 @@ struct LoginResponse: Codable {
 
 struct UserCoursesResponse: Codable {
     let user_id: String
+    let user_name: String
     let courses_as_instructor: [CourseNoUsers]
     let courses_as_student: [CourseNoUsers]
 }
