@@ -1,4 +1,3 @@
-from email.policy import default
 from flask_sqlalchemy import SQLAlchemy
 import bcrypt
 import uuid

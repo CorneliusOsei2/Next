@@ -1,46 +1,31 @@
-from crypt import methods
-import enum
 import json
-from time import time
 from flask import Flask, request
-from Tables import db, Day, Month, Timeslot, User, Course, Timestamp
-from gen import gen_color, month_names, gen_name, gen_netid, gen_course
-from utils import response, Debug
 from flask_cors import CORS
 from datetime import date
 import json
 import users_dao
 from datetime import datetime
+from Tables import db, Day, Month, Timeslot, User, Course, Timestamp
+from gen import month_names, gen_name, gen_netid, gen_course
+from utils import response, extract_token
 
 # Initialize Flask and CORS
 app = Flask(__name__)
 CORS(app)
 
-# DB config
-db_filename = "next.db"
-app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///%s" % db_filename
-app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
-app.config["SQLALCHEMY_ECHO"] = True
-db.init_app(app)
-with app.app_context():
-    db.create_all()
-
-
-############################################# HELPERS  ##############################################################
-
-def extract_token(request):
-    """
-    Helper to extract token from header of request.
-    """
-    auth_header = request.headers.get("Authorization")
-
-    if auth_header is None:
-        return False, response("Missing Authorization header", success=False, code=400)
+def init_db():
+    '''
+    DB init and config
+    '''
+    db_filename = "next.db"
+    app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///%s" % db_filename
+    app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
+    app.config["SQLALCHEMY_ECHO"] = True
+    db.init_app(app)
+    with app.app_context():
+        db.create_all()
     
-    bearer_token = auth_header.replace("Bearer", "").strip()
-    return True, bearer_token
-
-
+   
 ############################################# HELPERS FOR INTITIALIZATION #############################################
 
 def gen_months():
@@ -99,20 +84,15 @@ def gen_courses():
             db.session.commit()
 
 
-############################################# DEV ONLY ENDPOINTS ######################################################
+############################################# DEV-ONLY ENDPOINTS ######################################################
 
 @app.route("/", methods=["GET"])
 def fill_database():
     """
-    Endpoint for generating data for database.
+    Base endpoint
     """
-    try:
-        gen_days()
-        gen_courses()
-        return "Done",200
-    except Exception as e:
-        return e
-
+    return response(res="Bienvenue Mon Ami(e)!", success=True, code=200)
+   
 
 @app.route("/dev/next/users/", methods=["GET"])
 def get_all_users():
@@ -144,7 +124,7 @@ def get_all_timeslots():
 @app.route("/next/<string:course_id>/users/", methods=["GET"])
 def get_course_users(course_id):
     """
-    Endpoint for gettting all users (students and instructors) for a course id.
+    (DEV ONLY) Endpoint for gettting all users (students and instructors) for a course id.
     """
     instructors = User.query.filter(User.courses_as_instructor.any(id=course_id)).all()
     students = User.query.filter(User.courses_as_student.any(id=course_id)).all()
@@ -208,7 +188,6 @@ def login():
 
 @app.route("/next/session/", methods=["POST"])
 def update_session():
-    # TESTED
     """
     Endpoint for updating a user's session.
     """
@@ -275,7 +254,6 @@ def get_days(month_number):
 
 @app.route("/next/courses/", methods=["GET"])
 def get_courses_for_user():
-    # Tested
     """
     Endpoint for getting all courses (as instructor and student) for a user.
     """
@@ -298,7 +276,6 @@ def get_courses_for_user():
 @app.route("/next/courses/<string:course_id>/<int:month_id>/<int:day_id>/timeslots/", methods=["GET"])
 def get_timeslots_for_course_on_date(course_id, month_id, day_id):
     # TODO: add authorization; reformat date in url maybe?
-    # TESTED
     """
     Get timeslots for a particular course on a particular day
     """
@@ -365,7 +342,6 @@ def join_queue(course_id, timeslot_id):
 
 @app.route("/next/courses/<string:course_id>/timeslots/add/", methods=["POST"])
 def add_timeslot(course_id):
-    # TESTED
     """
     Add timeslot for course, given:
     1) start_time (in epoch seconds)
@@ -434,7 +410,7 @@ def delete_timeslot(course_id, timeslot_id):
     db.session.commit()
     return response({"timeslot": timeslot.serialize()}, success=True, code=200)
 
-# Added for testing purposes. Drop all tables
+######################################## Added for testing purposes. Drop all tables #############################################
 @app.route("/next/drop/", methods=["POST"])
 def drop_tables():
     """
@@ -444,5 +420,19 @@ def drop_tables():
     return response(res=[], success=True, code=201)
 
 
+########################################## Fill our database! #######################################################
+
+@app.before_first_request
+def fill_database():
+    '''
+    Initialize database with dummy data
+    '''
+    gen_days()
+    gen_courses()
+
+
 if __name__ == '__main__':
+    init_db()
     app.run(host='0.0.0.0', port=4500)
+
+    

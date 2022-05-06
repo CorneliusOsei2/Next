@@ -6,10 +6,15 @@ def response(res={}, success = True, code = 200):
     return json.dumps({"error": res}), code
 
 
+def extract_token(request):
+    """
+    Helper to extract token from header of request.
+    """
+    auth_header = request.headers.get("Authorization")
 
-class Debug:
-    count = 1
+    if auth_header is None:
+        return False, response("Missing Authorization header", success=False, code=400)
+    
+    bearer_token = auth_header.replace("Bearer", "").strip()
+    return True, bearer_token
 
-    def debug():
-        print("-------------------------------", Debug.count, "------------------------------------")
-        Debug.count += 1
