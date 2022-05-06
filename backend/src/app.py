@@ -340,6 +340,35 @@ def join_queue(course_id, timeslot_id):
 
     return response({"timestamp": timestamp.serialize()}, success=True, code=201)
 
+
+@app.route("next/courses/<string:course_id>/timeslots/<string:timeslot_id>/", methods=["DELETE"])
+def leave_queue(course_id, timeslot_id):
+    """
+    Endpoint for user to leave a queue they are already in
+    """
+    # Get parameters from request body
+    course = Course.query.filter_by(id=course_id).first()
+    if course is None:
+        return response("course not found", success=False, code=404)
+
+    timeslot = Timeslot.query.filter_by(id=timeslot_id).first()
+    if timeslot is None:
+        return response("timeslot not found", success=False, code=404)
+    
+    # Check if user is in course
+    if user not in course.students:
+        return response("not a student for this course", success=False, code=401)
+
+    # Check if user is not already in queue
+    student_timestamp = Timestamp.query.filter(Timestamp.user_id==user.id).first()
+    if optional_timestamp is None or optional_timestamp.status == "":
+        return response("student not in queue", success=False, code=400)
+
+    # delete timestamp]
+    db.session.delete(student_timestamp)
+    db.session.commit()
+    return({"timestamp": timestamp.serialize()}, success=True, code=200)
+
 @app.route("/next/courses/<string:course_id>/timeslots/add/", methods=["POST"])
 def add_timeslot(course_id):
     """
