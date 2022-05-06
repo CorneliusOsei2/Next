@@ -315,7 +315,7 @@ class CourseController: UIViewController {
     }
     
     @objc func getTimeslot() {
-        let next = TimeSlotController()
+        let next = TimeslotController()
         self.navigationController?.pushViewController(next, animated: true)
     }
     

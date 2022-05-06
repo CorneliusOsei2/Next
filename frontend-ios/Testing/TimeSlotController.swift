@@ -10,7 +10,7 @@ import SwiftUI
 import UIKit
 import SwiftUI
 
-class TimeSlotController: UIViewController {
+class TimeslotController: UIViewController {
     
     var status = UIButton()
     var pressed = false
