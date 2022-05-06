@@ -31,13 +31,6 @@ StudentCourse = db.Table(
   db.Column("course_id", db.String, db.ForeignKey("courses.id"))
 )
 
-StudentTimeslot = db.Table(
-  "student_timeslot_association",
-  db.Model.metadata,
-  db.Column("user_id", db.String, db.ForeignKey("users.id")),
-  db.Column("course_id", db.String, db.ForeignKey("timeslots.id"))
-)
-
 InstructorTimeslot = db.Table(
   "instructor_timeslot_association",
   db.Model.metadata,
@@ -45,19 +38,19 @@ InstructorTimeslot = db.Table(
   db.Column("course_id", db.String, db.ForeignKey("timeslots.id"))
 )
 
-StudentJoinedTimeslot = db.Table(
-"student_joined_timeslot_association",
-  db.Model.metadata,
-  db.Column("user_id", db.String, db.ForeignKey("users.id")),
-  db.Column("timeslot_id", db.String, db.ForeignKey("timeslots.id"))
-)
+# StudentJoinedTimeslot = db.Table(
+# "student_joined_timeslot_association",
+#   db.Model.metadata,
+#   db.Column("user_id", db.String, db.ForeignKey("users.id")),
+#   db.Column("timeslot_id", db.String, db.ForeignKey("timeslots.id"))
+# )
 
-StudentCompletedTimeslot = db.Table(
-"student_completed_timeslot_association",
-  db.Model.metadata,
-  db.Column("user_id", db.String, db.ForeignKey("users.id")),
-  db.Column("timeslot_id", db.String, db.ForeignKey("timeslots.id"))
-)
+# StudentCompletedTimeslot = db.Table(
+# "student_completed_timeslot_association",
+#   db.Model.metadata,
+#   db.Column("user_id", db.String, db.ForeignKey("users.id")),
+#   db.Column("timeslot_id", db.String, db.ForeignKey("timeslots.id"))
+# )
 
 ############################################# MODEL TABLES  ##############################################################
 
@@ -124,7 +117,6 @@ class Timeslot(db.Model):
     course = db.relationship("Course", cascade="delete")
 
     # Many-to-many relationship
-    students_in_timeslot = db.relationship("User", secondary=StudentTimeslot, back_populates="timeslots_as_student")
     instructors_in_timeslot = db.relationship("User", secondary=InstructorTimeslot, back_populates="timeslots_as_instructor")
 
     def __init__(self, **kwargs):
@@ -149,6 +141,7 @@ class Timeslot(db.Model):
         self.end_time = dt_end_time_hm.strftime("%I:%M %p")
         self.course_id = kwargs.get("course_id")
         self.date = f"{dt_start_time.month}-{dt_start_time.day}"
+        self.instructors_in_timeslot = []
 
     def serialize(self):
         """
@@ -160,7 +153,7 @@ class Timeslot(db.Model):
             "date": self.date,
             "start_time": self.start_time,
             "end_time": self.end_time,
-            "total_joined": len(self.students_in_timeslot)
+            "instructors": [i.serialize() for i in self.instructors_in_timeslot]
         }
 
 
@@ -168,6 +161,7 @@ class Timestamp(db.Model):
     __tablename___ = "timestamps"
     id = db.Column('id', db.String, default=lambda: str(uuid.uuid4()), primary_key=True)
     user_id = db.Column(db.String, db.ForeignKey("users.id"))
+    user_name = db.Column(db.String, db.ForeignKey("users.name"))
     timeslot_id = db.Column(db.String, nullable=False)
     joined_at = db.Column(db.DateTime, nullable=False)
     status = db.Column(db.Integer, nullable=False)
@@ -176,6 +170,7 @@ class Timestamp(db.Model):
 
     def __init__(self, **kwargs) -> None:
         self.user_id = kwargs.get("user_id")
+        self.user_name = kwargs.get("user_name")
         self.timeslot_id = kwargs.get("timeslot_id")
         self.joined_at = datetime.datetime.now()
         self.status = TimestampStatus.InQueue 
@@ -184,9 +179,10 @@ class Timestamp(db.Model):
     def serialize(self):
         return {
             "user_id": self.timeslot_id,
+            "user_name": self.user_name,
             "timeslot_id": self.timeslot_id,
             "joined_at": str(self.joined_at),
-            "status": self.status,
+            "status": TimestampStatus(self.status).name,
             "completed": self.completed
         }
 
@@ -245,9 +241,7 @@ class User(db.Model):
     # Many-to-many Relationships
     courses_as_student = db.relationship("Course", secondary=StudentCourse, back_populates="students")
     courses_as_instructor = db.relationship("Course", secondary=InstructorCourse, back_populates="instructors")
-    timeslots_as_student = db.relationship("Timeslot", secondary=StudentTimeslot, back_populates="students_in_timeslot")
     timeslots_as_instructor = db.relationship("Timeslot", secondary=InstructorTimeslot, back_populates="instructors_in_timeslot")
-
 
     def __init__(self, **kwargs):
         """
@@ -315,7 +309,6 @@ class User(db.Model):
             out["courses_as_instructor"] = [c.serialize() for c in self.courses_as_instructor]
             
         if include_timeslots:
-            out["timeslots_as_student"] = [t.serialize() for t in self.timeslots_as_student]
             out["timeslots_as_instructor"] = [t.serialize() for t in self.timeslots_as_instructor]
         
         return out
