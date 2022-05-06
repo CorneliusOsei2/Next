@@ -84,54 +84,26 @@ struct NetworkManager{
             }
         }
     }
-    
-//    static func getAllMonths(completionHandler: @escaping (Result<[Month], RequestError>) -> Void) throws {
-//        try networkingCall(route: "months/", requestType: .get, completionHandler: completionHandler)
-//    }
+
+    static func get_queue_info(fromSessionToken sessionToken: String, forCourseId courseId: String, forTimeslotId timeslotId: String, completion: @escaping (QueueInfoResponse) -> Void) {
+        let headers : HTTPHeaders = [
+            "Authorization" : "Bearer " + sessionToken
+        ]
+
+        let getQueueInfoUrl = api + "courses/" + courseId + "/queues/" + timeslotId
+        AF.request(getTimeslotsUrl, method: .get, parameters: [:], headers: headers).validate().responseData { (response) in
+            switch response.result {
+            case .success(let data):
+                let decoder = JSONDecoder()
+                if let timeslotsResponse = try? decoder.decode(TimeslotsResponse.self, from: data) {
+                    completion(timeslotsResponse.self)
+                }
+            case .failure(let error):
+                print(error.localizedDescription)
+            }
+        }
+    }
+   
 
 
-
-
-//    private static func networkingCall<T: Codable>(route: String = "", requestType: RequestType, content: Song? = nil, parameters: CustomStringConvertible..., completionHandler: @escaping (Result<T, RequestError>) -> Void) throws {
-//        guard let url = URL(string: api + route + parameters.map({$0.description + "/"}).reduce("", +)) else { return }
-//
-//        var request = URLRequest(url: url)
-//        request.httpMethod = requestType.rawValue
-//
-//        if let content = content {
-//            let encodedData = try JSONEncoder().encode(content)
-//            request.addValue("application/json", forHTTPHeaderField: "Content-Type")
-//            request.addValue("application/json", forHTTPHeaderField: "accept")
-//            request.httpBody = encodedData
-//        }
-//        let dataTask = defaultSession.dataTask(with: request) { data, response, error in
-//            if let error = error {
-//                print(error)
-//                return
-//            } else if let data = data {
-//                if let response = response as? HTTPURLResponse, response.statusCode != 200 {
-//                    let unwrappedError: RequestError = {
-//                        switch response.statusCode {
-//                            case 404: return .notFound
-//                            case 400: return .badRequest
-//                            default: return .uncategorized
-//                        }
-//                    }()
-//                    print(String(data: data, encoding: String.Encoding.utf8) as Any)
-//                    completionHandler(.failure(unwrappedError))
-//                    return
-//                }
-//
-//                do {
-//                    let decodedData = try decoder.decode(T.self, from: data)
-//                    completionHandler(.success(decodedData))
-//                } catch {
-//                    completionHandler(.failure(.decodingError(error)))
-//                }
-//            } else {
-//                completionHandler(.failure(.uncategorized))
-//            }
-//        }
-//        dataTask.resume()
-//    }
 }
