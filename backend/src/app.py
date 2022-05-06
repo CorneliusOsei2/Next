@@ -280,11 +280,26 @@ def get_courses_for_user():
 
 @app.route("/next/courses/<string:course_id>/<int:month_id>/<int:day_id>/timeslots/", methods=["GET"])
 def get_timeslots_for_course_on_date(course_id, month_id, day_id):
-    # TODO: add authorization; reformat date in url maybe?
     """
     Get timeslots for a particular course on a particular day
     """
     date = str(month_id) + "-" + str(day_id)
+
+    # Get user from session
+    was_successful, session_token = extract_token(request)
+    if not was_successful:
+        return session_token
+    user = users_dao.get_user_by_session_token(session_token)
+    if user is None or not user.verify_session_token(session_token):
+        return response(*InvalidSessionToken)
+
+    course = Course.query.filter_by(id=course_id).first()
+    if course is None:
+        return response(*CourseNotFound)
+    
+    # Only students or instructors can view the timeslots
+    if user not in course.students and user not in course.instructors:
+        return response(*UnauthorizedAccess)
     
     # Get timeslots by ascending order
     timeslots = Timeslot.query.filter(Timeslot.date==date and Timeslot.course==course_id).order_by(Timeslot.start_time_epoch.asc())
