@@ -3,7 +3,6 @@ from flask import Flask, request
 from flask_cors import CORS
 from datetime import date
 import json
-from Next.backend.src.errors import 
 import users_dao
 from datetime import datetime
 from Tables import db, Day, Month, Timeslot, User, Course, Timestamp, TimestampStatus
