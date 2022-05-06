@@ -486,7 +486,6 @@ def add_timeslot(course_id):
     
     return response({"timeslot": time_slot.serialize()}, success=True, code=201)
 
-
 @app.route("/next/courses/<string:course_id>/timeslots/<string:timeslot_id>/", methods=["DELETE"])
 def delete_timeslot(course_id, timeslot_id):
     # Tested

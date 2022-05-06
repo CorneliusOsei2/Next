@@ -63,13 +63,11 @@ class Month(db.Model):
     active = db.Column(db.Boolean, nullable=False)
     days = db.relationship("Day", cascade="delete")
 
-
     def __init__(self, **kwargs):
         self.name = kwargs.get("name")
         self.number = kwargs.get("number")
         self.num_days = kwargs.get("num_days")
         self.active = kwargs.get("active")
-
 
     def serialize(self):
         return {
@@ -88,14 +86,12 @@ class Day(db.Model):
     number = db.Column(db.Integer, nullable=False)
     active = db.Column(db.Boolean, nullable=False)
    
-
     def __init__(self, **kwargs):
         self.month_id = kwargs.get("month_id")
         self.month_name = kwargs.get("month_name")
         self.number = kwargs.get("number")
         self.active = kwargs.get("active")
         
-
     def serialize(self):
         return {
             "id": self.id,
@@ -197,7 +193,6 @@ class Course(db.Model):
     students = db.relationship("User", secondary=StudentCourse, back_populates="courses_as_student")
     instructors = db.relationship("User", secondary=InstructorCourse, back_populates="courses_as_instructor")
 
-
     def __init__(self, **kwargs):
         """
         Initialize Course object
@@ -253,13 +248,11 @@ class User(db.Model):
         self.password_digest = bcrypt.hashpw(kwargs.get("password").encode("utf8"), bcrypt.gensalt(rounds=13))
         self.renew_session()
 
-
     def _urlsafe_base_64(self):
         """
         Randomly generates hashed tokens (for session/update tokens)
         """
         return hashlib.sha1(os.urandom(64)).hexdigest()
-
 
     def renew_session(self):
         """
@@ -272,20 +265,17 @@ class User(db.Model):
         self.session_expiration = datetime.datetime.now() + datetime.timedelta(days=1)
         self.update_token = self._urlsafe_base_64()
 
-
     def verify_password(self, password):
         """
         Verifies password for a user.
         """
         return bcrypt.checkpw(password.encode("utf8"), self.password_digest)
 
-
     def verify_session_token(self, session_token):
         """
         Verifies session token of a user.
         """
         return session_token == self.session_token and datetime.datetime.now() < self.session_expiration
-
 
     def verify_update_token(self, update_token):
         """

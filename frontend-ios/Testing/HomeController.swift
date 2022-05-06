@@ -139,8 +139,7 @@ extension HomeController: UICollectionViewDataSource {
 extension HomeController: UICollectionViewDelegate {
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        // TODO: add request to fetch course timeslots
-        
+        self.navigationController?.pushViewController(CourseController(), animated: true)
     }
     
 }
