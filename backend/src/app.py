@@ -15,10 +15,7 @@ from errors import *
 app = Flask(__name__)
 CORS(app)
 
-# def init_db():
-'''
-DB init and config
-'''
+# DB init and config
 db_filename = "next.db"
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///%s" % db_filename
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
@@ -145,9 +142,7 @@ def get_courses_for_user_id(user_id):
     """
     (DEV ONLY) To display courses for user without session token.
     """
-    # body = json.loads(request.data)
-    # user_id = body.get("user_id")
-
+    
     user = User.query.filter_by(id=user_id).first()
     if user is None:
         return response(*UserNotFound)
