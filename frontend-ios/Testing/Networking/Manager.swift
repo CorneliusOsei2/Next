@@ -95,8 +95,8 @@ struct NetworkManager{
             switch response.result {
             case .success(let data):
                 let decoder = JSONDecoder()
-                if let timeslotsResponse = try? decoder.decode(TimeslotsResponse.self, from: data) {
-                    completion(timeslotsResponse.self)
+                if let queueInfoResponse = try? decoder.decode(QueueInfoResponse.self, from: data) {
+                    completion(queueInfoResponse.self)
                 }
             case .failure(let error):
                 print(error.localizedDescription)
@@ -136,7 +136,7 @@ struct NetworkManager{
             case .success(let data):
                 let decoder = JSONDecoder()
                 if let leaveQueueResponse = try? decoder.decode(LeaveQueueResponse.self, from: data) {
-                    completion(loginResponse)
+                    completion(leaveQueueResponse)
                 }
             case .failure(let error):
                 print(error.localizedDescription)
