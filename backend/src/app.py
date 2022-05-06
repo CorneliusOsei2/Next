@@ -8,8 +8,6 @@ from datetime import datetime
 from Tables import db, Day, Month, Timeslot, User, Course, Timestamp, TimestampStatus
 from gen import month_names, gen_name, gen_netid, gen_course, gen_color
 from utils import response, extract_token
-# from errors import CourseNotFound, TimeslotNotFound, IncorrectCredentials, InvalidSessionToken, StudentInQueue, \
-#     InvalidTimeRange, MissingCredentials, MissingTimes, StudentNotFound, UnauthorizedAccess, UserNotFound
 from errors import *
 
 

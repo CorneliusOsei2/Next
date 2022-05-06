@@ -4,8 +4,7 @@ DAO (Data Access Object) file
 Helper file containing functions for accessing data in our database.
 """
 
-from Tables import db
-from Tables import User
+from Tables import db, User
 
 def get_user_by_username(username):
   """
