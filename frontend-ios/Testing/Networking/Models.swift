@@ -16,6 +16,26 @@ struct UserCoursesResponse: Codable {
     let courses_as_student: [CourseNoUsers]
 }
 
+struct TimeslotsResponse: Codable {
+    let timeslots: [Timeslot]
+}
+
+struct Timeslot: Codable {
+    let id: String
+    let title: String
+    let course_id: String
+    let date: String
+    let start_time: String
+    let end_time: String
+    let instructors: [UserInTimeslot]
+}
+
+struct UserInTimeslot: Codable {
+    let id: String
+    let name: String
+    let username: String
+}
+
 struct User: Codable {
     let id: String
     let name: String
@@ -27,27 +47,18 @@ struct User: Codable {
 }
 
 struct CourseNoUsers: Codable {
-    let id: UUID
+    let id: String
     let code: String
     let name: String
     let color: String
 }
 
 struct CourseWithUsers: Codable {
-    let id: UUID
+    let id: String
     let code: String
     let name: String
     let color: String
     let instructors: [User]
     let students: [User]
-}
-
-struct Timeslot: Codable {
-    let id: UUID
-    let course_id: UUID
-    let date: String
-    let start_time: String
-    let end_time: String
-    let total_joined: Int
 }
 

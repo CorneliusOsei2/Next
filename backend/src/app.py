@@ -464,10 +464,14 @@ def add_timeslot(course_id):
     body = json.loads(request.data)
     start_time = body.get("start_time")
     end_time = body.get("end_time")
+    title = body.get("title")
     if start_time is None or end_time is None:
         return response(*err.MissingTimes) 
     if start_time >= end_time:
         return response(*err.InvalidTimeRange)
+
+    if title is None or title.strip() == "":
+        return response(*MissingTitle)
 
     course = Course.query.filter_by(id=course_id).first()
     if course is None:
@@ -477,7 +481,7 @@ def add_timeslot(course_id):
     if user not in course.instructors:
         return response(*err.UnauthorizedAccess)
     
-    time_slot = Timeslot(start_time=start_time, end_time=end_time, course_id=course_id)
+    time_slot = Timeslot(start_time=start_time, end_time=end_time, course_id=course_id, title=title)
     time_slot.instructors_in_timeslot.append(user)
     db.session.add(time_slot)
     db.session.commit()
