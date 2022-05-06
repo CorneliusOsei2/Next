@@ -38,19 +38,19 @@ InstructorTimeslot = db.Table(
   db.Column("course_id", db.String, db.ForeignKey("timeslots.id"))
 )
 
-StudentJoinedTimeslot = db.Table(
-"student_joined_timeslot_association",
-  db.Model.metadata,
-  db.Column("user_id", db.String, db.ForeignKey("users.id")),
-  db.Column("timeslot_id", db.String, db.ForeignKey("timeslots.id"))
-)
+# StudentJoinedTimeslot = db.Table(
+# "student_joined_timeslot_association",
+#   db.Model.metadata,
+#   db.Column("user_id", db.String, db.ForeignKey("users.id")),
+#   db.Column("timeslot_id", db.String, db.ForeignKey("timeslots.id"))
+# )
 
-StudentCompletedTimeslot = db.Table(
-"student_completed_timeslot_association",
-  db.Model.metadata,
-  db.Column("user_id", db.String, db.ForeignKey("users.id")),
-  db.Column("timeslot_id", db.String, db.ForeignKey("timeslots.id"))
-)
+# StudentCompletedTimeslot = db.Table(
+# "student_completed_timeslot_association",
+#   db.Model.metadata,
+#   db.Column("user_id", db.String, db.ForeignKey("users.id")),
+#   db.Column("timeslot_id", db.String, db.ForeignKey("timeslots.id"))
+# )
 
 ############################################# MODEL TABLES  ##############################################################
 
