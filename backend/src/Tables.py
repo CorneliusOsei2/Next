@@ -187,7 +187,7 @@ class Course(db.Model):
     id = db.Column('id', db.String, default=lambda: str(uuid.uuid4()), primary_key=True)
     name = db.Column(db.String, nullable=False)
     code = db.Column(db.String, nullable=False)
-    color = db.Column(db.String, default="#ff0000")
+    color = db.Column(db.String, nullable=False)
 
     # Many-to-many relationship
     students = db.relationship("User", secondary=StudentCourse, back_populates="courses_as_student")
@@ -200,6 +200,7 @@ class Course(db.Model):
         """
         self.code = kwargs.get("code")
         self.name = kwargs.get("name")
+        self.color = kwargs.get("color", "#FFFFFF")
 
 
     def serialize(self, include_users=False):

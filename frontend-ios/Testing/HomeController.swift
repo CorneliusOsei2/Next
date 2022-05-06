@@ -12,8 +12,8 @@ import SnapKit
 class HomeController: UIViewController {
     let userDefaults = UserDefaults.standard
     
-    var coursesAsStudent: [Course] = []
-    var coursesAsInstructor: [Course] = []
+    var coursesAsStudent: [CourseNoUsers] = []
+    var coursesAsInstructor: [CourseNoUsers] = []
     
     var logo: UIImageView!
     var header: UILabel!
@@ -124,10 +124,12 @@ extension HomeController: UICollectionViewDataSource {
         
         if indexPath.item < self.coursesAsStudent.count {
             let course = self.coursesAsStudent[indexPath.item]
-            cell.configure(code: course.code, userType: "Student")
+            let color: UIColor = Utils.colorFromHexStr(hexStr: course.color)
+            cell.configure(code: course.code, userType: "Student", color: color)
         } else {
             let course = self.coursesAsInstructor[indexPath.item - self.coursesAsStudent.count]
-            cell.configure(code: course.code, userType: "Instructor")
+            let color: UIColor = Utils.colorFromHexStr(hexStr: course.color)
+            cell.configure(code: course.code, userType: "Instructor", color: color)
         }
             
         return cell
