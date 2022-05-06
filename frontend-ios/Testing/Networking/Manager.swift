@@ -124,7 +124,6 @@ struct NetworkManager{
         }
     }
    
-    // /next/courses/<string:course_id>/timeslots/<string:timeslot_id>/leave/
     static func leave_queue(fromSessionToken sessionToken: String, forCourseId courseId: String, forTimeslotId timeslotId: String, completion: @escaping (LeaveQueueResponse) -> Void) {
         let headers : HTTPHeaders = [
             "Authorization" : "Bearer " + sessionToken
