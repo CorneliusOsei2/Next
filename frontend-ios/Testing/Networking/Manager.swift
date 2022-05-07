@@ -4,7 +4,7 @@ import Alamofire
 import SwiftyJSON
 
 struct NetworkManager{
-    static let api = "http://0.0.0.0:5000/next/"
+    static let baseUrl = "http://0.0.0.0:5000/next/"
     static let defaultSession = URLSession(configuration: .default)
 
     static var decoder: JSONDecoder = {
@@ -28,7 +28,7 @@ struct NetworkManager{
     }
     
     static func login(forUsername username: String, forPassword password: String, completion: @escaping (LoginResponse) -> Void) {
-        let loginURL = api + "login/"
+        let loginURL = baseUrl + "login/"
         let parameters : Parameters = [
             "username": username,
             "password": password
@@ -52,7 +52,7 @@ struct NetworkManager{
             "Authorization" : "Bearer " + sessionToken
         ]
 
-        let getUserCourseURL = api + "courses/"
+        let getUserCourseURL = baseUrl + "courses/"
         AF.request(getUserCourseURL, method: .get, parameters: [:], headers: headers).validate().responseData { (response) in
             switch response.result {
             case .success(let data):
@@ -65,54 +65,106 @@ struct NetworkManager{
             }
         }
     }
+    
+    static func get_timeslots(fromSessionToken sessionToken: String, forCourseId courseId: String, forMonth month: String, forDay day: String, completion: @escaping (TimeslotsResponse) -> Void) {
+        let headers : HTTPHeaders = [
+            "Authorization" : "Bearer " + sessionToken
+        ]
 
-//    static func getAllMonths(completionHandler: @escaping (Result<[Month], RequestError>) -> Void) throws {
-//        try networkingCall(route: "months/", requestType: .get, completionHandler: completionHandler)
-//    }
+        let getTimeslotsUrl = baseUrl + "courses/" + courseId + "/" + month + "/" + day + "/timeslots/"
+        AF.request(getTimeslotsUrl, method: .get, parameters: [:], headers: headers).validate().responseData { (response) in
+            switch response.result {
+            case .success(let data):
+                let decoder = JSONDecoder()
+                if let timeslotsResponse = try? decoder.decode(TimeslotsResponse.self, from: data) {
+                    completion(timeslotsResponse.self)
+                }
+            case .failure(let error):
+                print(error.localizedDescription)
+            }
+        }
+    }
 
+    static func get_queue_info(fromSessionToken sessionToken: String, forCourseId courseId: String, forTimeslotId timeslotId: String, completion: @escaping (QueueInfoResponse) -> Void) {
+        let headers : HTTPHeaders = [
+            "Authorization" : "Bearer " + sessionToken
+        ]
 
+        let getQueueInfoUrl = baseUrl + "courses/" + courseId + "/queues/" + timeslotId + "/"
+        AF.request(getQueueInfoUrl, method: .get, parameters: [:], headers: headers).validate().responseData { (response) in
+            switch response.result {
+            case .success(let data):
+                let decoder = JSONDecoder()
+                if let queueInfoResponse = try? decoder.decode(QueueInfoResponse.self, from: data) {
+                    completion(queueInfoResponse.self)
+                }
+            case .failure(let error):
+                print(error.localizedDescription)
+            }
+        }
+    }
 
-
-//    private static func networkingCall<T: Codable>(route: String = "", requestType: RequestType, content: Song? = nil, parameters: CustomStringConvertible..., completionHandler: @escaping (Result<T, RequestError>) -> Void) throws {
-//        guard let url = URL(string: api + route + parameters.map({$0.description + "/"}).reduce("", +)) else { return }
+//    static func join_queue(fromSessionToken sessionToken: String, forCourseId courseId: String, forTimeslotId timeslotId: String, completion: @escaping (JoinQueueResponse) -> Void) {
+//        let headers : HTTPHeaders = [
+//            "Authorization" : "Bearer " + sessionToken
+//        ]
+//        let joinQueueUrl = baseUrl + "courses/" + courseId + "/timeslots/" + timeslotId + "/join/"
 //
-//        var request = URLRequest(url: url)
-//        request.httpMethod = requestType.rawValue
-//
-//        if let content = content {
-//            let encodedData = try JSONEncoder().encode(content)
-//            request.addValue("application/json", forHTTPHeaderField: "Content-Type")
-//            request.addValue("application/json", forHTTPHeaderField: "accept")
-//            request.httpBody = encodedData
-//        }
-//        let dataTask = defaultSession.dataTask(with: request) { data, response, error in
-//            if let error = error {
-//                print(error)
-//                return
-//            } else if let data = data {
-//                if let response = response as? HTTPURLResponse, response.statusCode != 200 {
-//                    let unwrappedError: RequestError = {
-//                        switch response.statusCode {
-//                            case 404: return .notFound
-//                            case 400: return .badRequest
-//                            default: return .uncategorized
-//                        }
-//                    }()
-//                    print(String(data: data, encoding: String.Encoding.utf8) as Any)
-//                    completionHandler(.failure(unwrappedError))
-//                    return
+//        AF.request(joinQueueUrl, method: .post, parameters: [:], encoding: JSONEncoding.default).validate().responseData { (response) in
+//            switch response.result {
+//            case .success(let data):
+//                let decoder = JSONDecoder()
+//                if let joinQueueResponse = try? decoder.decode(JoinQueueResponse.self, from: data) {
+//                    completion(joinQueueResponse)
 //                }
-//
-//                do {
-//                    let decodedData = try decoder.decode(T.self, from: data)
-//                    completionHandler(.success(decodedData))
-//                } catch {
-//                    completionHandler(.failure(.decodingError(error)))
-//                }
-//            } else {
-//                completionHandler(.failure(.uncategorized))
+//            case .failure(let error):
+//                print(error.localizedDescription)
 //            }
 //        }
-//        dataTask.resume()
 //    }
+//
+//    static func leave_queue(fromSessionToken sessionToken: String, forCourseId courseId: String, forTimeslotId timeslotId: String, completion: @escaping (LeaveQueueResponse) -> Void) {
+//        let headers : HTTPHeaders = [
+//            "Authorization" : "Bearer " + sessionToken
+//        ]
+//        let leaveQueueUrl = baseUrl + "courses/" + courseId + "/timeslots/" + timeslotId + "/leave/"
+//
+//        AF.request(leaveQueueUrl, method: .post, parameters: [:], encoding: JSONEncoding.default).validate().responseData { (response) in
+//            switch response.result {
+//            case .success(let data):
+//                let decoder = JSONDecoder()
+//                if let leaveQueueResponse = try? decoder.decode(LeaveQueueResponse.self, from: data) {
+//                    completion(leaveQueueResponse)
+//                }
+//            case .failure(let error):
+//                print(error.localizedDescription)
+//            }
+//        }
+//    }
+
+
+//    static func add_timeslot(fromSessionToken sessionToken: String, forCourseId courseId: String, forTimeslotId timeslotId: String, completion: @escaping (AddTimeslotResponse) -> Void) {
+//        let headers : HTTPHeaders = [
+//            "Authorization" : "Bearer " + sessionToken
+//        ]
+//        let addTimeslotUrl = baseUrl + "/courses/" + courseId + "/timeslots/" + timeslotId + "/"
+//        let parameters : Parameters = [
+//            "start_time": start_time,
+//            "end_time": end_time
+//        ]
+//
+//        AF.request(loginURL, method: .post, parameters: parameters, encoding: JSONEncoding.default).validate().responseData { (response) in
+//            switch response.result {
+//            case .success(let data):
+//                let decoder = JSONDecoder()
+//                if let addTimeslotResponse = try? decoder.decode(AddTimeslotResponse.self, from: data) {
+//                    completion(addTimeslotResponse)
+//                }
+//            case .failure(let error):
+//                print(error.localizedDescription)
+//            }
+//        }
+//    }
+
+
 }
