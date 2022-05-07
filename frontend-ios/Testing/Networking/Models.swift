@@ -63,25 +63,4 @@ struct CourseWithUsers: Codable {
     let students: [User]
 }
 
-struct QueueInfoResponse: Codable {
-    let queue: [Timestamp]
-    let in_queue: Bool
-    let is_student: Bool
-    let instructor_count: Int
-    let waiting: Int
-    let ongoing: Int
-    let completed: Int
-}
 
-struct JoinLeaveQueueResponse: Codable {
-    let timestamp: Timestamp
-}
-
-struct Timestamp: Codable {
-    let user_id: String
-    let user_name: String
-    let timeslot_id: String
-    let joined_at: String
-    let status: String
-    let completed: Bool
-}
