@@ -25,12 +25,12 @@ def gen_color(i):
     return colors[i]
 
 def gen_name(i):
-    names = ["A", "B", "C", "D"]
+    names = ["Joey", "Ana", "C", "D"]
     return names[i]
 
 
 def gen_netid(i):
-    netids = ["a3", "b5", "c9"]
+    netids = ["jfm325", "ana123", "c9"]
     return netids[i]
 
 
