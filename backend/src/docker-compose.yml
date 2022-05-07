@@ -1,7 +1,7 @@
 version: '3'
 services:
   run:
-    image: 
+    image: cornelius2/next
     env_file: .env
     ports:
       - "5000:5000"
