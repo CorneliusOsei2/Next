@@ -104,43 +104,43 @@ struct NetworkManager{
         }
     }
 
-//    static func join_queue(fromSessionToken sessionToken: String, forCourseId courseId: String, forTimeslotId timeslotId: String, completion: @escaping (JoinQueueResponse) -> Void) {
-//        let headers : HTTPHeaders = [
-//            "Authorization" : "Bearer " + sessionToken
-//        ]
-//        let joinQueueUrl = baseUrl + "courses/" + courseId + "/timeslots/" + timeslotId + "/join/"
-//
-//        AF.request(joinQueueUrl, method: .post, parameters: [:], encoding: JSONEncoding.default).validate().responseData { (response) in
-//            switch response.result {
-//            case .success(let data):
-//                let decoder = JSONDecoder()
-//                if let joinQueueResponse = try? decoder.decode(JoinQueueResponse.self, from: data) {
-//                    completion(joinQueueResponse)
-//                }
-//            case .failure(let error):
-//                print(error.localizedDescription)
-//            }
-//        }
-//    }
-//
-//    static func leave_queue(fromSessionToken sessionToken: String, forCourseId courseId: String, forTimeslotId timeslotId: String, completion: @escaping (LeaveQueueResponse) -> Void) {
-//        let headers : HTTPHeaders = [
-//            "Authorization" : "Bearer " + sessionToken
-//        ]
-//        let leaveQueueUrl = baseUrl + "courses/" + courseId + "/timeslots/" + timeslotId + "/leave/"
-//
-//        AF.request(leaveQueueUrl, method: .post, parameters: [:], encoding: JSONEncoding.default).validate().responseData { (response) in
-//            switch response.result {
-//            case .success(let data):
-//                let decoder = JSONDecoder()
-//                if let leaveQueueResponse = try? decoder.decode(LeaveQueueResponse.self, from: data) {
-//                    completion(leaveQueueResponse)
-//                }
-//            case .failure(let error):
-//                print(error.localizedDescription)
-//            }
-//        }
-//    }
+    static func join_queue(fromSessionToken sessionToken: String, forCourseId courseId: String, forTimeslotId timeslotId: String, completion: @escaping (JoinLeaveQueueResponse) -> Void) {
+        let headers : HTTPHeaders = [
+            "Authorization" : "Bearer " + sessionToken
+        ]
+        let joinQueueUrl = baseUrl + "courses/" + courseId + "/timeslots/" + timeslotId + "/join/"
+
+        AF.request(joinQueueUrl, method: .post, parameters: [:], headers: headers).validate().responseData { (response) in
+            switch response.result {
+            case .success(let data):
+                let decoder = JSONDecoder()
+                if let joinQueueResponse = try? decoder.decode(JoinLeaveQueueResponse.self, from: data) {
+                    completion(joinQueueResponse)
+                }
+            case .failure(let error):
+                print(error.localizedDescription)
+            }
+        }
+    }
+
+    static func leave_queue(fromSessionToken sessionToken: String, forCourseId courseId: String, forTimeslotId timeslotId: String, completion: @escaping (JoinLeaveQueueResponse) -> Void) {
+        let headers : HTTPHeaders = [
+            "Authorization" : "Bearer " + sessionToken
+        ]
+        let leaveQueueUrl = baseUrl + "courses/" + courseId + "/timeslots/" + timeslotId + "/leave/"
+
+        AF.request(leaveQueueUrl, method: .post, parameters: [:], headers: headers).validate().responseData { (response) in
+            switch response.result {
+            case .success(let data):
+                let decoder = JSONDecoder()
+                if let leaveQueueResponse = try? decoder.decode(JoinLeaveQueueResponse.self, from: data) {
+                    completion(leaveQueueResponse)
+                }
+            case .failure(let error):
+                print(error.localizedDescription)
+            }
+        }
+    }
 
 
 //    static func add_timeslot(fromSessionToken sessionToken: String, forCourseId courseId: String, forTimeslotId timeslotId: String, completion: @escaping (AddTimeslotResponse) -> Void) {

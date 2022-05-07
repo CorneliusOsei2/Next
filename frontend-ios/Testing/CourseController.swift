@@ -317,15 +317,13 @@ extension CourseController: UICollectionViewDataSource {
 extension CourseController: UICollectionViewDelegate {
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-//        TODO: add networking
-//        var course: CourseNoUsers!
-//        if indexPath.item < self.coursesAsStudent.count {
-//            course = self.coursesAsStudent[indexPath.item]
-//        } else {
-//            course = self.coursesAsInstructor[indexPath.item - self.coursesAsStudent.count]
-//        }
         let timeslot = self.timeslots[indexPath.item]
-        self.navigationController?.pushViewController(TimeslotController(timeslotId: timeslot.id, courseId: self.courseId, courseCode: self.courseCode, courseColor: self.courseColor), animated: true)
+        var instructorNames: [String] = []
+        for instructor in timeslot.instructors {
+            instructorNames.append(instructor.name)
+        }
+        
+        self.navigationController?.pushViewController(TimeslotController(timeslotId: timeslot.id, timeslotName: timeslot.title, timeslotInstructors: instructorNames.joined(separator: ","), courseId: self.courseId, courseCode: self.courseCode, courseColor: self.courseColor), animated: true)
     }
     
 }
