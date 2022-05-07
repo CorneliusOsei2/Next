@@ -17,6 +17,7 @@
 		33BD82FC282468AE00A6E23D /* (null) in Sources */ = {isa = PBXBuildFile; };
 		33D3C3B028222F2E00436286 /* CustomTabBarViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33D3C3AF28222F2D00436286 /* CustomTabBarViewController.swift */; };
 		652812EF282076C5004CA27D /* HomeController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 652812EE282076C4004CA27D /* HomeController.swift */; };
+		656C742D2825ADFF0086C2ED /* StaffViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 656C742C2825ADFF0086C2ED /* StaffViewController.swift */; };
 		65D736A4281DE5F80092AAA6 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65D736A3281DE5F80092AAA6 /* AppDelegate.swift */; };
 		65D736A6281DE5F80092AAA6 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65D736A5281DE5F80092AAA6 /* SceneDelegate.swift */; };
 		65D736A8281DE5F80092AAA6 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65D736A7281DE5F80092AAA6 /* ViewController.swift */; };
@@ -39,6 +40,7 @@
 		33D3C3AF28222F2D00436286 /* CustomTabBarViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomTabBarViewController.swift; sourceTree = "<group>"; };
 		45A79259ACA86A669E3F4914 /* Pods_Testing.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Testing.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		652812EE282076C4004CA27D /* HomeController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeController.swift; sourceTree = "<group>"; };
+		656C742C2825ADFF0086C2ED /* StaffViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StaffViewController.swift; sourceTree = "<group>"; };
 		65D736A0281DE5F80092AAA6 /* Testing.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Testing.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		65D736A3281DE5F80092AAA6 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		65D736A5281DE5F80092AAA6 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -110,6 +112,7 @@
 				652812EE282076C4004CA27D /* HomeController.swift */,
 				65D736A7281DE5F80092AAA6 /* ViewController.swift */,
 				33620ADC2825A46400238642 /* CourseController.swift */,
+				656C742C2825ADFF0086C2ED /* StaffViewController.swift */,
 				65D736A9281DE5F80092AAA6 /* Main.storyboard */,
 				65D736AC281DE5FA0092AAA6 /* Assets.xcassets */,
 				65D736AE281DE5FA0092AAA6 /* LaunchScreen.storyboard */,
@@ -262,6 +265,7 @@
 				33BD82F928238B0000A6E23D /* Models.swift in Sources */,
 				65D736A6281DE5F80092AAA6 /* SceneDelegate.swift in Sources */,
 				652812EF282076C5004CA27D /* HomeController.swift in Sources */,
+				656C742D2825ADFF0086C2ED /* StaffViewController.swift in Sources */,
 				33BD82FC282468AE00A6E23D /* (null) in Sources */,
 				33620AD92824921700238642 /* Utils.swift in Sources */,
 				33620ADB2825A3C500238642 /* Constants.swift in Sources */,

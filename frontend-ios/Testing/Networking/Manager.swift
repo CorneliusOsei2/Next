@@ -4,7 +4,7 @@ import Alamofire
 import SwiftyJSON
 
 struct NetworkManager{
-    static let api = "http://0.0.0.0:4500/next/"
+    static let api = "http://0.0.0.0:5000/next/"
     static let defaultSession = URLSession(configuration: .default)
 
     static var decoder: JSONDecoder = {

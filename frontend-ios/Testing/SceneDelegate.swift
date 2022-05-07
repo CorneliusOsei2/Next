@@ -29,7 +29,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         
         if let windowScene = scene as? UIWindowScene{
             let window = UIWindow(windowScene: windowScene)
-            let viewController = LoginController()
+            let viewController = StaffViewController() // Change this for testing purposes.
             
             self.window = window
             self.window?.makeKeyAndVisible()
