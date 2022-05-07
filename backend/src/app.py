@@ -341,10 +341,16 @@ def get_queue_info(course_id, timeslot_id):
     timestamps_ongoing = Timestamp.query.filter(Timestamp.status==TimestampStatus.Ongoing and Timestamp.timeslot_id==timeslot_id).count()
     timestamps_completed = Timestamp.query.filter(Timestamp.completed==True and Timestamp.timeslot_id==timeslot_id).count()
     
+    user_timestamp = Timestamp.query.filter(Timestamp.status==TimestampStatus.OutOfQueue and Timestamp.user_id==user.id and Timestamp.timeslot_id==timeslot_id).first()
+    in_queue = False
+    if user_timestamp is None:
+        in_queue = True
+
     # Student specific info about queue
     if user in course.students:
         return response(res={
             "queue": [],
+            "in_queue": in_queue,
             "is_student": True,
             "instructor_count": len(timeslot.instructors_in_timeslot),
             "waiting": timestamps_in_queue,
@@ -356,6 +362,7 @@ def get_queue_info(course_id, timeslot_id):
         return response(res=
         {
             "queue": [t.serialize() for t in timestamps],
+            "in_queue": in_queue,
             "is_student": False,
             "instructor_count": len(timeslot.instructors_in_timeslot),
             "waiting": timestamps_in_queue,

@@ -65,11 +65,16 @@ struct CourseWithUsers: Codable {
 
 struct QueueInfoResponse: Codable {
     let queue: [Timestamp]
+    let in_queue: Bool
     let is_student: Bool
     let instructor_count: Int
     let waiting: Int
     let ongoing: Int
     let completed: Int
+}
+
+struct JoinLeaveQueueResponse: Codable {
+    let timestamp: Timestamp
 }
 
 struct Timestamp: Codable {
