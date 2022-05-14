@@ -1,0 +1,50 @@
+.homepage{
+    display: flex;
+}
+
+
+.sidebar{
+    background-color: white;
+    width: 10%;
+    height: 100vh;
+    top: 0;
+    padding-left: 10px;
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 0;
+    justify-content: center;
+}
+
+.icons{
+    display: flex;
+    align-items: flex-start;
+}
+
+.sidebar-item{
+    width: 40px;
+    padding-left: 0;
+}
+.icon{
+    height: 35px;
+    width: 35px;
+    padding-left: 0;
+}
+
+.icon:hover{
+    
+}
+
+ul {
+    padding-left: 0;
+}
+
+li {
+    padding: 0;
+    margin: 20px 0;
+    list-style: none;
+}
+
+.toppage{
+    justify-content: center;
+    height: 100vh;
+}
