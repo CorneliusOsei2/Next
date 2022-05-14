@@ -1,13 +1,30 @@
 .homepage{
+    height: 100vh;
     display: flex;
     overflow: hidden;
+    background-color: white;
+}
+
+.topbar{
+    width: 100vw;
+    height: 8%;
+    display: flex;
+    position: fixed;
+    background-color: white;
+}
+.next-logo-div{
+    height: 60px;
+    margin-left: 5px;
+    margin-top: 5px;
+}
+.next-logo{
+    height: 60px;
 }
 
 .notification{
     margin-right: 0;
-    z-index: 2;
-    position: absolute;
-    top: 4%;
+    position: fixed;
+    top: 1%;
     right: 4%;
 }
 
@@ -17,33 +34,11 @@
     height: 100vh;
     top: 0;
     padding-left: 10px;
-    position: absolute;
+    position: fixed;
     display: flex;
     flex-direction: column;
     margin-bottom: 0;
     justify-content: center;
-    z-index: 2;
-}
-
-@media screen and (max-width: 450px) {
-    .sidebar{
-        width: 100vh;
-        height: 10%;
-        bottom: 0;
-        position: absolute;
-        display: flex;
-        flex-direction: row;
-        margin-bottom: 0;
-        justify-content: center;
-        z-index: 2;
-        position: fixed;
-    }
-
-    .icons{
-        display: flex;
-        
-    }
-    
 }
 
 .icons{
@@ -64,7 +59,7 @@
 }
 
 .sidebar-icon:hover{
-    box-shadow: 1px 1px 5px 2px rgb(175, 171, 171);
+    box-shadow: 2px 2px 5px 2px rgb(175, 171, 171);
 
 }
 
@@ -79,7 +74,6 @@ li {
 }
 
 .toppage{
+    margin-top: 8%;
     justify-content: center;
-    height: 100vh;
-    z-index: 1;
 }
