@@ -34,7 +34,6 @@ const MainPage = () => {
     }
 
     const getTimeslots = (course_id) => {
-        
         setShowCoursesPage(false);
         setShowTimeslotsPage(true);
         setShowAddTimeslot(false);
@@ -42,6 +41,7 @@ const MainPage = () => {
         fetch(`http://0.0.0.0:4500/next/${course_id}/${currMonth}/${currDay}/timeslots/`, {
             "methods" : "GET",
             headers: {
+                Authentication: 'Bearer Token',
                 "Content-Type": "applications/json"
             }
             })
@@ -62,6 +62,7 @@ const MainPage = () => {
         fetch(`http://0.0.0.0:4500/next/${currCourse}/add/`,
             {'method':'POST',
             headers : {
+            Authentication: 'Bearer Token',
             'Content-Type':'application/json'
             },
             body:JSON.stringify(slot)
