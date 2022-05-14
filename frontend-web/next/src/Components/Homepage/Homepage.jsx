@@ -6,6 +6,7 @@ import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import MenuBookIcon from '@mui/icons-material/MenuBook';
 import LogoutIcon from '@mui/icons-material/Logout';
 import FeedbackIcon from '@mui/icons-material/Feedback';
+import CircleNotificationsIcon from '@mui/icons-material/CircleNotifications';
 import { Tooltip } from '@mui/material';
 
 const Homepage = () => {
@@ -14,6 +15,7 @@ const Homepage = () => {
 
     return (
         <div className="homepage">
+            <TopBar></TopBar>
             <Sidebar></Sidebar>
             <TopPage></TopPage>
         </div>
@@ -28,27 +30,35 @@ const Sidebar = () => {
                 <ul>
                     <li className="sidebar-item">
                         <a href="index.html" title="user icons">
-                            <Tooltip title="Profile" placement="right"><AccountCircleIcon fontSize="large"></AccountCircleIcon></Tooltip>
+                            <Tooltip title="Profile" placement="right"><AccountCircleIcon className="sidebar-icon" fontSize="large"></AccountCircleIcon></Tooltip>
                         </a>
                     </li>
                     <li className="sidebar-item">
                         <a href="index.html" title="user icons">
-                            <Tooltip title="Courses" placement="right"><MenuBookIcon fontSize="large"></MenuBookIcon></Tooltip>
+                            <Tooltip title="Courses" placement="right"><MenuBookIcon className="sidebar-icon" fontSize="large"></MenuBookIcon></Tooltip>
                         </a>
                     </li>
                     <li className="sidebar-item">
                         <a href="index.html" title="user icons">
-                            <Tooltip title="Leave Feedback" placement="right"><FeedbackIcon fontSize="large"></FeedbackIcon></Tooltip>
+                            <Tooltip title="Leave Feedback" placement="right"><FeedbackIcon className="sidebar-icon" fontSize="large"></FeedbackIcon></Tooltip>
                         </a>
                     </li>
                     <li className="sidebar-item">
                         <a href="index.html" title="user icons">
-                            <Tooltip title="Logout" placement="right"><LogoutIcon fontSize="large"></LogoutIcon></Tooltip>
+                            <Tooltip title="Logout" placement="right"><LogoutIcon className="sidebar-icon" fontSize="large"></LogoutIcon></Tooltip>
                         </a>
                     </li>
 
                 </ul>
             </div>
+        </div>
+    )
+}
+
+const TopBar = () => {
+    return (
+        <div className="notification">
+            <CircleNotificationsIcon className="notification-icon" style={{fontSize: 50}}></CircleNotificationsIcon>
         </div>
     )
 }
@@ -85,7 +95,6 @@ const TopPage = () => {
                 </div>
 
                 <div className="col-md-6">
-                    <img className="" src={profileIcon} alt="" />
                 </div>
             </div>
         </div>
