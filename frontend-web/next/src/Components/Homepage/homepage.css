@@ -1,14 +1,40 @@
 .homepage{
+    height: 100vh;
     display: flex;
+    overflow: hidden;
+    background-color: white;
 }
 
+.topbar{
+    width: 100vw;
+    height: 8%;
+    display: flex;
+    position: fixed;
+    background-color: white;
+}
+.next-logo-div{
+    height: 60px;
+    margin-left: 5px;
+    margin-top: 5px;
+}
+.next-logo{
+    height: 60px;
+}
+
+.notification{
+    margin-right: 0;
+    position: fixed;
+    top: 1%;
+    right: 4%;
+}
 
 .sidebar{
-    background-color: white;
+    background: none;
     width: 10%;
     height: 100vh;
     top: 0;
     padding-left: 10px;
+    position: fixed;
     display: flex;
     flex-direction: column;
     margin-bottom: 0;
@@ -24,14 +50,17 @@
     width: 40px;
     padding-left: 0;
 }
-.icon{
-    height: 35px;
-    width: 35px;
-    padding-left: 0;
+
+.sidebar-icon{
+    border-radius: 10px; 
+-moz-border-radius: 10px; 
+-webkit-border-radius: 10px;
+    font-size: 50px;
 }
 
-.icon:hover{
-    
+.sidebar-icon:hover{
+    box-shadow: 2px 2px 5px 2px rgb(175, 171, 171);
+
 }
 
 ul {
@@ -45,6 +74,6 @@ li {
 }
 
 .toppage{
+    margin-top: 8%;
     justify-content: center;
-    height: 100vh;
 }
