@@ -33,7 +33,6 @@ const CoursesPage = ({getTimeslots, user_id}) => {
         {id: 1, code: "CS 1110", name: "Intro to Computing Using Python"},
         {id: 1, code: "CS 1110", name: "Intro to Computing Using Python"},
         {id: 1, code: "CS 1110", name: "Intro to Computing Using Python"},
-        {id: 1, code: "CS 1110", name: "Intro to Computing Using Python"}
     ]
 
     return(
@@ -42,19 +41,27 @@ const CoursesPage = ({getTimeslots, user_id}) => {
             {/* <button onClick={coursesHandler}>Click</button> */}
 
             <div >
-                    <div className="row container">
+                    <div className="row container courses-container">
 
                         {courses.map(course => {
                         return (
                             <div key={course.id} className="col-md-4">
-                                <div className="course" id={course.id} code={course.code}>
-                                    <div className="course-name">{course.name}</div>
-                                    <hr />
-                                    <div className="">
-                                        <p>Next office hours at: </p>
-                                        <button id={course.id} onClick={handleCourseClick} className="btn btn-outline-primary">Timeslots</button>
+
+
+
+                                <div className="course">
+                                    <div className="img-container">
+                                        
+                                    </div>
+                                    <div className="text-container">
+                                        <h3 className="course-code">CS 1110</h3>
+                                        <div>
+                                        Heyya, this is Next!
+                                        </div>
                                     </div>
                                 </div>
+
+                                
                             </div>
                                 
                     )}

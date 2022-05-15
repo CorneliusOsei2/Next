@@ -1,29 +1,32 @@
-body{
- 
-}
-
 .coursespage{
+    display: contents;
+    float: right;
     width: 90%;
-    position: relative;
+    position: absolute;
     margin-left: 10%;
     margin-top: 5%;
 }
 
-.course{
-    width: 300px;
-    height: 180px;
-    border: 2px solid black;
+.courses-container{
+    margin: auto;
+    padding-top: 8%;
+}
+
+  .text-container {
+    box-shadow: 0px 0px 10px 0px rgba(0,0,0,0.2);
+    padding: 120px 20px 20px 20px;
     border-radius: 20px;
-    padding: 4px;
-    border-left: 10px solid #0D6EFD;
-    margin-bottom: 10px;
-}
-
-.course:hover{
-    width: 310px;
-}
-
-
+    margin-bottom: 25px;
+    background: #fff;
+    line-height: 19px;
+    font-size: 14px;
+  }
+  
+  .text-container h3 {
+    margin: 20px 0px 10px 0px;
+    color: #04bcff;
+    font-size: 18px;
+  }
 
 button{
     margin: auto;

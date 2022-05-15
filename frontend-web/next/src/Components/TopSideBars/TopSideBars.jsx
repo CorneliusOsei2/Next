@@ -14,7 +14,7 @@ const TopSideBars = () => {
     
 
     return (
-        <div className="homepage">
+        <div className="topsidebars">
             <TopBar></TopBar>
             <Sidebar></Sidebar>
         </div>

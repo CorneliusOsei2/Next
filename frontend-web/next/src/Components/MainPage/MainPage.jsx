@@ -76,7 +76,7 @@ const MainPage = () => {
     
 
     return(
-        <div>
+        <div className='mainpage'>
 
              {/* {showCoursesPage && <CoursesPage user_id={user.id} getTimeslots={getTimeslots}></CoursesPage>}
              {showTimeslotsPage && <TimeslotsPage timeslots={timeslots} handleDate={handleDate}></TimeslotsPage>}
