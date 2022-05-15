@@ -61,7 +61,7 @@ const TopBar = () => {
                 <div><img className="next-logo" src={nextLogo} alt="" /></div>
              </div>
              <div className="greet-div text-center">
-                        Hi, <span className="greet-name">Cornelius</span>
+                Hi, <span className="greet-name">Cornelius</span>
             </div>
 
             <div className="notification">

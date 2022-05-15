@@ -5,28 +5,25 @@ body{
 .coursespage{
     width: 90%;
     position: relative;
-    margin-left: 5%;
+    margin-left: 10%;
     margin-top: 5%;
 }
+
 .course{
-    border-top-left-radius: 20px;
-    border-top-right-radius: 20px;
+    width: 300px;
     height: 180px;
-    padding-top: 0;
-    margin-bottom: 15px;
-    background-color: aqua;
-    filter: drop-shadow(0px 4px 4px rgba(0, 0, 0, 0.25));
+    border: 2px solid black;
+    border-radius: 20px;
+    padding: 4px;
+    border-left: 10px solid #0D6EFD;
+    margin-bottom: 10px;
 }
 
-.top{
-    height: 50px;
-    margin-top: 0;
-    background-color: #fff;
-    border-top-left-radius: 20px;
-    border-top-right-radius: 20px;
-    border-bottom-left-radius: 20px;
-    border-bottom-right-radius: 20px;
+.course:hover{
+    width: 310px;
 }
+
+
 
 button{
     margin: auto;
