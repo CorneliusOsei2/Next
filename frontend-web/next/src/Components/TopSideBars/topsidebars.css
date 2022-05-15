@@ -1,5 +1,4 @@
 .homepage{
-    height: 100vh;
     display: flex;
     overflow: hidden;
     background-color: white;
@@ -52,10 +51,7 @@
 }
 
 .sidebar-icon{
-    border-radius: 10px; 
--moz-border-radius: 10px; 
--webkit-border-radius: 10px;
-    font-size: 50px;
+    border-radius: 50%;
 }
 
 .sidebar-icon:hover{

@@ -1,6 +1,13 @@
 body{
  
 }
+
+.coursespage{
+    width: 90%;
+    position: relative;
+    margin-left: 5%;
+    margin-top: 5%;
+}
 .course{
     border-top-left-radius: 20px;
     border-top-right-radius: 20px;

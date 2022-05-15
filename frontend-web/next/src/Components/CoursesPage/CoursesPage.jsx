@@ -3,40 +3,54 @@ import "./coursespage.css"
 
 const CoursesPage = ({getTimeslots, user_id}) => {
 
-    const [courses, setCourses] = useState([])
+    // const [courses, setCourses] = useState([])
     
-    const coursesHandler = (e) => {
-        getCourses()
-    }
+    // const coursesHandler = (e) => {
+    //     getCourses()
+    // }
 
-    const getCourses = () => {
-        fetch(`http://0.0.0.0:4500/next/dev/${user_id}/courses/`, {
-          "methods" : "GET",
-          headers: {
-              "Content-Type": "applications/json"
-          }
-          })
-          .then(res => res.json())
-          .then(res => setCourses(res.courses_as_student))
-          .then(res => console.log(res))
-          .catch(err => console.log(err))
-      }
+    // const getCourses = () => {
+    //     fetch(`http://0.0.0.0:4500/next/dev/${user_id}/courses/`, {
+    //       "methods" : "GET",
+    //       headers: {
+    //           "Content-Type": "applications/json"
+    //       }
+    //       })
+    //       .then(res => res.json())
+    //       .then(res => setCourses(res.courses_as_student))
+    //       .then(res => console.log(res))
+    //       .catch(err => console.log(err))
+    //   }
     
     const handleCourseClick = (e) => {
         getTimeslots(e.target.id)
     }
 
+    const courses = [
+        {id: 1, code: "CS 1110", name: "Intro to Computing Using Python"},
+        {id: 1, code: "CS 1110", name: "Intro to Computing Using Python"},
+        {id: 1, code: "CS 1110", name: "Intro to Computing Using Python"},
+        {id: 1, code: "CS 1110", name: "Intro to Computing Using Python"},
+        {id: 1, code: "CS 1110", name: "Intro to Computing Using Python"},
+        {id: 1, code: "CS 1110", name: "Intro to Computing Using Python"},
+        {id: 1, code: "CS 1110", name: "Intro to Computing Using Python"},
+        {id: 1, code: "CS 1110", name: "Intro to Computing Using Python"},
+        {id: 1, code: "CS 1110", name: "Intro to Computing Using Python"},
+        {id: 1, code: "CS 1110", name: "Intro to Computing Using Python"},
+        {id: 1, code: "CS 1110", name: "Intro to Computing Using Python"},
+
+        {id: 1, code: "CS 1110", name: "Intro to Computing Using Python"},
+
+    ]
+
     return(
-        <div>
+        <div  className="coursespage">
 
-            <button onClick={coursesHandler}>Click</button>
+            {/* <button onClick={coursesHandler}>Click</button> */}
 
-            <div>
+            <div >
 
-                    <div className="greet-div">
-                        Hi, <span className="greet-name">Cornelius</span>
-                    </div>
-
+                   
                     <div className="row container">
 
                         {courses.map(course => {

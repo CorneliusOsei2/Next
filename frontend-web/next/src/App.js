@@ -2,14 +2,14 @@
 import MainPage from "./Components/MainPage/MainPage.jsx"
 
 import "./App.css"
-import Homepage from "./Components/Homepage/Homepage.jsx";
+import TopSideBars from "./Components/TopSideBars/TopSideBars.jsx";
 
 function App() {
   return (
     <div className="App">
-      <Homepage></Homepage>
+      {/* <TopSideBars></TopSideBars> */}
 
-      {/* <MainPage></MainPage> */}
+      <MainPage></MainPage>
 
     </div>
   );
