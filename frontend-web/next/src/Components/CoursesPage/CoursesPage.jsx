@@ -3,53 +3,65 @@ import "./coursespage.css"
 
 const CoursesPage = ({getTimeslots, user_id}) => {
 
-    const [courses, setCourses] = useState([])
+    // const [courses, setCourses] = useState([])
     
-    const coursesHandler = (e) => {
-        getCourses()
-    }
+    // const coursesHandler = (e) => {
+    //     getCourses()
+    // }
 
-    const getCourses = () => {
-        fetch(`http://0.0.0.0:4500/next/dev/${user_id}/courses/`, {
-          "methods" : "GET",
-          headers: {
-              "Content-Type": "applications/json"
-          }
-          })
-          .then(res => res.json())
-          .then(res => setCourses(res.courses_as_student))
-          .then(res => console.log(res))
-          .catch(err => console.log(err))
-      }
+    // const getCourses = () => {
+    //     fetch(`http://0.0.0.0:4500/next/dev/${user_id}/courses/`, {
+    //       "methods" : "GET",
+    //       headers: {
+    //           "Content-Type": "applications/json"
+    //       }
+    //       })
+    //       .then(res => res.json())
+    //       .then(res => setCourses(res.courses_as_student))
+    //       .then(res => console.log(res))
+    //       .catch(err => console.log(err))
+    //   }
     
     const handleCourseClick = (e) => {
         getTimeslots(e.target.id)
     }
 
+    const courses = [
+        {id: 1, code: "CS 1110", name: "Intro to Computing Using Python"},
+        {id: 1, code: "CS 1110", name: "Intro to Computing Using Python"},
+        {id: 1, code: "CS 1110", name: "Intro to Computing Using Python"},
+        {id: 1, code: "CS 1110", name: "Intro to Computing Using Python"},
+        {id: 1, code: "CS 1110", name: "Intro to Computing Using Python"},
+        {id: 1, code: "CS 1110", name: "Intro to Computing Using Python"},
+    ]
+
     return(
-        <div>
+        <div  className="coursespage">
 
-            <button onClick={coursesHandler}>Click</button>
+            {/* <button onClick={coursesHandler}>Click</button> */}
 
-            <div>
-
-                    <div className="greet-div">
-                        Hi, <span className="greet-name">Cornelius</span>
-                    </div>
-
-                    <div className="row container">
+            <div >
+                    <div className="row container courses-container">
 
                         {courses.map(course => {
                         return (
                             <div key={course.id} className="col-md-4">
-                                <div className="course" id={course.id} code={course.code}>
-                                    <div className="top">{course.name}</div>
-                                    <hr />
-                                    <div className="bottom">
-                                        <p>Next office hours at: </p>
-                                        <button id={course.id} onClick={handleCourseClick} className="btn btn-outline-danger">Timeslots</button>
+
+
+
+                                <div className="course">
+                                    <div className="img-container">
+                                        
+                                    </div>
+                                    <div className="text-container">
+                                        <h3 className="course-code">CS 1110</h3>
+                                        <div>
+                                        Heyya, this is Next!
+                                        </div>
                                     </div>
                                 </div>
+
+                                
                             </div>
                                 
                     )}
