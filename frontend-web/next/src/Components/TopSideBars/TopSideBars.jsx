@@ -24,7 +24,7 @@ const TopSideBars = () => {
 
 const TopBar = () => {
     return (
-        <div className="topbar">
+        <div className="topbar bg-light">
             <div className="next-logo-div">
                 <div><img className="next-logo" src={nextLogo} alt="" /></div>
              </div>
@@ -42,7 +42,7 @@ const TopBar = () => {
 
 const Sidebar = () => {
     return (
-        <div className="sidebar">
+        <div className="sidebar bg-light">
             
             <div className="icons">
                 <ul>
