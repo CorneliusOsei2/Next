@@ -1,6 +1,12 @@
 body {
   background-color: white;
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center center;
   text-align: center;
   display: flex;
   padding: 0;
+  overflow: scroll;
+
+
 }

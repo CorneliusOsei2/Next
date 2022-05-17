@@ -1,10 +1,14 @@
 .coursespage{
-    display: flex;
-    float: right;
-    width: 90%;
-    position: absolute;
-    margin-left: 10%;
-    margin-top: 5%;
+  background: linear-gradient(165.97deg, #FFFFFF 0%, rgba(200, 255, 245, 0.7) 58.64%, rgba(200, 255, 245, 0.7) 30.33%);
+  display: flex;
+  float: right;
+  width: 90%;
+  position: absolute;
+  margin-left: 8%;
+  margin-top: 5%;
+  right: 0;
+  padding-bottom: 5%;
+  border-bottom-right-radius: 50%;
 }
 
 .courses-container{
@@ -14,7 +18,7 @@
 
 .text-container {
   box-shadow: 0px 0px 10px 0px rgba(0,0,0,0.2);
-  padding: 120px 20px 20px 20px;
+  padding: 100px 20px 20px 20px;
   border-radius: 20px;
   margin-bottom: 25px;
   background: #fff;
@@ -43,5 +47,10 @@ button{
 
   .courses-container{
     margin-bottom: 18%;
+  }
+
+  .text-container{
+    padding: 50px 20px 20px 20px;
+    line-height: 10px;
   }
 }

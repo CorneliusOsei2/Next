@@ -6,6 +6,7 @@ import { useState } from 'react';
 import AddTimeslot from '../AddTimeslot/AddTimeslot';
 import TopSideBars from '../TopSideBars/TopSideBars';
 
+import DateTimePicker from 'react-datetime-picker';
 import "./mainpage.css"
 const MainPage = () => {
 
@@ -81,9 +82,12 @@ const MainPage = () => {
              {/* {showCoursesPage && <CoursesPage user_id={user.id} getTimeslots={getTimeslots}></CoursesPage>}
              {showTimeslotsPage && <TimeslotsPage timeslots={timeslots} handleDate={handleDate}></TimeslotsPage>}
              {showAddTimeslot &&  <AddTimeslot addSlot={addSlot} slot={slot}></AddTimeslot>} */}
-
+            
              <TopSideBars></TopSideBars>
+             
              <CoursesPage></CoursesPage>
+            
+
             
         </div>
     )

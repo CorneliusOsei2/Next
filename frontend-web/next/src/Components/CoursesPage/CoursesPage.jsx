@@ -40,7 +40,12 @@ const CoursesPage = ({getTimeslots, user_id}) => {
 
             {/* <button onClick={coursesHandler}>Click</button> */}
 
+            
+            
             <div >
+
+            
+                
                     <div className="row container courses-container">
 
                         {courses.map(course => {
@@ -50,9 +55,7 @@ const CoursesPage = ({getTimeslots, user_id}) => {
 
 
                                 <div className="course">
-                                    <div className="img-container">
                                         
-                                    </div>
                                     <div className="text-container">
                                         <h3 className="course-code">CS 1110</h3>
                                         <div>
