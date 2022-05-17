@@ -1,5 +1,5 @@
 .coursespage{
-    display: contents;
+    display: flex;
     float: right;
     width: 90%;
     position: absolute;
@@ -30,4 +30,18 @@
 
 button{
     margin: auto;
+}
+
+
+@media screen and (max-width: 600px) {
+  .coursespage{
+      width: unset;
+      margin-top: 15%;
+      margin-bottom: 20%;
+      margin-left: unset;
+  }
+
+  .courses-container{
+    margin-bottom: 18%;
+  }
 }
