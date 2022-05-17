@@ -21,6 +21,25 @@ const TopSideBars = () => {
     )
 }
 
+
+const TopBar = () => {
+    return (
+        <div className="topbar">
+            <div className="next-logo-div">
+                <div><img className="next-logo" src={nextLogo} alt="" /></div>
+             </div>
+             <div className="greet-div">
+                Bienvenue, <span className="greet-name">Cornelius!</span>
+            </div>
+
+            <div className="notification">
+                <CircleNotificationsIcon className="notification-icon" style={{fontSize: 50}}></CircleNotificationsIcon>
+            </div>
+        </div>
+        
+    )
+}
+
 const Sidebar = () => {
     return (
         <div className="sidebar">
@@ -54,22 +73,5 @@ const Sidebar = () => {
     )
 }
 
-const TopBar = () => {
-    return (
-        <div className="topbar">
-            <div className="next-logo-div">
-                <div><img className="next-logo" src={nextLogo} alt="" /></div>
-             </div>
-             <div className="greet-div text-center">
-                Hi, <span className="greet-name">Cornelius</span>
-            </div>
-
-            <div className="notification">
-                <CircleNotificationsIcon className="notification-icon" style={{fontSize: 50}}></CircleNotificationsIcon>
-            </div>
-        </div>
-        
-    )
-}
 
 export default TopSideBars

@@ -6,12 +6,13 @@
 
 .topbar{
     width: 100vw;
-    height: 8%;
+    height: 10%;
     display: flex;
     position: fixed;
     background-color: white;
 }
 .next-logo-div{
+    width: 20%;
     height: 60px;
     margin-left: 5px;
     margin-top: 5px;
@@ -20,11 +21,17 @@
     height: 60px;
 }
 
+.greet-div{
+    width: 60%;
+    margin: auto;
+}
+
 .notification{
-    margin-right: 0;
-    position: fixed;
+    width: 20%;
+    height: 60px;
+    margin-right: 5px;
     top: 1%;
-    right: 4%;
+    right: 1%;
 }
 
 .sidebar{
@@ -40,9 +47,33 @@
     justify-content: center;
 }
 
+@media screen and (max-width: 600px) {
+    .sidebar{
+        width: 100vw;
+        bottom: 0;
+        padding-left: 0%;
+        padding-right: 20px;
+        background-color: white;
+        height: 10%;
+        top: unset
+    }
+
+    ul{
+        display: flex;
+        justify-content: center;
+    }
+
+    .icons{
+        margin: auto;
+    }
+
+    .sidebar-item{
+        margin-left: 35px;
+    }
+  }
+
 .icons{
     display: flex;
-    align-items: flex-start;
 }
 
 .sidebar-item{
@@ -61,6 +92,7 @@
 
 ul {
     padding-left: 0;
+
 }
 
 li {

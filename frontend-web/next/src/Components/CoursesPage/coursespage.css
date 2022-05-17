@@ -12,21 +12,21 @@
     padding-top: 8%;
 }
 
-  .text-container {
-    box-shadow: 0px 0px 10px 0px rgba(0,0,0,0.2);
-    padding: 120px 20px 20px 20px;
-    border-radius: 20px;
-    margin-bottom: 25px;
-    background: #fff;
-    line-height: 19px;
-    font-size: 14px;
-  }
+.text-container {
+  box-shadow: 0px 0px 10px 0px rgba(0,0,0,0.2);
+  padding: 120px 20px 20px 20px;
+  border-radius: 20px;
+  margin-bottom: 25px;
+  background: #fff;
+  line-height: 50px;
+  font-size: 14px;
+}
   
-  .text-container h3 {
-    margin: 20px 0px 10px 0px;
-    color: #04bcff;
-    font-size: 18px;
-  }
+.text-container h3 {
+  margin: 20px 0px 10px 0px;
+  color: #04bcff;
+  font-size: 18px;
+}
 
 button{
     margin: auto;
