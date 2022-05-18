@@ -1,5 +1,6 @@
 import { useState } from "react"
 import "./coursespage.css"
+import cornerArcs from "../../assets/images/cornerArcs.png"
 
 const CoursesPage = ({getTimeslots, user_id}) => {
 
@@ -44,8 +45,6 @@ const CoursesPage = ({getTimeslots, user_id}) => {
             
             <div >
 
-            
-                
                     <div className="row container courses-container">
 
                         {courses.map(course => {
@@ -73,6 +72,8 @@ const CoursesPage = ({getTimeslots, user_id}) => {
                  
                   
                 </div>
+
+            <img id="corner-arcs" src={cornerArcs} alt="" />
         </div>
     )
     
