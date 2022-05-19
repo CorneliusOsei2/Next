@@ -7,7 +7,8 @@
 
 .topbar{
     width: 100vw;
-    height: 10%;
+    height: 70px;
+    top:0;
     z-index: 2;
     display: flex;
     position: fixed;
@@ -38,7 +39,7 @@
 
 .sidebar{
     background: none;
-    width: 8%;
+    width: 55px;
     height: 100vh;
     top: 0;
     z-index: 2;

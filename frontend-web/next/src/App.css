@@ -1,3 +1,7 @@
+html{
+  overflow: scroll;
+
+}
 body {
   background-color: white;
   background-size: cover;
@@ -6,7 +10,4 @@ body {
   text-align: center;
   display: flex;
   padding: 0;
-  overflow: scroll;
-
-
 }
