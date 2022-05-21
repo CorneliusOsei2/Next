@@ -14,7 +14,6 @@ body{
     font-size: 24px;
 }
 .date-div{
-    height: 100vh;
     background-color: #fff;
     flex-direction: row;
     justify-content: center;
