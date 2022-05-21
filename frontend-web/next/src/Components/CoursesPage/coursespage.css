@@ -1,10 +1,14 @@
 .coursespage{
-  background: linear-gradient(165.97deg, #FFFFFF 0%, rgba(200, 255, 245, 0.7) 58.64%, rgba(200, 255, 245, 0.7) 30.33%);
+  background: linear-gradient(165.97deg, #FFFFFF 0%, rgba(200, 255, 245, 0.7) 58.64%, rgba(200, 255, 245, 0.7) 30.33%) no-repeat center center fixed;
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  -o-background-size: cover;
+  background-size: cover;
   display: flex;
+  min-height: 100vh;
   padding-left: 8%;
   padding-top: 5%;
   right: 0;
-  padding-bottom: 5%;
   bottom: 0;
 }
 
@@ -41,9 +45,9 @@ button{
 
 @media screen and (max-width: 600px) {
   .coursespage{
+
       width: unset;
       margin-top: 15%;
-      margin-bottom: 20%;
       margin-left: unset;
   }
 
@@ -55,4 +59,11 @@ button{
     padding: 60px 30px 30px 30px;
     line-height: 10px;
   }
+
+  #corner-arcs{
+    top: 0;
+    height: 50px;
+    width: 50px;
+  }
+  
 }
