@@ -1,13 +1,22 @@
-
-
-label {
-    display: block;
-    font: 1rem 'Fira Sans', sans-serif;
+#addtimeslot-page{
+    min-height: 100vh;
+    display: flex;
 }
 
-input,
+#timeslot-form{
+    background-color: white;
+    width: 350px;
+    margin: auto;
+    padding: 40px;
+    border-top-left-radius: 30px;
+    border-bottom-right-radius: 30px;
+  box-shadow: 0px 0px 10px 0px rgba(39, 177, 223, 0.2);
+}
+
 label {
-    margin: .4rem 0;
+    display: flex;
+    padding-left: 0;
+    font: 1rem 'Fira Sans', sans-serif;
 }
 
 .time{

@@ -1,5 +1,6 @@
 import { useState } from "react"
 import "./coursespage.css"
+import cornerArc from "../../assets/images/cornerArc.png"
 import cornerArcs from "../../assets/images/cornerArcs.png"
 
 const CoursesPage = ({getTimeslots, user_id}) => {
@@ -27,14 +28,23 @@ const CoursesPage = ({getTimeslots, user_id}) => {
         getTimeslots(e.target.id)
     }
 
-    const courses = [
+    const coursesAsStudent = [
         {id: 1, code: "CS 1110", name: "Intro to Computing Using Python"},
         {id: 1, code: "CS 1110", name: "Intro to Computing Using Python"},
         {id: 1, code: "CS 1110", name: "Intro to Computing Using Python"},
         {id: 1, code: "CS 1110", name: "Intro to Computing Using Python"},
         {id: 1, code: "CS 1110", name: "Intro to Computing Using Python"},
-        {id: 1, code: "CS 1110", name: "Intro to Computing Using Python"},
+        {id: 1, code: "CS 1110", name: "Intro to Computing Using Python"}
     ]
+
+    const coursesAsInstructor = [
+        {id: 1, code: "CS 1110", name: "Intro to Computing Using Python"},
+        {id: 1, code: "CS 1110", name: "Intro to Computing Using Python"},
+        {id: 1, code: "CS 1110", name: "Intro to Computing Using Python"},
+        {id: 1, code: "CS 1110", name: "Intro to Computing Using Python"},
+        {id: 1, code: "CS 1110", name: "Intro to Computing Using Python"},
+        {id: 1, code: "CS 1110", name: "Intro to Computing Using Python"}
+    ];
 
     return(
         <div  className="coursespage">
@@ -44,36 +54,62 @@ const CoursesPage = ({getTimeslots, user_id}) => {
             
             
             <div >
+                    {coursesAsStudent && 
+                        <div className="student-courses-title">
+                            <h5>Courses Enrolled In As Student</h5>
+                        </div>
+                    }
 
                     <div className="row container courses-container">
-
-                        {courses.map(course => {
+                        {coursesAsInstructor.map(course => {
                         return (
                             <div key={course.id} className="col-md-4">
-
-
-
                                 <div className="course">
-                                        
-                                    <div className="text-container">
-                                        <h3 className="course-code">CS 1110</h3>
+                                    <div className="course-container">
+                                        <div className="course-title">
+                                            <h3 className="course-code">CS 1110</h3>
+                                        </div>
                                         <div>
                                         Heyya, this is Next!
                                         </div>
                                     </div>
                                 </div>
-
-                                
                             </div>
-                                
-                    )}
+                            )}
                         )}
                     </div>
-                 
-                  
-                </div>
 
-            <img id="corner-arcs" src={cornerArcs} alt="" />
+                    {coursesAsStudent && 
+                        <div className="student-courses-title mt-3">
+                            <h5>Courses Enrolled In As Student</h5>
+                        </div>
+                    }
+                    <div className="row container courses-container">
+                        {coursesAsInstructor.map(course => {
+                        return (
+                            <div key={course.id} className="col-md-4">
+                                <div className="course">
+                                    <div className="course-container">
+                                        <div className="course-title">
+                                            <h3 className="course-code">CS 1110</h3>
+                                        </div>
+                                        <div>
+                                        Heyya, this is Next!
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            )}
+                        )}
+                    </div>
+
+                </div>
+            
+            <div className="corner-arcs d-flex">
+            <img  src={cornerArc} alt="" />
+            <img src={cornerArcs} alt="" />
+            </div>
+           
         </div>
     )
     

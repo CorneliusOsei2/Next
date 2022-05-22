@@ -5,6 +5,7 @@ const AddTimeslot = ({addSlot, timeslot}) => {
     const [showSlot, setShowSlot] = useState(false)
     const [start, setStart] = useState()
     const [end, setEnd] = useState()
+    const [virtual, setVirtual] = useState(true)
 
 
     const handleTimeSubmit = (e) => {
@@ -28,15 +29,62 @@ const AddTimeslot = ({addSlot, timeslot}) => {
         e.preventDefault();
     }
 
+    const modeHandler = (e) => {
+        let targetMode = e.target.id;
+        
+        if (targetMode === "in-person"){
+            setVirtual(false);
+        } else{
+            setVirtual(true);
+        }
+
+        let modeOptions = document.getElementsByName("mode");
+        modeOptions.forEach((option) => {
+            console.log(option)
+            if (option.id !== targetMode){
+                option.checked = false;
+            }
+        })
+       
+
+    }
   
     return (
-        <div>
+        <div id="addtimeslot-page">
 
             <form id="timeslot-form" onSubmit={handleTimeSubmit}>
-                <input className="form-control time" type="time" id="from" name="start" required></input>
-                <input className="form-control time" type="time" id="to" name="end" required></input>
+                <label htmlFor="timeslot-title">Title</label>
+                <input id=" timeslot-title" className="form-control" type="text" required/>
+                <label htmlFor="from">Start Time</label>
+                <input className="form-control time" type="time" id="from" name="start" required/>
+                <label htmlFor="to">End Time</label>
+                <input className="form-control time" type="time" id="to" name="end" required/>
+                
+                <div className="timeslot-location">
+                    <p>Mode</p>
+                    <div className="d-flex" required>
+                    <input id="in-person" name="mode" type="radio" onClick={modeHandler}></input><label htmlFor="in-person">In-person</label>
+                        <label htmlFor="virtual">Virtual</label> <input id="virtual" name="mode" type="radio" onClick={modeHandler}/>
+                    </div>
 
-                <button type="submit">Add</button>
+                    {virtual && 
+                        <div className="virtual-mode">
+                            <label>Provide Link</label>
+                            <textarea className="form-control" name="" id="" cols="30" rows="2" required></textarea>
+                        </div>
+                        
+                    }
+
+                   
+                </div>
+
+                <div className="">
+                    <label>Each week? </label><input type="checkbox"/>
+                    <label htmlFor="timeslot-message"></label>
+                </div>
+                
+                <textarea id="timeslot-message" className="form-control" type="text"></textarea>
+                <button className="btn btn-primary" type="submit">Add</button>
             </form>
 
             {showSlot && <div className="timeslot-view">

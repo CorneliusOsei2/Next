@@ -1,5 +1,4 @@
 .coursespage{
-  background: linear-gradient(165.97deg, #FFFFFF 0%, rgba(200, 255, 245, 0.7) 58.64%, rgba(200, 255, 245, 0.7) 30.33%) no-repeat center center fixed;
   -webkit-background-size: cover;
   -moz-background-size: cover;
   -o-background-size: cover;
@@ -7,37 +6,47 @@
   display: flex;
   min-height: 100vh;
   padding-left: 8%;
-  padding-top: 5%;
+  padding-top: 8%;
   right: 0;
   bottom: 0;
 }
 
-.courses-container{
-    margin: auto;
-    padding-top: 8%;
-}
 
-#corner-arcs{
+.corner-arcs{
   top: 0;
-  height: 150px;
+  height: 70px;
+  width: 50px;
 }
 
-.text-container {
+.course-container {
   box-shadow: 0px 0px 10px 0px rgba(0,0,0,0.2);
-  padding: 100px 20px 20px 20px;
+  padding: 0px 0px 0px 0px;
   border-radius: 20px;
   margin-bottom: 25px;
   background: #fff;
   line-height: 50px;
   font-size: 14px;
 }
+
+/* .course-container:hover{
+  width: 1.1;
+  transition: all(2s);
+} */
   
-.text-container h3 {
-  margin: 20px 0px 10px 0px;
-  color: #04bcff;
+.course-title {
+  /* background: url("../../assets/images/bckgrnd.png"); */
+  background-color: rgb(163, 214, 227);
+  border-top-left-radius: 20px;
+  border-top-right-radius: 20px;
+  width: 100%;
+  height: 100px;
   font-size: 18px;
 }
 
+.course-img{
+  height: 50px;
+  width: 100%;
+}
 button{
     margin: auto;
 }
@@ -55,15 +64,16 @@ button{
     margin-bottom: 18%;
   }
 
-  .text-container{
-    padding: 60px 30px 30px 30px;
+  .course-container{
+    padding: 0px 25px 25px 25px;
     line-height: 10px;
   }
 
-  #corner-arcs{
+  .corner-arcs{
     top: 0;
     height: 50px;
-    width: 50px;
+    width: 20px;
   }
+
   
 }
