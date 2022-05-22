@@ -10,9 +10,6 @@ import CircleNotificationsIcon from '@mui/icons-material/CircleNotifications';
 import { Tooltip } from '@mui/material';
 
 const TopSideBars = () => {
-
-    
-
     return (
         <div className="topsidebars">
             <TopBar></TopBar>

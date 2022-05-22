@@ -86,6 +86,8 @@ const MainPage = () => {
              <TopSideBars></TopSideBars>
              
              <CoursesPage></CoursesPage>
+
+             <AddTimeslot></AddTimeslot>
             
 
             

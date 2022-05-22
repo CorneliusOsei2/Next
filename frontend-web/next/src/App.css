@@ -1,6 +1,12 @@
 html{
   overflow: scroll;
+  scroll-behavior: smooth;
+  min-height: 100vh;
 
+}
+.App{
+  background: linear-gradient(165.97deg, #FFFFFF 0%, rgba(200, 255, 245, 0.7) 58.64%, rgba(200, 255, 245, 0.7) 30.33%) no-repeat center center fixed;
+  min-height: 100vh;
 }
 body {
   background-color: white;
@@ -10,4 +16,5 @@ body {
   text-align: center;
   display: flex;
   padding: 0;
+  overflow-x: hidden;
 }
