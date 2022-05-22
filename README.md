@@ -26,7 +26,7 @@ Although we have yet to implement it on the frontend, the following features are
 - Instructors seeing an instructor-specific Queue page view (showing a list of students)
 - Instructors being able to add/delete timeslots
 
-## Meets Requirements
+## Features
 
 iOS:
 
@@ -37,7 +37,7 @@ iOS:
 
 Backend:
 
-1) 6 POST Routes; 5 GET Routes; 1 DELETE Route
+1) 6 POST Routes; GET Routes; DELETE Route
 2) 6 Tables; 3 Relationships
 3) API Specification with route descriptions: <https://docs.google.com/document/d/1w7hZGV2CeQnmG_XoH0eFa0ylxJ4hBtEGHCEiPj2U2kM/edit?usp=sharing>
 4) Implemented User Authentication (all routes used by app depend on session token) [Example: only students for a course could view the time slots for a course]
