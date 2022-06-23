@@ -18,7 +18,7 @@ A user could also view the timeslots for a course and then can view information 
 
 They can also join/leave a queue.
 
-Although we have yet to implement it on the frontend, the following features are supported by the backend:
+Although we have yet to implement it on the frontend fully, the following features are supported by the backend:
 
 - User logout
 - Students being able to scroll through different days and months to view time slots
